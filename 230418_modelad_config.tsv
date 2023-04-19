@@ -1,0 +1,5 @@
+dataset	sample	batch	platform	fname
+WT_1_1	WT	230418	ONT	/share/crsp/lab/seyedam/share/ad_nanopore_tmp/AD002/ad002_trimfastq/ad002_10725_lig-ss_blk_1_t1.fastq.gz
+WT_1_2	WT	230418	ONT	/share/crsp/lab/seyedam/share/ad_nanopore_tmp/AD002/ad002_trimfastq/ad002_10721_lig-blk_2_t1.fastq.gz
+5xFAD_1_1	5xFAD	230418	ONT	/share/crsp/lab/seyedam/share/ad_nanopore_tmp/AD002/ad002_trimfastq/ad002_10721_lig-ss_blk_1_t1.fastq.gz
+5xFAD_1_2	5xFAD	230418	ONT	/share/crsp/lab/seyedam/share/ad_nanopore_tmp/AD002/ad002_trimfastq/ad002_10725_lig-blk_2_t1.fastq.gz
