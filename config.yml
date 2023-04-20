@@ -10,6 +10,7 @@ ref:
   gtf_gz: ref/annot.gtf.gz
   gtf: ref/annot.gtf
   sjs: ref/annot_junc.bed
+  talon_db: ref/ref_talon.db
 
 data:
   # fastq: data/{batch}/raw/{dataset}.fastq
@@ -25,3 +26,4 @@ data:
 
   sam_label: data/{batch}/talon/{dataset}_labeled.sam
   talon_config: data/{batch}/talon/talon_config.csv
+  talon_db: data/{batch}/talon/annot_talon.db

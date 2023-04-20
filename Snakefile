@@ -19,26 +19,24 @@ def get_df_col(wc, df, col):
     val = df.loc[df.dataset==wc.dataset, col].values[0]
     return val
 
-# # config formatting errors
+# config formatting errors
+if len(df.batch.unique()) > 1:
+    raise ValueError('Must only have one batch per config')
 # if len(df.source.unique()) < len(df.source.tolist()):
 #     raise ValueError('Sources must have unique names')
 
 
 rule all:
-   #  expand(config['data']['map_stats'],
-   #         zip,
-   #         batch=batches,
-   #         dataset=datasets),
-   # expand(config['data']['tc_stats'],
-   #        zip,
-   #        batch=batches,
-   #        dataset=datasets),
-   input:
-       expand(config['data']['sam_label'],
-                      zip,
-                      batch=batches,
-                      dataset=datasets),
-       # config['data']['talon_config']
+    input:
+        # expand(config['data']['map_stats'],
+        #    zip,
+        #    batch=batches,
+        #    dataset=datasets),
+        expand(config['data']['tc_stats'],
+          zip,
+          batch=batches,
+          dataset=datasets),
+        expand(config['data']['talon_config'], batch=batches)
 
 ################################################################################
 ########################### Ref. processing ####################################
@@ -78,7 +76,7 @@ use rule dl as dl_ref with:
 
 use rule gunzip as gunzip_ref with:
     input:
-        fa = config['ref']['fa_gz']
+        gz = config['ref']['fa_gz']
     output:
         out = config['ref']['fa']
 
@@ -95,7 +93,7 @@ rule get_annot_sjs:
         sjs = config['ref']['sjs']
     shell:
         """
-        python {params.tc_path}accessory_scripts/get_SJs_from_gtf.py \
+        python {params.tc}accessory_scripts/get_SJs_from_gtf.py \
              --f {input.gtf} \
              --g {input.fa} \
              --minIntronSize 21 \
@@ -112,11 +110,8 @@ rule alignment_stats:
     shell:
         """
         module load samtools
-        samtools stats {input.alignment} | \
-           grep ^SN | \
-           cut -f 2- | \
-           grep -e 'reads mapped' -e 'reads unmapped' -e 'average length' -e 'maximum length' > {output.stats}
-           sed -i '/reads mapped and paired/d' > {output.stats}
+        samtools stats {input.alignment} | grep ^SN | cut -f 2- | grep -e 'reads map
+ped' -e 'reads unmapped' -e 'average length' -e 'maximum length' | sed '/reads mapped and paired/d' > {output.stats}
         """
 
 ################################################################################
@@ -133,7 +128,7 @@ rule map:
      			-t {resources.threads} \
      			-ax splice \
      			-k14 \
-                --junc-bed {input.sjs}
+                --junc-bed {input.sjs} \
      		    {input.ref_fa} {input.fastq} > {output.sam} 2> {output.log}"""
 
 rule sam_to_bam:
@@ -197,6 +192,7 @@ rule tc:
             --canonOnly \
             --primaryOnly \
             --deleteTmp \
+            --tmpDir {params.opref}_temp/ \
             --outprefix {params.opref}
         """
 
@@ -257,4 +253,52 @@ rule talon_config:
     run:
         config = params.df[['dataset', 'sample', 'platform']].copy(deep=True)
         config['fname'] = input.files
-        config.to_csv(output.config, header=None, sep=',')
+        config.to_csv(output.config, header=None, sep=',', index=False)
+
+rule talon_init:
+	input:
+		ref_gtf = config['ref']['gtf']
+	output:
+		db = config['ref']['talon_db']
+	params:
+		talon_opref = config['ref']['talon_db'].rsplit('_talon', maxsplit=1)[0],
+        genome = 'mm10',
+        annot = 'vM21'
+	resources:
+		mem_gb = 32,
+		threads = 16
+	shell:
+		'talon_initialize_database \
+		--f {input.ref_gtf} \
+		--g {params.genome} \
+		--a {params.annot} \
+		--l 0 \
+		--idprefix TALONT \
+		--5p 500 \
+		--3p 300 \
+		--o {params.talon_opref}'
+
+rule talon:
+    input:
+        ref = config['ref']['talon_db']
+        config = config['data']['talon_config']
+    resources:
+        mem_gb = 132,
+        threads = 30
+    params:
+        genome = 'mm10',
+        opref = config['data']['talon_db'].rsplit('_talon', maxsplit=1)[0],
+    output:
+        db = config['data']['talon_db']
+    shell:
+        """
+        cp {input.ref} {input.ref}_back
+        talon {input.config} \
+            --f {input.ref} \
+            --build {params.genome} \
+            --tmpDir {params.opref}_temp/ \
+            --threads {resources.threads} \
+            -o {params.opref}
+        mv {input.ref} {params.opref}_talon.db
+        mv {input.ref}_back {input.ref}
+        """
