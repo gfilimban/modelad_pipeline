@@ -6,24 +6,44 @@ ref:
   fa_link: https://www.encodeproject.org/files/mm10_no_alt_analysis_set_ENCODE/@@download/mm10_no_alt_analysis_set_ENCODE.fasta.gz
   fa_gz: ref/genome.fa.gz
   fa: ref/genome.fa
+  chrom_sizes: ref/genome_chrom_sizes.tsv
   gtf_link: https://www.encodeproject.org/files/gencode.vM21.primary_assembly.annotation_UCSC_names/@@download/gencode.vM21.primary_assembly.annotation_UCSC_names.gtf.gz
   gtf_gz: ref/annot.gtf.gz
   gtf: ref/annot.gtf
+  gtf_utr: ref/annot_utr.gtf
   sjs: ref/annot_junc.bed
-  talon_db: ref/ref_talon.db
+  talon_db: ref/ref.db
 
 data:
-  # fastq: data/{batch}/raw/{dataset}.fastq
+  fastq: data/{batch}/raw/{dataset}.fastq
 
+  # mapping
   map_stats: data/{batch}/minimap2/{dataset}_map_stats.txt
   sam: data/{batch}/minimap2/{dataset}.sam
   bam: data/{batch}/minimap2/{dataset}.bam
   sam_log: data/{batch}/minimap2/{dataset}_minimap.log
   sam_rev: data/{batch}/minimap2/{dataset}.rev.sam
 
+  # transcriptclean
   sam_clean: data/{batch}/tc/{dataset}_clean.sam
   tc_stats: data/{batch}/tc/{dataset}_tc_stats.txt
 
+  # talon
   sam_label: data/{batch}/talon/{dataset}_labeled.sam
   talon_config: data/{batch}/talon/talon_config.csv
   talon_db: data/{batch}/talon/annot_talon.db
+  ab: data/{batch}/talon/annot_talon_abundance.tsv
+  filt_list: data/{batch}/talon/talon_pass_list.tsv
+  filt_ab: data/{batch}/talon/annot_talon_abundance_filtered.tsv
+  filt_gtf: data/{batch}/talon/annot_talon_observedOnly.gtf
+  read_annot: data/{batch}/talon/annot_talon_read_annot.tsv
+
+  # lapa
+  lapa_config: data/{batch}/lapa/lapa_config.csv
+  lapa_ends: data/{batch}/lapa/{end_mode}/{end_mode}_clusters.bed
+  lapa_links: data/{batch}/lapa/tss_to_tes_links.csv
+  lapa_gtf: data/{batch}/lapa/lapa_corrected.gtf
+  lapa_ab: data/{batch}/lapa/lapa_corrected_abundance_filtered.tsv
+  lapa_filt_gtf:
+  # lapa_tes: data/{batch}/lapa/polyA_clusters.bed
+  # lapa_tss: data/{batch}/lapa/tss_clusters.bed
