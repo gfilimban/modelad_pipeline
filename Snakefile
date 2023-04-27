@@ -38,12 +38,7 @@ rule all:
           zip,
           batch=batches,
           dataset=datasets),
-        expand(config['data']['filt_ab'], batch=batches),
-        expand(config['data']['ab'], batch=batches),
-        expand(config['data']['filt_gtf'], batch=batches),
-        expand(config['data']['lapa_ends'], batch=batches, end_mode=end_modes)
-        # expand(config['data']['lapa_tss'], batch=batches),
-        # expand(config['data']['lapa_tes'], batch=batches)
+        expand(config['data']['lapa_ab'], batch=batches)
 
 ################################################################################
 ########################### Ref. processing ####################################
@@ -498,13 +493,17 @@ rule lapa_call_ends:
         ends = config['data']['lapa_ends']
     shell:
         """
+        rm -rf {params.opref}
         {params.lapa_cmd} \
             --alignment {input.config} \
             --fasta {input.fa} \
             --annotation {input.gtf} \
             --chrom_sizes {input.chrom_sizes} \
             --output_dir {params.opref}
-        mv {params.lapa_end_temp} {output.ends}
+        if [ {params.lapa_end_temp} != {output.ends} ]
+        then
+            cp {params.lapa_end_temp} {output.ends}
+        fi
         """
 
 rule lapa_link:
@@ -550,52 +549,5 @@ rule lapa_correct_talon:
                 --gtf_output {output.gtf} \
                 --abundance_input {input.ab} \
                 --abundance_output {output.ab} \
-                --keep_unsupported"
+                --keep_unsupported
         """
-
-
-# rule lapa_call_tes:
-#     input:
-#         config = config['data']['lapa_config'],
-#         fa = config['ref']['fa'],
-#         gtf = config['ref']['gtf_utr'],
-#         chrom_sizes = config['ref']['chrom_sizes']
-#     resources:
-#         threads = 4,
-#         mem_gb = 32
-#     params:
-#         opref = config['data']['lapa_tes'].rsplit('/', maxsplit=1)[1]+'/'
-#     output:
-#         ends = config['data']['lapa_tes']
-#     shell:
-#         """
-#         lapa \
-#             --alignment {input.config} \
-#             --fasta {input.fa} \
-#             --annotation {input.gtf} \
-#             --chrom_sizes {input.chrom_sizes} \
-#             --output_dir {params.opref}
-#         """
-#
-# rule lapa_call_tss:
-#     input:
-#         config = config['data']['lapa_config'],
-#         fa = config['ref']['fa'],
-#         gtf = config['ref']['gtf_utr'],
-#         chrom_sizes = config['ref']['chrom_sizes']
-#     resources:
-#         threads = 4,
-#         mem_gb = 32
-#     params:
-#         opref = config['data']['lapa_tss'].rsplit('/', maxsplit=1)[1]+'/'
-#     output:
-#         ends = config['data']['lapa_tss']
-#     shell:
-#         """
-#         lapa_tss \
-#             --alignment {input.config} \
-#             --fasta {input.fa} \
-#             --annotation {input.gtf} \
-#             --chrom_sizes {input.chrom_sizes} \
-#             --output_dir {params.opref}
-#         """
