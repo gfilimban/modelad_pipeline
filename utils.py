@@ -3,6 +3,46 @@ import pandas as pd
 import re
 import math
 import gzip
+import pyranges as pr
+
+def parse_config_file(fname):
+    # check to make sure the same file stem isn't there more than once
+    # (can happen if different flow cells needed different amounts of chopping)
+    df['file_stem'] = df.basename.str.rsplit('_', n=1, expand=True)[0]
+    if df.file_stem.duplicated().any():
+        dupe_stems = df.loc[df.file_stem.duplicated(keep=False), 'basename'].tolist()
+        raise ValueError(f'Files {dupe_stems} seem to be duplicated. Check config file.')
+
+    # extract the sample name (?)
+    temp = df.basename.str.split('_', expand=True)[[0,1]]#.str.join('_')
+    df['sample_temp'] = temp[0]+'_'+temp[1]
+
+    # get tech rep numbers -- each mouse has multiple reps
+    # and are therefore technical reps
+    df['techrep_num'] = df.sort_values(['genotype', 'sample_temp'],
+    							ascending=[True, True])\
+    							.groupby(['sample_temp']) \
+    							.cumcount() + 1
+
+    # get biorep numbers -- each sample is a different mouse
+    # and therefore a different biorep
+    temp = df[['genotype', 'sample_temp']].drop_duplicates()
+    temp.reset_index(inplace=True, drop=True)
+    temp['biorep_num'] = temp.sort_values(['genotype', 'sample_temp'],
+    							ascending=[True, True])\
+    							.groupby(['genotype']) \
+    							.cumcount()+1
+    df = df.merge(temp, how='left',
+                  on=['genotype', 'sample_temp'])
+
+    # sample should be the genotype + mouse id
+    # so genotype + biorep
+    df['sample'] = df.genotype+'_'+df.biorep_num.astype(str)
+
+    # dataset should be genotype + mouse id + tech rep
+    df['dataset'] = df.genotype+'_'+df.biorep_num.astype(str)+'_'+df.techrep_num.astype(str)
+
+    return df
 
 def rev_comp(seq):
     """ Returns the reverse complement of a DNA sequence,
@@ -92,3 +132,66 @@ def reverse_alignment(infile, outfile, threads=1):
         output.write(read)
     input.close()
     output.close()
+
+################################################################################
+############################ LAPA file post-proc ###############################
+################################################################################
+
+# def gtf_add_rescue_ism_cat(gtf):
+#     """
+#     Update LAPA GTF w/ ISM rescue category for those that were assigned new
+#     ends from LAPA
+#     """
+#     gtf = pr.read_gtf(input.lapa_gtf, as_df=True)
+#     gtf.loc[(gtf.transcript_id.str.contains('#'))&(gtf.ISM_transcript=='TRUE'),
+#              'transcript_novelty'] = 'ISM_rescue'
+#     gtf = pr.PyRanges(gtf)
+#     return gtf
+
+def ab_add_rescue_ism_cat(ab):
+    """
+    Update LAPA abundance w/ ISM rescue category for those that were assigned new
+    ends from LAPA
+    """
+    df = pd.read_csv(ab, sep='\t')
+    df.loc[(df.annot_transcript_id.str.contains('#'))&(df.transcript_novelty=='ISM'), 'transcript_novelty'] = 'ISM_rescue'
+    return df
+
+def filter_lapa_on_nov(df,
+                        t_novs=['Known', 'NIC', 'NNC', 'ISM_rescue'],
+                        g_novs=['Known']):
+    """
+    Filter LAPA output based on gene and transcript novelty.
+
+    Input:
+        df (pandas df): Abundance table from LAPA
+        t_nov (list of str): Transcript novelty categories to keep
+        g_nov (list of str): Gene novelty categories to keep
+
+    Returns:
+        filt_df (pandas df): DataFrame of gene id, transcript id passing filt
+    """
+    df = df.loc[df.transcript_novelty.isin(t_novs)]
+    df = df.loc[df.gene_novelty.isin(g_novs)]
+    filt_df = df[['annot_gene_id', 'annot_transcript_id']].drop_duplicates()
+    filt_df = filt_df.rename({'annot_gene_id':'gid',
+                              'annot_transcript_id': 'tid'}, axis=1)
+    return filt_df
+
+def filter_spikes(gtf):
+    """
+    Filter LAPA output based on SIRV / ERCC status
+
+    Input:
+        gtf (str): GTF path from LAPA
+    Returns:
+        filt_df (pandas df): DataFrame of gene id, transcript id passing filt
+    """
+    df = pr.read_gtf(input.lapa_gtf, as_df=True)
+    df = df.loc[~df.Chromosome.str.contains('SIRV')]
+    df = df.loc[~df.Chromosome.str.contains('ERCC')]
+    df = df.locc[df.Feature == 'transcript']
+    filt_df = df[['gene_id', 'transcript_id']].drop_duplicates()
+    filt_df = filt_df.rename({'gene_id':'gid',
+                              'transcript_id':'tid'}, axis=1)
+    return filt_df

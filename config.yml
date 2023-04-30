@@ -43,7 +43,9 @@ data:
   lapa_ends: data/{batch}/lapa/{end_mode}/{end_mode}_clusters.bed
   lapa_links: data/{batch}/lapa/tss_to_tes_links.csv
   lapa_gtf: data/{batch}/lapa/lapa_corrected.gtf
+  lapa_ab: data/{batch}/lapa/lapa_corrected_abundance.tsv
+
+  # lapa filtering
+  lapa_filt_list: data/{batch}/lapa/lapa_pass_list.tsv
+  lapa_filt_gtf: data/{batch}/lapa/lapa_corrected_filtered.gtf
   lapa_ab: data/{batch}/lapa/lapa_corrected_abundance_filtered.tsv
-  lapa_filt_gtf:
-  # lapa_tes: data/{batch}/lapa/polyA_clusters.bed
-  # lapa_tss: data/{batch}/lapa/tss_clusters.bed

@@ -9,7 +9,8 @@ from utils import *
 
 configfile: 'config.yml'
 
-df = pd.read_csv('230418_modelad_config.tsv', sep='\t')
+config_tsv = '230429_config.tsv'
+df = parse_config_file(config_tsv)
 batches = df.batch.tolist()
 datasets = df.dataset.tolist()
 samples = df['sample'].tolist()
@@ -551,3 +552,37 @@ rule lapa_correct_talon:
                 --abundance_output {output.ab} \
                 --keep_unsupported
         """
+
+rule filt_lapa:
+    input:
+        ab = config['data']['lapa_ab'],
+        gtf = config['data']['lapa_gtf']
+    resources:
+        threads = 1,
+        mem_gb = 4
+    params:
+        t_nov = ['Known', 'NIC', 'NNC', 'ISM_rescue'],
+        g_nov = ['Known'],
+        filt_spikes = True
+    output:
+        filt_list = config['data']['lapa_filt_list']
+    run:
+        # filter based on novelty after defining
+        # rescue ISMS
+        df = ab_add_rescue_ism_cat(input.ab)
+        filt_df = filter_lapa_on_nov(df,
+                                     params.t_novs,
+                                     params.g_novs)
+
+        # filter out spike-ins
+        if params.filt_spikes:
+            temp = filter_spikes(input.gtf)
+            filt_df = filt_df.merge(temp, how='inner')
+
+        filt_df.to_csv(output.filt_list, index=False, sep='\t')
+
+rule filt_lapa_ab:
+    input:
+
+
+rule filt_lapa_gtf:
