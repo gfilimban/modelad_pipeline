@@ -1,7 +1,7 @@
 ```bash
 snakemake \
   -s Snakefile \
-  -j 10 \
+  -j 30 \
   --latency-wait 120 \
   -n
   ```

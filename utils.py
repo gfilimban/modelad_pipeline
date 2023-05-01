@@ -5,13 +5,30 @@ import math
 import gzip
 import pyranges as pr
 
-def parse_config_file(fname):
+def parse_config_file(fname,
+                      datasets_per_run,
+                      auto_dedupe=True):
+
+    df = pd.read_csv(fname, sep='\t')
+
+    # get flowcell
+    exp = '.*\/[\w-]+_(\d+)(?:_t\d+)?\.fastq(?:.gz)?'
+    df['flowcell'] = df.fname.str.extract(exp)
+
     # check to make sure the same file stem isn't there more than once
     # (can happen if different flow cells needed different amounts of chopping)
-    df['file_stem'] = df.basename.str.rsplit('_', n=1, expand=True)[0]
+    # df['file_stem'] = df.basename.str.rsplit('_', n=1, expand=True)[0]
+    exp = '.*\/([\w-]+_\d+)(?:_t\d+)?\.fastq(?:.gz)?'
+    df['file_stem'] = df.fname.str.extract(exp)
+    df['chop_num'] = df.basename.str.rsplit('.fastq', expand=True)[0].str.rsplit('_t', expand=True)[1].astype(float)
     if df.file_stem.duplicated().any():
         dupe_stems = df.loc[df.file_stem.duplicated(keep=False), 'basename'].tolist()
-        raise ValueError(f'Files {dupe_stems} seem to be duplicated. Check config file.')
+        if not auto_dedupe:
+            raise ValueError(f'Files {dupe_stems} seem to be duplicated. Check config file.')
+        else:
+            print(f'Files {dupe_stems} seem to be duplicated. Automatically removing lower chop numbers')
+            df = df.sort_values(by='chop_num', ascending=False)
+            df = df.drop_duplicates(subset='file_stem', keep='first')
 
     # extract the sample name (?)
     temp = df.basename.str.split('_', expand=True)[[0,1]]#.str.join('_')
@@ -41,6 +58,15 @@ def parse_config_file(fname):
 
     # dataset should be genotype + mouse id + tech rep
     df['dataset'] = df.genotype+'_'+df.biorep_num.astype(str)+'_'+df.techrep_num.astype(str)
+
+    # get the talon run number these will go into
+    talon_run_num = 0
+    df['talon_run_num'] = np.nan
+    for ind, entry, in df.iterrows():
+        if ind % datasets_per_run == 0:
+            talon_run_num += 1
+        df.loc[ind, 'talon_run_num'] = talon_run_num
+    df['talon_run_num'] = df.talon_run_num.astype(int)
 
     return df
 

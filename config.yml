@@ -30,13 +30,15 @@ data:
 
   # talon
   sam_label: data/{batch}/talon/{dataset}_labeled.sam
-  talon_config: data/{batch}/talon/talon_config.csv
-  talon_db: data/{batch}/talon/annot_talon.db
+
+  talon_config: data/{batch}/talon/talon_{talon_run}_config.csv
+  talon_db: data/{batch}/talon/annot_{talon_run}_talon.db
+  read_annot: data/{batch}/talon/annot_{talon_run}_talon_read_annot.tsv
+
   ab: data/{batch}/talon/annot_talon_abundance.tsv
   filt_list: data/{batch}/talon/talon_pass_list.tsv
   filt_ab: data/{batch}/talon/annot_talon_abundance_filtered.tsv
   filt_gtf: data/{batch}/talon/annot_talon_observedOnly.gtf
-  read_annot: data/{batch}/talon/annot_talon_read_annot.tsv
 
   # lapa
   lapa_config: data/{batch}/lapa/lapa_config.csv

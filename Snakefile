@@ -7,14 +7,22 @@ sys.path.append(p)
 
 from utils import *
 
+# settings we can change each time it's run
 configfile: 'config.yml'
-
 config_tsv = '230429_config.tsv'
-df = parse_config_file(config_tsv)
+datasets_per_run = 7 # number of datasets per talon run
+auto_dedupe = True # deduplicate runs w/ same stem but different chop numbers
+
+
+df = parse_config_file(config_tsv,
+                       datasets_per_run=datasets_per_run,
+                       auto_dedupe=auto_dedupe)
 batches = df.batch.tolist()
 datasets = df.dataset.tolist()
 samples = df['sample'].tolist()
 platforms = df.platform.tolist()
+talon_run_nums = df.talon_run_nums.unique().tolist()
+max_talon_run = df.talon_run_nums.max()
 
 end_modes = ['tss', 'tes']
 
@@ -39,7 +47,11 @@ rule all:
           zip,
           batch=batches,
           dataset=datasets),
-        expand(config['data']['lapa_ab'], batch=batches)
+        expand(config['data'])['talon_db'],
+          batch=batches,
+          talon_run=max_talon_run)
+
+        # expand(config['data']['lapa_ab'], batch=batches)
 
 ################################################################################
 ########################### Ref. processing ####################################
@@ -325,18 +337,9 @@ rule talon_init:
     		--o {params.talon_opref}'
 
 rule talon:
-    input:
-        ref = config['ref']['talon_db'],
-        config = config['data']['talon_config']
     resources:
-        mem_gb = 132,
+        mem_gb = 360,
         threads = 30
-    params:
-        genome = 'mm10',
-        opref = config['data']['talon_db'].rsplit('_talon', maxsplit=1)[0],
-    output:
-        db = config['data']['talon_db'],
-        annot = config['data']['read_annot']
     shell:
         """
         cp {input.ref} {input.ref}_back
@@ -351,9 +354,31 @@ rule talon:
         mv {input.ref}_back {input.ref}
         """
 
+use rule talon as first_talon:
+    input:
+        ref = config['ref']['talon_db'],
+        config = expand(config['data']['talon_config'], talon_run=1)[0]
+    params:
+        genome = 'mm10',
+        opref = expand(config['data']['talon_db'], talon_run=1)[0].rsplit('_talon', maxsplit=1)[0],
+    output:
+        db = expand(config['data']['talon_db'], talon_run=1)[0]
+        annot = expand(config['data']['read_annot'], talon_run=1)[0]
+
+use rule talon as seq_talon:
+    input:
+        ref = expand(config['data']['talon_db'], talon_run=wildcards.talon_run-1)[0],
+        config = expand(config['data']['talon_config'], talon_run=wildcards.talon_run)[0]
+    params:
+        genome = 'mm10',
+        opref = expand(config['data']['talon_db'], talon_run=wildcards.talon_run)[0].rsplit('_talon', maxsplit=1)[0],
+    output:
+        db = expand(config['data']['talon_db'], talon_run=wildcards.talon_run)[0]
+        annot = expand(config['data']['read_annot'], talon_run=wildcards.talon_run)[0]
+
 rule talon_unfilt_ab:
     input:
-        db = config['data']['talon_db']
+        db = expand(config['data']['talon_db'], talon_run=max_talon_run)[0]
     resources:
         threads = 1,
         mem_gb = 32
@@ -374,7 +399,7 @@ rule talon_unfilt_ab:
 
 rule talon_filt:
     input:
-        db = config['data']['talon_db']
+        db = expand(config['data']['talon_db'], talon_run=max_talon_run)[0]
     resources:
         threads = 1,
         mem_gb = 32
@@ -395,7 +420,7 @@ rule talon_filt:
 
 rule talon_filt_ab:
     input:
-        db = config['data']['talon_db'],
+        db = expand(config['data']['talon_db'], talon_run=max_talon_run)[0]
         filt = config['data']['filt_list']
     resources:
         threads = 1,
@@ -418,7 +443,7 @@ rule talon_filt_ab:
 
 rule talon_gtf:
     input:
-        db = config['data']['talon_db'],
+        db = expand(config['data']['talon_db'], talon_run=max_talon_run)[0]
         filt = config['data']['filt_list']
     resources:
         threads = 1,
