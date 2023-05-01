@@ -21,8 +21,8 @@ batches = df.batch.tolist()
 datasets = df.dataset.tolist()
 samples = df['sample'].tolist()
 platforms = df.platform.tolist()
-talon_run_nums = df.talon_run_nums.unique().tolist()
-max_talon_run = df.talon_run_nums.max()
+talon_run_nums = df.talon_run_num.unique().tolist()
+max_talon_run = df.talon_run_num.max()
 
 end_modes = ['tss', 'tes']
 
@@ -33,9 +33,6 @@ def get_df_col(wc, df, col):
 # config formatting errors
 if len(df.batch.unique()) > 1:
     raise ValueError('Must only have one batch per config')
-# if len(df.source.unique()) < len(df.source.tolist()):
-#     raise ValueError('Sources must have unique names')
-
 
 rule all:
     input:
@@ -47,7 +44,7 @@ rule all:
           zip,
           batch=batches,
           dataset=datasets),
-        expand(config['data'])['talon_db'],
+        expand(config['data']['talon_db'],
           batch=batches,
           talon_run=max_talon_run)
 
@@ -295,12 +292,25 @@ rule talon_label:
             --o {params.opref}
         """
 
+def get_talon_run_files(wc, batches, df, config_entry):
+    temp = df.loc[df.talon_run_num == wc.talon_run]
+    datasets = temp.dataset.tolist()
+    files = expand(config_entry,
+                   zip,
+                   batch=batches,
+                   dataset=datasets)
+    return files
+
 rule talon_config:
     input:
-        files = expand(config['data']['sam_label'],
-                       zip,
-                       batch=batches,
-                       dataset=datasets)
+        # files = expand(config['data']['sam_label'],
+        #                zip,
+        #                batch=batches,
+        #                dataset=datasets)
+        files = lambda wc:get_talon_run_files(wc,
+                                              batches,
+                                              df,
+                                              config['data']['sam_label'])
     resources:
         threads = 1,
         mem_gb = 1
@@ -354,31 +364,43 @@ rule talon:
         mv {input.ref}_back {input.ref}
         """
 
-use rule talon as first_talon:
+use rule talon as first_talon with:
     input:
         ref = config['ref']['talon_db'],
-        config = expand(config['data']['talon_config'], talon_run=1)[0]
+        config = expand(config['data']['talon_config'],
+                        batch=batches,
+                        talon_run=1)[0]
     params:
         genome = 'mm10',
-        opref = expand(config['data']['talon_db'], talon_run=1)[0].rsplit('_talon', maxsplit=1)[0],
+        opref = expand(config['data']['talon_db'],
+                        batch=batches,
+                        talon_run=1)[0].rsplit('_talon', maxsplit=1)[0],
     output:
-        db = expand(config['data']['talon_db'], talon_run=1)[0]
-        annot = expand(config['data']['read_annot'], talon_run=1)[0]
+        db = expand(config['data']['talon_db'],
+                        batch=batches,
+                        talon_run=1)[0],
+        annot = expand(config['data']['read_annot'],
+                        batch=batches,
+                        talon_run=1)[0]
 
-use rule talon as seq_talon:
+use rule talon as seq_talon with:
     input:
-        ref = expand(config['data']['talon_db'], talon_run=wildcards.talon_run-1)[0],
-        config = expand(config['data']['talon_config'], talon_run=wildcards.talon_run)[0]
+        ref = lambda wc: expand(config['data']['talon_db'],
+                        batch=wc.batch,
+                        talon_run=int(wc.talon_run)-1)[0],
+        config = config['data']['talon_config']
     params:
         genome = 'mm10',
-        opref = expand(config['data']['talon_db'], talon_run=wildcards.talon_run)[0].rsplit('_talon', maxsplit=1)[0],
+        opref = config['data']['talon_db']
     output:
-        db = expand(config['data']['talon_db'], talon_run=wildcards.talon_run)[0]
-        annot = expand(config['data']['read_annot'], talon_run=wildcards.talon_run)[0]
+        db = config['data']['talon_db'],
+        annot = config['data']['read_annot']
 
 rule talon_unfilt_ab:
     input:
-        db = expand(config['data']['talon_db'], talon_run=max_talon_run)[0]
+        db = expand(config['data']['talon_db'],
+                        batch=batches,
+                        talon_run=max_talon_run)[0]
     resources:
         threads = 1,
         mem_gb = 32
@@ -399,7 +421,9 @@ rule talon_unfilt_ab:
 
 rule talon_filt:
     input:
-        db = expand(config['data']['talon_db'], talon_run=max_talon_run)[0]
+        db = expand(config['data']['talon_db'],
+                        batch=batches,
+                        talon_run=max_talon_run)[0]
     resources:
         threads = 1,
         mem_gb = 32
@@ -420,7 +444,9 @@ rule talon_filt:
 
 rule talon_filt_ab:
     input:
-        db = expand(config['data']['talon_db'], talon_run=max_talon_run)[0]
+        db = expand(config['data']['talon_db'],
+                        batch=batches,
+                        talon_run=max_talon_run)[0],
         filt = config['data']['filt_list']
     resources:
         threads = 1,
@@ -443,7 +469,9 @@ rule talon_filt_ab:
 
 rule talon_gtf:
     input:
-        db = expand(config['data']['talon_db'], talon_run=max_talon_run)[0]
+        db = expand(config['data']['talon_db'],
+                        batch=batches,
+                        talon_run=max_talon_run)[0],
         filt = config['data']['filt_list']
     resources:
         threads = 1,

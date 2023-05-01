@@ -4,6 +4,7 @@ import re
 import math
 import gzip
 import pyranges as pr
+import numpy as np
 
 def parse_config_file(fname,
                       datasets_per_run,
