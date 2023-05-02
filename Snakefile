@@ -293,7 +293,7 @@ rule talon_label:
         """
 
 def get_talon_run_files(wc, batches, df, config_entry):
-    temp = df.loc[df.talon_run_num == wc.talon_run]
+    temp = df.loc[df.talon_run_num == int(wc.talon_run)]
     datasets = temp.dataset.tolist()
     files = expand(config_entry,
                    zip,
@@ -319,7 +319,9 @@ rule talon_config:
     output:
         config = config['data']['talon_config']
     run:
-        config = params.df[['dataset', 'sample', 'platform']].copy(deep=True)
+        config = params.df[['dataset', 'sample', 'platform', 'talon_run_num']].copy(deep=True)
+        config = config.loc[config.talon_run_num==int(wildcards.talon_run)]
+        config.drop('talon_run_num', axis=1, inplace=True)
         config['fname'] = input.files
         config.to_csv(output.config, header=None, sep=',', index=False)
 
@@ -348,7 +350,7 @@ rule talon_init:
 
 rule talon:
     resources:
-        mem_gb = 360,
+        mem_gb = 256,
         threads = 30
     shell:
         """
