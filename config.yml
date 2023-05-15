@@ -34,11 +34,16 @@ data:
   talon_config: data/{batch}/talon/talon_{talon_run}_config.csv
   talon_db: data/{batch}/talon/annot_{talon_run}_talon.db
   read_annot: data/{batch}/talon/annot_{talon_run}_talon_read_annot.tsv
+  temp_db: data/{batch}/talon/temp_annot_2_talon.db
 
   ab: data/{batch}/talon/annot_talon_abundance.tsv
   filt_list: data/{batch}/talon/talon_pass_list.tsv
   filt_ab: data/{batch}/talon/annot_talon_abundance_filtered.tsv
   filt_gtf: data/{batch}/talon/annot_talon_observedOnly.gtf
+
+  # swan
+  sg: data/{batch}/swan/swan.p
+  die_tsv: data/{batch}/swan/{genotype1}_{genotype2}_die.tsv
 
   # lapa
   lapa_config: data/{batch}/lapa/lapa_config.csv
@@ -51,3 +56,7 @@ data:
   lapa_filt_list: data/{batch}/lapa/lapa_pass_list.tsv
   lapa_filt_gtf: data/{batch}/lapa/lapa_corrected_filtered.gtf
   lapa_ab: data/{batch}/lapa/lapa_corrected_abundance_filtered.tsv
+
+  # degs and dets
+  deg_tsv: data/{batch}/deg/{genotype1}_{genotype2}_deg.tsv
+  det_tsv: data/{batch}/deg/{genotype1}_{genotype2}_det.tsv

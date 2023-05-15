@@ -1,6 +1,8 @@
 import pandas as pd
 import os
 import sys
+import swan_vis as swan
+import itertools
 
 p = os.path.dirname(os.getcwd())
 sys.path.append(p)
@@ -13,7 +15,6 @@ config_tsv = '230429_config.tsv'
 datasets_per_run = 7 # number of datasets per talon run
 auto_dedupe = True # deduplicate runs w/ same stem but different chop numbers
 
-
 df = parse_config_file(config_tsv,
                        datasets_per_run=datasets_per_run,
                        auto_dedupe=auto_dedupe)
@@ -23,8 +24,23 @@ samples = df['sample'].tolist()
 platforms = df.platform.tolist()
 talon_run_nums = df.talon_run_num.unique().tolist()
 max_talon_run = df.talon_run_num.max()
+genotypes = df.genotype.unique().tolist()
+
+wildcard_constraints:
+    genotype1= '|'.join([re.escape(x) for x in genotypes]),
+    genotype2= '|'.join([re.escape(x) for x in genotypes])
+
 
 end_modes = ['tss', 'tes']
+
+def get_genotype_pairs(df, pair_num):
+    genotypes = df.genotype.unique().tolist()
+    pairs = list(itertools.combinations(genotypes, 2))
+    if pair_num == 0:
+        g = [p[0] for p in pairs]
+    elif pair_num == 1:
+        g = [p[1] for p in pairs]
+    return g
 
 def get_df_col(wc, df, col):
     val = df.loc[df.dataset==wc.dataset, col].values[0]
@@ -33,6 +49,8 @@ def get_df_col(wc, df, col):
 # config formatting errors
 if len(df.batch.unique()) > 1:
     raise ValueError('Must only have one batch per config')
+
+
 
 rule all:
     input:
@@ -46,7 +64,14 @@ rule all:
           dataset=datasets),
         expand(config['data']['talon_db'],
           batch=batches,
-          talon_run=max_talon_run)
+          talon_run=max_talon_run),
+        expand(config['data']['sg'], batch=batches),
+        expand(expand(config['data']['die_tsv'],
+               zip,
+               genotype1=get_genotype_pairs(df, 0),
+               genotype2=get_genotype_pairs(df, 1),
+               allow_missing=True),
+               batch=batches[0])
 
         # expand(config['data']['lapa_ab'], batch=batches)
 
@@ -343,7 +368,7 @@ rule talon_init:
     		--g {params.genome} \
     		--a {params.annot} \
     		--l 0 \
-    		--idprefix TALONT \
+    		--idprefix TALON \
     		--5p 500 \
     		--3p 300 \
     		--o {params.talon_opref}'
@@ -393,7 +418,7 @@ use rule talon as seq_talon with:
         config = config['data']['talon_config']
     params:
         genome = 'mm10',
-        opref = config['data']['talon_db']
+        opref = config['data']['talon_db'].rsplit('_talon', maxsplit=1)[0]
     output:
         db = config['data']['talon_db'],
         annot = config['data']['read_annot']
@@ -428,7 +453,7 @@ rule talon_filt:
                         talon_run=max_talon_run)[0]
     resources:
         threads = 1,
-        mem_gb = 32
+        mem_gb = 128
     params:
         annot = 'vM21'
     output:
@@ -452,7 +477,7 @@ rule talon_filt_ab:
         filt = config['data']['filt_list']
     resources:
         threads = 1,
-        mem_gb = 32
+        mem_gb = 128
     params:
         genome = 'mm10',
         annot = 'vM21',
@@ -477,7 +502,7 @@ rule talon_gtf:
         filt = config['data']['filt_list']
     resources:
         threads = 1,
-        mem_gb = 16
+        mem_gb = 128
     params:
         genome = 'mm10',
         annot = 'vM21',
@@ -494,6 +519,62 @@ rule talon_gtf:
             --observed \
             --o {params.opref}
         """
+
+################################################################################
+################################ Swan ##########################################
+################################################################################
+def make_sg(input, params, wildcards):
+
+    # initialize
+    sg = swan.SwanGraph()
+    sg.add_annotation(input.annot)
+    sg.add_transcriptome(input.gtf, include_isms=True)
+    sg.add_abundance(input.filt_ab)
+    sg.add_abundance(input.ab, how='gene')
+
+    # add metadata
+    adatas = sg.get_adatas()
+    for adata in adatas:
+        adata.obs['genotype'] = adata.obs.dataset.str.rsplit('_', n=2, expand=True)[0]
+
+    sg.save_graph(params.prefix)
+
+rule make_sg:
+    input:
+        annot = config['ref']['gtf'],
+        gtf = config['data']['filt_gtf'],
+        filt_ab = config['data']['filt_ab'],
+        ab = config['data']['ab']
+    params:
+        prefix = config['data']['sg'].replace('.p', '')
+    resources:
+        mem_gb = 128,
+        threads = 1
+    conda:
+        'pydeseq2'
+    output:
+        sg = config['data']['sg']
+    run:
+        make_sg(input, params, wildcards)
+
+rule swan_die:
+    input:
+        sg = config['data']['sg']
+    resources:
+        mem_gb = 128,
+        threads = 8
+    conda:
+        'pydeseq2'
+    output:
+        out = config['data']['die_tsv']
+    run:
+        sg = swan.read(input.sg)
+        sg.adata.obs['genotype'] = sg.adata.obs.dataset.str.rsplit('_', n=2, expand=True)[0]
+        die, genes = sg.die_gene_test(obs_col='genotype',
+                                      obs_conditions=[wildcards.genotype1,
+                                                      wildcards.genotype2])
+        die.to_csv(output.out, sep='\t')
+
 
 ################################################################################
 ################################# LAPA #########################################
@@ -641,3 +722,25 @@ rule filt_lapa_ab:
 
 
 rule filt_lapa_gtf:
+
+
+################################################################################
+##################################### DEG / DET ################################
+################################################################################
+rule deg:
+    input:
+        sg = config['data']['sg']
+    resources:
+        mem_gb = 128,
+        threads = 8
+    conda:
+        'pydeseq2'
+    output:
+        out = config['data']['die_tsv']
+    run:
+        sg = swan.read(input.sg)
+        sg.adata.obs['genotype'] = sg.adata.obs.dataset.str.rsplit('_', n=2, expand=True)[0]
+        die, genes = sg.die_gene_test(obs_col='genotype',
+                                      obs_conditions=[wildcards.genotype1,
+                                                      wildcards.genotype2])
+        die.to_csv(output.out, sep='\t')

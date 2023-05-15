@@ -6,6 +6,9 @@ snakemake \
   -n
   ```
 
+```bash
+snakemake -s Snakefile --dag | dot -Tpng > ruledag.png
+```
 
 ```bash
 snakemake \
