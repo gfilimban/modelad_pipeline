@@ -6,7 +6,17 @@ import gzip
 import pyranges as pr
 import numpy as np
 
+def process_meta(meta_fname):
+    meta = pd.read_csv(meta_fname, sep='\t')
+    meta['genotype'] = meta.genotype.str.replace(' ', '_')
+    meta['genotype'] = meta.genotype.str.replace('/', '_')
+
+    meta['age'] = meta.age.str.replace(' ', '_')
+
+    return meta
+
 def parse_config_file(fname,
+                      meta_fname,
                       datasets_per_run,
                       auto_dedupe=True):
 
@@ -35,30 +45,40 @@ def parse_config_file(fname,
     temp = df.basename.str.split('_', expand=True)[[0,1]]#.str.join('_')
     df['sample_temp'] = temp[0]+'_'+temp[1]
 
+    # extract the mouse id
+    df['mouse_id'] = df['sample_temp'].str.split('_', expand=True)[1]
+
+    # merge in metadata
+    meta = process_meta(meta_fname)
+    df['mouse_id'] = df['mouse_id'].astype('int')
+    df = df.merge(meta, how='left', on='mouse_id')
+
     # get tech rep numbers -- each mouse has multiple reps
     # and are therefore technical reps
-    df['techrep_num'] = df.sort_values(['genotype', 'sample_temp'],
-    							ascending=[True, True])\
-    							.groupby(['sample_temp']) \
-    							.cumcount() + 1
+    df['techrep_num'] = df.sort_values(['genotype', 'mouse_id'],
+                                ascending=[True, True])\
+                                .groupby(['mouse_id']) \
+                                .cumcount() + 1
 
-    # get biorep numbers -- each sample is a different mouse
+    # sample should be the genotype + age + sex + tissue
+    df['sample'] = df.genotype+'_'+ \
+                   df.sex+'_'+ \
+                   df.age+'_'+ \
+                   df.tissue
+
+    # get biorep numbers -- each mouse_id is a different mouse
     # and therefore a different biorep
-    temp = df[['genotype', 'sample_temp']].drop_duplicates()
+    temp = df[['sample', 'mouse_id']].drop_duplicates()
     temp.reset_index(inplace=True, drop=True)
-    temp['biorep_num'] = temp.sort_values(['genotype', 'sample_temp'],
-    							ascending=[True, True])\
-    							.groupby(['genotype']) \
-    							.cumcount()+1
+    temp['biorep_num'] = temp.sort_values(['sample', 'mouse_id'],
+                                ascending=[True, True])\
+                                .groupby(['sample']) \
+                                .cumcount()+1
     df = df.merge(temp, how='left',
-                  on=['genotype', 'sample_temp'])
+                  on=['sample', 'mouse_id'])
 
-    # sample should be the genotype + mouse id
-    # so genotype + biorep
-    df['sample'] = df.genotype+'_'+df.biorep_num.astype(str)
-
-    # dataset should be genotype + mouse id + tech rep
-    df['dataset'] = df.genotype+'_'+df.biorep_num.astype(str)+'_'+df.techrep_num.astype(str)
+    # dataset should be sample + bio rep + tech rep
+    df['dataset'] = df['sample']+'_'+df.biorep_num.astype(str)+'_'+df.techrep_num.astype(str)
 
     # get the talon run number these will go into
     talon_run_num = 0

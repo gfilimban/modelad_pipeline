@@ -11,11 +11,13 @@ from utils import *
 
 # settings we can change each time it's run
 configfile: 'config.yml'
-config_tsv = '230429_config.tsv'
+config_tsv = '230516_config.tsv'
+meta_tsv = 'mouse_metadata.tsv'
 datasets_per_run = 7 # number of datasets per talon run
 auto_dedupe = True # deduplicate runs w/ same stem but different chop numbers
 
 df = parse_config_file(config_tsv,
+                       meta_tsv,
                        datasets_per_run=datasets_per_run,
                        auto_dedupe=auto_dedupe)
 batches = df.batch.tolist()
@@ -550,8 +552,6 @@ rule make_sg:
     resources:
         mem_gb = 128,
         threads = 1
-    conda:
-        'pydeseq2'
     output:
         sg = config['data']['sg']
     run:
@@ -563,13 +563,10 @@ rule swan_die:
     resources:
         mem_gb = 128,
         threads = 8
-    conda:
-        'pydeseq2'
     output:
         out = config['data']['die_tsv']
     run:
         sg = swan.read(input.sg)
-        sg.adata.obs['genotype'] = sg.adata.obs.dataset.str.rsplit('_', n=2, expand=True)[0]
         die, genes = sg.die_gene_test(obs_col='genotype',
                                       obs_conditions=[wildcards.genotype1,
                                                       wildcards.genotype2])
@@ -727,20 +724,18 @@ rule filt_lapa_gtf:
 ################################################################################
 ##################################### DEG / DET ################################
 ################################################################################
-rule deg:
-    input:
-        sg = config['data']['sg']
-    resources:
-        mem_gb = 128,
-        threads = 8
-    conda:
-        'pydeseq2'
-    output:
-        out = config['data']['die_tsv']
-    run:
-        sg = swan.read(input.sg)
-        sg.adata.obs['genotype'] = sg.adata.obs.dataset.str.rsplit('_', n=2, expand=True)[0]
-        die, genes = sg.die_gene_test(obs_col='genotype',
-                                      obs_conditions=[wildcards.genotype1,
-                                                      wildcards.genotype2])
-        die.to_csv(output.out, sep='\t')
+# rule deg:
+#     input:
+#         sg = config['data']['sg']
+#     resources:
+#         mem_gb = 128,
+#         threads = 8
+#     output:
+#         out = config['data']['deg_tsv']
+#     run:
+#         sg = swan.read(input.sg)
+#         sg.adata.obs['genotype'] = sg.adata.obs.dataset.str.rsplit('_', n=2, expand=True)[0]
+#         die, genes = sg.die_gene_test(obs_col='genotype',
+#                                       obs_conditions=[wildcards.genotype1,
+#                                                       wildcards.genotype2])
+#         die.to_csv(output.out, sep='\t')
