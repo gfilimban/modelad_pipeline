@@ -12,7 +12,11 @@ def process_meta(meta_fname):
     meta['genotype'] = meta.genotype.str.replace('/', '_')
 
     meta['age'] = meta.age.str.replace(' ', '_')
-
+    
+    dupe_ids = meta.loc[meta.mouse_id.duplicated(), 'mouse_id'].tolist()
+    if len(dupe_ids) > 0:
+        raise ValueError(f'Found duplicated mouse ids {dupe_ids} in mouse metadata')
+        
     return meta
 
 def parse_config_file(fname,
