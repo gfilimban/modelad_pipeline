@@ -11,13 +11,13 @@ from utils import *
 
 # settings we can change each time it's run
 configfile: 'config.yml'
-# config_tsv = '230516_config.tsv'
-config_tsv = '230429_config.tsv'
+config_tsv = '230516_config.tsv'
+# config_tsv = '230429_config.tsv'
 meta_tsv = 'mouse_metadata.tsv'
 datasets_per_run = 7 # number of datasets per talon run
 auto_dedupe = True # deduplicate runs w/ same stem but different chop numbers
 
-df = parse_config_file(config_tsv,
+df, dataset_df = parse_config_file(config_tsv,
                        meta_tsv,
                        datasets_per_run=datasets_per_run,
                        auto_dedupe=auto_dedupe)
@@ -49,6 +49,10 @@ def get_df_col(wc, df, col):
     val = df.loc[df.dataset==wc.dataset, col].values[0]
     return val
 
+def get_dataset_df_col(wc, df, col):
+    val = df.loc[df.talon_dataset==wc.talon_dataset, col].values[0]
+    return val
+
 # config formatting errors
 if len(df.batch.unique()) > 1:
     raise ValueError('Must only have one batch per config')
@@ -57,17 +61,17 @@ if len(df.batch.unique()) > 1:
 
 rule all:
     input:
-        # expand(config['data']['map_stats'],
-        #    zip,
-        #    batch=batches,
-        #    dataset=datasets),
-        # expand(config['data']['tc_stats'],
-        #   zip,
-        #   batch=batches,
-        #   dataset=datasets),
-        # expand(config['data']['talon_db'],
-        #   batch=batches,
-        #   talon_run=max_talon_run),
+        expand(config['data']['map_stats'],
+           zip,
+           batch=batches,
+           dataset=datasets),
+        expand(config['data']['tc_stats'],
+          zip,
+          batch=batches,
+          dataset=datasets),
+        expand(config['data']['talon_db'],
+          batch=batches,
+          talon_run=max_talon_run),
         # expand(config['data']['sg'], batch=batches),
         # expand(expand(config['data']['die_tsv'],
         #        zip,
@@ -82,13 +86,15 @@ rule all:
         #        allow_missing=True),
         #        batch=batches[0],
         #        feature=['gene', 'iso'])
-        expand(expand(config['data']['de_tsv'],
-               zip,
-               genotype1=get_genotype_pairs(df, 0)[0],
-               genotype2=get_genotype_pairs(df, 1)[0],
-               allow_missing=True),
-               batch=batches[0],
-               feature=['gene', 'iso'])
+
+
+        # expand(expand(config['data']['de_tsv'],
+        #        zip,
+        #        genotype1=get_genotype_pairs(df, 0)[0],
+        #        genotype2=get_genotype_pairs(df, 1)[0],
+        #        allow_missing=True),
+        #        batch=batches[0],
+        #        feature=['gene', 'iso'])
 
 
         # expand(config['data']['lapa_ab'], batch=batches)
@@ -241,6 +247,16 @@ rule sam_to_bam:
         samtools index -$ {params.threads} {output.bam}
         """
 
+rule merge_alignment:
+    resources:
+        threads = 32,
+        mem_gb = 64
+    shell:
+        """
+        module load samtools
+        samtools merge -o {output.bam} {input.files}
+        """
+
 use rule map as map_reads with:
     input:
         fastq = lambda wc: get_df_col(wc, df, 'fname'),
@@ -248,7 +264,7 @@ use rule map as map_reads with:
         ref_fa = config['ref']['fa'],
         sjs = config['ref']['sjs']
     output:
-        sam = config['data']['sam'],
+        sam = temporary(config['data']['sam']),
         log = config['data']['sam_log']
 
 # use rule sam_to_bam as convert_sam:
@@ -270,7 +286,7 @@ rule rev_alignment:
         threads = 8,
         mem_gb = 32
     output:
-        sam_rev = config['data']['sam_rev']
+        sam_rev = temporary(config['data']['sam_rev'])
     run:
         reverse_alignment(input.sam, output.sam_rev, resources.threads)
 
@@ -302,7 +318,7 @@ use rule tc as tc_sam with:
         tc = config['tc_path'],
         opref = config['data']['sam_clean'].rsplit('_clean.sam', maxsplit=1)[0]
     output:
-        sam = config['data']['sam_clean']
+        sam = temporary(config['data']['sam_clean'])
 
 use rule alignment_stats as tc_stats with:
     input:
@@ -311,7 +327,7 @@ use rule alignment_stats as tc_stats with:
         stats = config['data']['tc_stats']
 
 ################################################################################
-################################# TALON ########################################
+############################## TALON label #####################################
 ################################################################################
 rule talon_label:
     input:
@@ -323,7 +339,7 @@ rule talon_label:
     params:
         opref = config['data']['sam_label'].rsplit('_labeled.sam', maxsplit=1)[0]
     output:
-        sam = config['data']['sam_label']
+        sam = temporary(config['data']['sam_label'])
     shell:
         """
         talon_label_reads \
@@ -335,9 +351,38 @@ rule talon_label:
             --o {params.opref}
         """
 
+use rule sam_to_bam as talon_label_bam with:
+    input:
+        sam = config['data']['sam_label']
+    output:
+        sam = temporary(config['data']['bam_label_sorted'])
+
+################################################################################
+################################# TALON ########################################
+################################################################################
+
+# merge files from the different flowcell into the same talon input file
+def get_merge_talon_label_files(wc, batches, df, config_entry):
+    temp = df.loc[df.talon_dataset == wc.talon_dataset]
+    datasets = temp.dataset.tolist()
+    files = expand(config_entry,
+                   zip,
+                   batch=batches,
+                   dataset=datasets)
+    return files
+
+use rule merge_alignment as merge_talon_label with:
+    input:
+        files = lambda wc:get_merge_talon_label_files(wc,
+                                                      batches,
+                                                      dataset_df,
+                                                      config['data']['bam_label_sorted'])
+    output:
+        bam = config['data']['bam_label_merge']
+
 def get_talon_run_files(wc, batches, df, config_entry):
     temp = df.loc[df.talon_run_num == int(wc.talon_run)]
-    datasets = temp.dataset.tolist()
+    datasets = temp.talon_dataset.tolist()
     files = expand(config_entry,
                    zip,
                    batch=batches,
@@ -352,8 +397,8 @@ rule talon_config:
         #                dataset=datasets)
         files = lambda wc:get_talon_run_files(wc,
                                               batches,
-                                              df,
-                                              config['data']['sam_label'])
+                                              dataset_df,
+                                              config['data']['bam_label_merge'])
     resources:
         threads = 1,
         mem_gb = 1

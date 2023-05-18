@@ -26,7 +26,22 @@ def parse_config_file(fname,
                       datasets_per_run,
                       auto_dedupe=True):
 
+    """
+    Parameters:
+        fname (str): Path to config file fname. One line per input fastq.
+        meta_fname (str): Path to file with metadata information.
+        datasets_per_run (int): Number of datasets to process in each TALON run
+        auto_dedupe (bool): Automatically deduplicate duplicate fastqs that result from 
+            successive Porechop rounds
+
+    Returns:
+        df (pandas DataFrame): DF w/ pipeline information; one line per fastq
+        dataset_df (pandas DataFrame): DF w/ dataset information; one line per mouse
+    """
+
     df = pd.read_csv(fname, sep='\t')
+
+    ############ Dataset + flowcell df
 
     # get flowcell
     exp = '.*\/[\w-]+_(\d+)(?:_t\d+)?\.fastq(?:.gz)?'
@@ -47,7 +62,7 @@ def parse_config_file(fname,
             df = df.sort_values(by='chop_num', ascending=False)
             df = df.drop_duplicates(subset='file_stem', keep='first')
 
-    # extract the sample name (?)
+    # extract the sample name
     temp = df.basename.str.split('_', expand=True)[[0,1]]#.str.join('_')
     df['sample_temp'] = temp[0]+'_'+temp[1]
 
@@ -61,7 +76,7 @@ def parse_config_file(fname,
 
     # get tech rep numbers -- each mouse has multiple reps
     # and are therefore technical reps
-    df['techrep_num'] = df.sort_values(['genotype', 'mouse_id'],
+    df['flowcell'] = df.sort_values(['genotype', 'mouse_id'],
                                 ascending=[True, True])\
                                 .groupby(['mouse_id']) \
                                 .cumcount() + 1
@@ -83,20 +98,29 @@ def parse_config_file(fname,
     df = df.merge(temp, how='left',
                   on=['sample', 'mouse_id'])
 
-    # dataset should be sample + bio rep + tech rep
-    df['dataset'] = df['sample']+'_'+df.biorep_num.astype(str)+'_'+df.techrep_num.astype(str)
+    # talon dataset should be sample + bio rep
+    df['talon_dataset'] = df['sample']+'_'+df['biorep_num'].astype(str)
+
+    # dataset should be sample + bio rep + flow cel
+    df['dataset'] = df['talon_dataset']+'_'+df['flowcell'].astype(str)
+
+    ############ TALON dataset df
+
+    # create a dataset-level df that will represent the aggregate
+    cols = ['sample', 'mouse_id', 'genotype', 'sex', \
+            'age', 'tissue', 'biorep_num', 'talon_dataset']
+    dataset_df = df[cols].drop_duplicates()
 
     # get the talon run number these will go into
     talon_run_num = 0
     df['talon_run_num'] = np.nan
-    for ind, entry, in df.iterrows():
+    for ind, entry, in dataset_df.iterrows():
         if ind % datasets_per_run == 0:
             talon_run_num += 1
-        df.loc[ind, 'talon_run_num'] = talon_run_num
-    df['talon_run_num'] = df.talon_run_num.astype(int)
-
-    return df
-
+        dataset_df.loc[ind, 'talon_run_num'] = talon_run_num
+    dataset_df['talon_run_num'] = dataset_df.talon_run_num.astype(int)
+    
+    return df, dataset_df
 def rev_comp(seq):
     """ Returns the reverse complement of a DNA sequence,
         retaining the case of each letter"""

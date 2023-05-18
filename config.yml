@@ -28,9 +28,14 @@ data:
   sam_clean: data/{batch}/tc/{dataset}_clean.sam
   tc_stats: data/{batch}/tc/{dataset}_tc_stats.txt
 
-  # talon
+  # talon label
   sam_label: data/{batch}/talon/{dataset}_labeled.sam
+  bam_label_sorted: data/{batch}/talon/{dataset}_labeled.sorted.bam
 
+  # merge labelled sams
+  bam_label_merge: data/{batch}/talon/{talon_dataset}_labeled_merged.bam
+
+  # talon
   talon_config: data/{batch}/talon/talon_{talon_run}_config.csv
   talon_db: data/{batch}/talon/annot_{talon_run}_talon.db
   read_annot: data/{batch}/talon/annot_{talon_run}_talon_read_annot.tsv
