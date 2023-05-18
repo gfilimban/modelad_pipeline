@@ -15,25 +15,25 @@ ref:
   talon_db: ref/ref.db
 
 data:
-  fastq: data/{batch}/raw/{dataset}.fastq
+  fastq: data/{batch}/raw/{dataset}_{flowcell}.fastq
 
   # mapping
-  map_stats: data/{batch}/minimap2/{dataset}_map_stats.txt
-  sam: data/{batch}/minimap2/{dataset}.sam
-  bam: data/{batch}/minimap2/{dataset}.bam
-  sam_log: data/{batch}/minimap2/{dataset}_minimap.log
-  sam_rev: data/{batch}/minimap2/{dataset}.rev.sam
+  map_stats: data/{batch}/minimap2/{dataset}_{flowcell}_map_stats.txt
+  sam: data/{batch}/minimap2/{dataset}_{flowcell}.sam
+  bam: data/{batch}/minimap2/{dataset}_{flowcell}.bam
+  sam_log: data/{batch}/minimap2/{dataset}_{flowcell}_minimap.log
+  sam_rev: data/{batch}/minimap2/{dataset}_{flowcell}.rev.sam
 
   # transcriptclean
-  sam_clean: data/{batch}/tc/{dataset}_clean.sam
-  tc_stats: data/{batch}/tc/{dataset}_tc_stats.txt
+  sam_clean: data/{batch}/tc/{dataset}_{flowcell}_clean.sam
+  tc_stats: data/{batch}/tc/{dataset}_{flowcell}_tc_stats.txt
 
   # talon label
-  sam_label: data/{batch}/talon/{dataset}_labeled.sam
-  bam_label_sorted: data/{batch}/talon/{dataset}_labeled.sorted.bam
+  sam_label: data/{batch}/talon/{dataset}_{flowcell}_labeled.sam
+  bam_label_sorted: data/{batch}/talon/{dataset}_{flowcell}_labeled.sorted.bam
 
   # merge labelled sams
-  bam_label_merge: data/{batch}/talon/{talon_dataset}_labeled_merged.bam
+  bam_label_merge: data/{batch}/talon/{dataset}_labeled_merged.bam
 
   # talon
   talon_config: data/{batch}/talon/talon_{talon_run}_config.csv

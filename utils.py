@@ -99,16 +99,16 @@ def parse_config_file(fname,
                   on=['sample', 'mouse_id'])
 
     # talon dataset should be sample + bio rep
-    df['talon_dataset'] = df['sample']+'_'+df['biorep_num'].astype(str)
+    df['dataset'] = df['sample']+'_'+df['biorep_num'].astype(str)
 
-    # dataset should be sample + bio rep + flow cel
-    df['dataset'] = df['talon_dataset']+'_'+df['flowcell'].astype(str)
+    # # dataset should be sample + bio rep + flow cel
+    # df['dataset'] = df['talon_dataset']+'_'+df['flowcell'].astype(str)
 
     ############ TALON dataset df
 
     # create a dataset-level df that will represent the aggregate
     cols = ['sample', 'mouse_id', 'genotype', 'sex', \
-            'age', 'tissue', 'biorep_num', 'talon_dataset']
+            'age', 'tissue', 'biorep_num', 'dataset']
     dataset_df = df[cols].drop_duplicates()
 
     # get the talon run number these will go into
@@ -121,6 +121,7 @@ def parse_config_file(fname,
     dataset_df['talon_run_num'] = dataset_df.talon_run_num.astype(int)
     
     return df, dataset_df
+
 def rev_comp(seq):
     """ Returns the reverse complement of a DNA sequence,
         retaining the case of each letter"""
