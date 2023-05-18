@@ -1,5 +1,6 @@
 import swan_vis as swan
-import pydeseq2
+from pydeseq2.dds import DeseqDataSet
+from pydeseq2.ds import DeseqStats
 import pdb
 import scanpy as sc
 
@@ -23,11 +24,11 @@ pdb.set_trace()
 if len(obs_conditions) != 2:
     raise ValueError(f'{obs_conditions} not valid. Please provide exactly two conditions to compare')
 
-sg = swan.read(swan_file)
-if how == 'gene':
-    adata = sg.gene_adata
-elif how == 'iso':
-    adata = sg.adata
+# sg = swan.read(swan_file)
+# if how == 'gene':
+#     adata = sg.gene_adata
+# elif how == 'iso':
+#     adata = sg.adata
 
 # column doesn't exist
 if obs_col not in adata.obs.columns:
@@ -40,14 +41,17 @@ adata = adata[adata.obs.loc[adata.obs[obs_col].isin(obs_conditions)].index,
 # remove unexpressed stuff
 adata = sc.pp.filter_genes(adata, min_counts=1)
 
+# densify matrix
+adata.X = adata.X.todense()
+
 # create deseq obj
-dds = pydeseq2.dds.DeseqDataSet(adata=adata,
-                                design_factors=obs_col,
-                                n_cpus=threads,
-                                refit_cooks=True)
+dds = DeseqDataSet(adata=adata,
+                   design_factors=obs_col,
+                   n_cpus=threads,
+                   refit_cooks=True)
 
 # run test
 dds.deseq2()
-stat_res = pydeseq2.ds.DeseqStats(dds,
-                                  n_cpus=threads)
+stat_res = DeseqStats(dds,
+                      n_cpus=threads)
 # results = stat_res.s

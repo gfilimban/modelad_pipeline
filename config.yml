@@ -44,6 +44,7 @@ data:
   # swan
   sg: data/{batch}/swan/swan.p
   die_tsv: data/{batch}/swan/{genotype1}_{genotype2}_die.tsv
+  adata: data/{batch}/swan/swan_{feature}_adata.h5ad
 
   # lapa
   lapa_config: data/{batch}/lapa/lapa_config.csv
@@ -58,5 +59,4 @@ data:
   lapa_ab: data/{batch}/lapa/lapa_corrected_abundance_filtered.tsv
 
   # degs and dets
-  deg_tsv: data/{batch}/deg/{genotype1}_{genotype2}_deg.tsv
-  det_tsv: data/{batch}/deg/{genotype1}_{genotype2}_det.tsv
+  de_tsv: data/{batch}/de/{genotype1}_{genotype2}_de_{feature}.tsv

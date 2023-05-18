@@ -11,7 +11,8 @@ from utils import *
 
 # settings we can change each time it's run
 configfile: 'config.yml'
-config_tsv = '230516_config.tsv'
+# config_tsv = '230516_config.tsv'
+config_tsv = '230429_config.tsv'
 meta_tsv = 'mouse_metadata.tsv'
 datasets_per_run = 7 # number of datasets per talon run
 auto_dedupe = True # deduplicate runs w/ same stem but different chop numbers
@@ -56,24 +57,39 @@ if len(df.batch.unique()) > 1:
 
 rule all:
     input:
-        expand(config['data']['map_stats'],
-           zip,
-           batch=batches,
-           dataset=datasets),
-        expand(config['data']['tc_stats'],
-          zip,
-          batch=batches,
-          dataset=datasets),
-        expand(config['data']['talon_db'],
-          batch=batches,
-          talon_run=max_talon_run),
-        expand(config['data']['sg'], batch=batches),
-        expand(expand(config['data']['die_tsv'],
+        # expand(config['data']['map_stats'],
+        #    zip,
+        #    batch=batches,
+        #    dataset=datasets),
+        # expand(config['data']['tc_stats'],
+        #   zip,
+        #   batch=batches,
+        #   dataset=datasets),
+        # expand(config['data']['talon_db'],
+        #   batch=batches,
+        #   talon_run=max_talon_run),
+        # expand(config['data']['sg'], batch=batches),
+        # expand(expand(config['data']['die_tsv'],
+        #        zip,
+        #        genotype1=get_genotype_pairs(df, 0),
+        #        genotype2=get_genotype_pairs(df, 1),
+        #        allow_missing=True),
+        #        batch=batches[0]),
+        # expand(expand(config['data']['de_tsv'],
+        #        zip,
+        #        genotype1=get_genotype_pairs(df, 0),
+        #        genotype2=get_genotype_pairs(df, 1),
+        #        allow_missing=True),
+        #        batch=batches[0],
+        #        feature=['gene', 'iso'])
+        expand(expand(config['data']['de_tsv'],
                zip,
-               genotype1=get_genotype_pairs(df, 0),
-               genotype2=get_genotype_pairs(df, 1),
+               genotype1=get_genotype_pairs(df, 0)[0],
+               genotype2=get_genotype_pairs(df, 1)[0],
                allow_missing=True),
-               batch=batches[0])
+               batch=batches[0],
+               feature=['gene', 'iso'])
+
 
         # expand(config['data']['lapa_ab'], batch=batches)
 
@@ -572,6 +588,18 @@ rule swan_die:
                                                       wildcards.genotype2])
         die.to_csv(output.out, sep='\t')
 
+rule swan_output_adata:
+    input:
+        sg = config['data']['sg']
+    resources:
+        mem_gb = 64,
+        threads = 1
+    output:
+        out = config['data']['adata']
+    run:
+        save_swan_adata(input.sg,
+                        output.out,
+                        how=wildcards.feature)
 
 ################################################################################
 ################################# LAPA #########################################
@@ -724,15 +752,27 @@ rule filt_lapa_gtf:
 ################################################################################
 ##################################### DEG / DET ################################
 ################################################################################
-# rule deg:
-#     input:
-#         sg = config['data']['sg']
-#     resources:
-#         mem_gb = 128,
-#         threads = 8
-#     output:
-#         out = config['data']['deg_tsv']
-#     run:
+rule deg:
+    input:
+        adata = config['data']['adata']
+    resources:
+        mem_gb = 128,
+        threads = 8
+    output:
+        out = config['data']['de_tsv']
+    conda:
+        "pydeseq2"
+    shell:
+        """
+            python diff_exp.py \
+                   {input.adata} \
+                   {wildcards.feature} \
+                   genotype \
+                   {wildcards.genotype1},{wildcards.genotype2} \
+                   {output.out} \
+                   {resources.threads}
+        """
+
 #         sg = swan.read(input.sg)
 #         sg.adata.obs['genotype'] = sg.adata.obs.dataset.str.rsplit('_', n=2, expand=True)[0]
 #         die, genes = sg.die_gene_test(obs_col='genotype',

@@ -5,6 +5,8 @@ import math
 import gzip
 import pyranges as pr
 import numpy as np
+import scanpy as sc
+import swan_vis as swan
 
 def process_meta(meta_fname):
     meta = pd.read_csv(meta_fname, sep='\t')
@@ -12,11 +14,11 @@ def process_meta(meta_fname):
     meta['genotype'] = meta.genotype.str.replace('/', '_')
 
     meta['age'] = meta.age.str.replace(' ', '_')
-    
+
     dupe_ids = meta.loc[meta.mouse_id.duplicated(), 'mouse_id'].tolist()
     if len(dupe_ids) > 0:
         raise ValueError(f'Found duplicated mouse ids {dupe_ids} in mouse metadata')
-        
+
     return meta
 
 def parse_config_file(fname,
@@ -246,3 +248,23 @@ def filter_spikes(gtf):
     filt_df = filt_df.rename({'gene_id':'gid',
                               'transcript_id':'tid'}, axis=1)
     return filt_df
+
+def save_swan_adata(swan_file,
+                    ofile,
+                    how='iso'):
+    """
+    Save anndata obj from Swan.
+
+    Input:
+        swan_file (str): Input SwanGraph file
+        ofile (str): Output AnnData file
+        how (str): {'iso', 'tss', 'tes', 'ic', 'edge', 'loc', 'gene'}
+    """
+    sg = swan.read(swan_file)
+    if how == 'gene':
+        adata = sg.gene_adata
+    elif how == 'iso':
+        adata = sg.adata
+    else:
+        raise ValueError("You haven't implemented this yet.")
+    adata.write(ofile)
