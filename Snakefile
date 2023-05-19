@@ -51,11 +51,11 @@ def get_genotype_pairs(df, pair_num):
     return g
 
 def get_df_col(wc, df, col):
-    val = df.loc[(df.dataset==wc.dataset)&(df.flowcell=wc.flowcell), col].values[0]
+    val = df.loc[(df.dataset==wc.dataset)&(df.flowcell==wc.flowcell), col].values[0]
     return val
 
 def get_dataset_df_col(wc, df, col):
-    val = df.loc[df.talon_dataset==wc.talon_dataset, col].values[0]
+    val = df.loc[df.dataset==wc.dataset, col].values[0]
     return val
 
 # config formatting errors
@@ -247,9 +247,9 @@ rule sam_to_bam:
         """
         module load samtools
         samtools sort \
-            --threads {params.threads} \
+            --threads {resources.threads} \
             -O bam {input.sam} > {output.bam}
-        samtools index -$ {params.threads} {output.bam}
+        samtools index -@ {resources.threads} {output.bam}
         """
 
 rule merge_alignment:
@@ -359,7 +359,7 @@ use rule sam_to_bam as talon_label_bam with:
     input:
         sam = config['data']['sam_label']
     output:
-        sam = temporary(config['data']['bam_label_sorted'])
+        bam = temporary(config['data']['bam_label_sorted'])
 
 ################################################################################
 ################################# TALON ########################################
@@ -367,13 +367,13 @@ use rule sam_to_bam as talon_label_bam with:
 
 # merge files from the different flowcell into the same talon input file
 def get_merge_talon_label_files(wc, batches, df, config_entry):
-    temp = df.loc[df.datset == wc.dataset]
+    temp = df.loc[df.dataset == wc.dataset]
     datasets = temp.dataset.tolist()
     flowcells = temp.flowcell.tolist()
     files = expand(config_entry,
                    zip,
                    batch=batches,
-                   datasets=datasets,
+                   dataset=datasets,
                    flowcell=flowcells)
     return files
 
@@ -413,7 +413,7 @@ rule talon_config:
     output:
         config = config['data']['talon_config']
     run:
-        config = params.df[['talon_dataset', 'sample', 'platform', 'talon_run_num']].copy(deep=True)
+        config = params.df[['dataset', 'sample', 'platform', 'talon_run_num']].copy(deep=True)
         config = config.loc[config.talon_run_num==int(wildcards.talon_run)]
         config.drop('talon_run_num', axis=1, inplace=True)
         config['fname'] = input.files

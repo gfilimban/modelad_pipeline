@@ -31,7 +31,7 @@ def parse_config_file(fname,
         fname (str): Path to config file fname. One line per input fastq.
         meta_fname (str): Path to file with metadata information.
         datasets_per_run (int): Number of datasets to process in each TALON run
-        auto_dedupe (bool): Automatically deduplicate duplicate fastqs that result from 
+        auto_dedupe (bool): Automatically deduplicate duplicate fastqs that result from
             successive Porechop rounds
 
     Returns:
@@ -108,8 +108,8 @@ def parse_config_file(fname,
 
     # create a dataset-level df that will represent the aggregate
     cols = ['sample', 'mouse_id', 'genotype', 'sex', \
-            'age', 'tissue', 'biorep_num', 'dataset']
-    dataset_df = df[cols].drop_duplicates()
+            'age', 'tissue', 'biorep_num', 'dataset', 'platform']
+    dataset_df = df[cols].drop_duplicates().reset_index()
 
     # get the talon run number these will go into
     talon_run_num = 0
@@ -119,7 +119,7 @@ def parse_config_file(fname,
             talon_run_num += 1
         dataset_df.loc[ind, 'talon_run_num'] = talon_run_num
     dataset_df['talon_run_num'] = dataset_df.talon_run_num.astype(int)
-    
+
     return df, dataset_df
 
 def rev_comp(seq):
