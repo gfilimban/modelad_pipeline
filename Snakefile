@@ -31,8 +31,10 @@ platforms = df.platform.tolist()
 genotypes = df.genotype.unique().tolist()
 
 # from the df w/ one line for each dataset / mouse
-talon_run_nums = dataset_df.talon_run_num.unique().tolist()
-max_talon_run = dataset_df.talon_run_num.max()
+temp = dataset_df[['study', 'talon_run_num']].drop_duplicates()
+temp = temp.groupby('study').max().reset_index()
+studies = temp.study.tolist()
+max_talon_runs = temp.talon_run_num.tolist()
 
 wildcard_constraints:
     genotype1= '|'.join([re.escape(x) for x in genotypes]),
@@ -76,7 +78,8 @@ rule all:
           flowcell=flowcells),
         expand(config['data']['talon_db'],
           batch=batches,
-          talon_run=max_talon_run),
+          study=studies,
+          talon_run=max_talon_runs),
         # expand(config['data']['sg'], batch=batches),
         # expand(expand(config['data']['die_tsv'],
         #        zip,
@@ -167,8 +170,6 @@ rule get_utr_fix_gtf:
         mem_gb = 8
     output:
         gtf = config['ref']['gtf_utr']
-    # run:
-    #     gtf_utr_fix(input.gtf, output.gtf)
     shell:
         """
         gencode_utr_fix \

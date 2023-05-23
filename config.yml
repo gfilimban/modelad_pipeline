@@ -36,15 +36,15 @@ data:
   bam_label_merge: data/{batch}/talon/{dataset}_labeled_merged.bam
 
   # talon
-  talon_config: data/{batch}/talon/talon_{talon_run}_config.csv
-  talon_db: data/{batch}/talon/annot_{talon_run}_talon.db
-  read_annot: data/{batch}/talon/annot_{talon_run}_talon_read_annot.tsv
-  temp_db: data/{batch}/talon/temp_annot_2_talon.db
+  talon_config: data/{batch}/talon/{study}/talon_{talon_run}_config.csv
+  talon_db: data/{batch}/talon/{study}/annot_{talon_run}_talon.db
+  read_annot: data/{batch}/talon/{study}/annot_{talon_run}_talon_read_annot.tsv
+  temp_db: data/{batch}/talon/{study}/temp_annot_2_talon.db
 
-  ab: data/{batch}/talon/annot_talon_abundance.tsv
-  filt_list: data/{batch}/talon/talon_pass_list.tsv
-  filt_ab: data/{batch}/talon/annot_talon_abundance_filtered.tsv
-  filt_gtf: data/{batch}/talon/annot_talon_observedOnly.gtf
+  ab: data/{batch}/talon/{study}/annot_talon_abundance.tsv
+  filt_list: data/{batch}/{study}/talon/talon_pass_list.tsv
+  filt_ab: data/{batch}/{study}/talon/annot_talon_abundance_filtered.tsv
+  filt_gtf: data/{batch}/{study}/talon/annot_talon_observedOnly.gtf
 
   # swan
   sg: data/{batch}/swan/swan.p
