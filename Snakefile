@@ -72,16 +72,16 @@ else:
 
 rule all:
     input:
-        expand(config['data']['map_stats'],
-           zip,
-           batch=batches,
-           dataset=datasets,
-           flowcell=flowcells),
-        expand(config['data']['tc_stats'],
-          zip,
-          batch=batches,
-          dataset=datasets,
-          flowcell=flowcells),
+        # expand(config['data']['map_stats'],
+        #    zip,
+        #    batch=batches,
+        #    dataset=datasets,
+        #    flowcell=flowcells),
+        # expand(config['data']['tc_stats'],
+        #   zip,
+        #   batch=batches,
+        #   dataset=datasets,
+        #   flowcell=flowcells),
         expand(expand(config['data']['talon_db'],
           zip,
           study=studies,
@@ -474,29 +474,45 @@ rule talon:
 use rule talon as first_talon with:
     input:
         ref = config['ref']['talon_db'],
+        # config = lambda wc: expand(config['data']['talon_config'],
+        #                            zip,
+        #                            study=wc.study,
+        #                            talon_run=1,
+        #                            batch=batch)[0]
         config = expand(config['data']['talon_config'],
                         zip,
-                        study=wc.study,
                         talon_run=1,
-                        batch=batch)[0]
+                        allow_missing=True)[0]
     params:
         genome = 'mm10',
+        # opref = lambda wc: expand(config['data']['talon_db'],
+        #                           zip,
+        #                           study=wc.study,
+        #                           talon_run=1,
+        #                           batch=batch)[0].rsplit('_talon', maxsplit=1)[0],
         opref = expand(config['data']['talon_db'],
-                        zip,
-                        study=wc.study,
-                        talon_run=1,
-                        batch=batch)[0].rsplit('_talon', maxsplit=1)[0],
+                      zip,
+                      talon_run=1,
+                      allow_missing=True)[0].rsplit('_talon', maxsplit=1)[0],
     output:
+        # db = lambda wc: expand(config['data']['talon_db'],
+        #                        zip,
+        #                        study=wc.study,
+        #                        talon_run=1,
+        #                        batch=batch)[0],
         db = expand(config['data']['talon_db'],
-                        zip,
-                        study=wc.study,
-                        talon_run=1,
-                        batch=batch)[0],
+                   zip,
+                   talon_run=1,
+                   allow_missing=True)[0],
+        # annot = lambda wc: expand(config['data']['read_annot'],
+        #                           zip,
+        #                           study=wc.study,
+        #                           talon_run=1,
+        #                           batch=batch)[0]
         annot = expand(config['data']['read_annot'],
-                        zip,
-                        study=wc.study,
-                        talon_run=1,
-                        batch=batch)[0]
+                                  zip,
+                                  talon_run=1,
+                                  allow_missing=True)[0]
 
 use rule talon as seq_talon with:
     input:
