@@ -501,6 +501,9 @@ use rule talon as seq_talon with:
         annot = config['data']['read_annot']
 
 rule talon_unfilt_ab:
+# TODO - will probably have to update this expand
+# probably need to expand across all max_talon_run dbs
+# in all rule
     input:
         db = expand(config['data']['talon_db'],
                         batch=batches,
@@ -525,6 +528,9 @@ rule talon_unfilt_ab:
         """
 
 rule talon_filt:
+# TODO - will probably have to update this expand
+# probably need to expand across all max_talon_run dbs
+# in all rule
     input:
         db = expand(config['data']['talon_db'],
                         batch=batches,
@@ -549,6 +555,9 @@ rule talon_filt:
         """
 
 rule talon_filt_ab:
+# TODO - will probably have to update this expand
+# probably need to expand across all max_talon_run dbs
+# in all rule
     input:
         db = expand(config['data']['talon_db'],
                         batch=batches,
@@ -576,6 +585,9 @@ rule talon_filt_ab:
 
 rule talon_gtf:
     input:
+    # TODO - will probably have to update this expand
+    # probably need to expand across all max_talon_run dbs
+    # in all rule
         db = expand(config['data']['talon_db'],
                         batch=batches,
                         study=studies,
