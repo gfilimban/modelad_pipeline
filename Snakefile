@@ -310,6 +310,8 @@ rule tc:
             --canonOnly \
             --primaryOnly \
             --deleteTmp \
+            --correctMismatches False \
+            --correctIndels True \
             --tmpDir {params.opref}_temp/ \
             --outprefix {params.opref}
         """

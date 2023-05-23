@@ -69,6 +69,11 @@ def parse_config_file(fname,
     # extract the mouse id
     df['mouse_id'] = df['sample_temp'].str.split('_', expand=True)[1]
 
+    # extract the "study" name
+    exp = '^(ad[0-9]+)'
+    df['study'] = df.basename.str.extract(exp)
+
+
     # merge in metadata
     meta = process_meta(meta_fname)
     df['mouse_id'] = df['mouse_id'].astype('int')
@@ -100,27 +105,28 @@ def parse_config_file(fname,
 
     # talon dataset should be sample + bio rep
     df['dataset'] = df['sample']+'_'+df['biorep_num'].astype(str)
+    return df
 
-    # # dataset should be sample + bio rep + flow cel
-    # df['dataset'] = df['talon_dataset']+'_'+df['flowcell'].astype(str)
-
-    ############ TALON dataset df
-
-    # create a dataset-level df that will represent the aggregate
-    cols = ['sample', 'mouse_id', 'genotype', 'sex', \
-            'age', 'tissue', 'biorep_num', 'dataset', 'platform']
-    dataset_df = df[cols].drop_duplicates().reset_index()
-
-    # get the talon run number these will go into
-    talon_run_num = 0
-    df['talon_run_num'] = np.nan
-    for ind, entry, in dataset_df.iterrows():
-        if ind % datasets_per_run == 0:
-            talon_run_num += 1
-        dataset_df.loc[ind, 'talon_run_num'] = talon_run_num
-    dataset_df['talon_run_num'] = dataset_df.talon_run_num.astype(int)
-
-    return df, dataset_df
+    # # # dataset should be sample + bio rep + flow cel
+    # # df['dataset'] = df['talon_dataset']+'_'+df['flowcell'].astype(str)
+    #
+    # ############ TALON dataset df
+    #
+    # # create a dataset-level df that will represent the aggregate
+    # cols = ['sample', 'mouse_id', 'genotype', 'sex', \
+    #         'age', 'tissue', 'biorep_num', 'dataset', 'platform']
+    # dataset_df = df[cols].drop_duplicates().reset_index()
+    #
+    # # get the talon run number these will go into
+    # talon_run_num = 0
+    # df['talon_run_num'] = np.nan
+    # for ind, entry, in dataset_df.iterrows():
+    #     if ind % datasets_per_run == 0:
+    #         talon_run_num += 1
+    #     dataset_df.loc[ind, 'talon_run_num'] = talon_run_num
+    # dataset_df['talon_run_num'] = dataset_df.talon_run_num.astype(int)
+    #
+    # return df, dataset_df
 
 def rev_comp(seq):
     """ Returns the reverse complement of a DNA sequence,
