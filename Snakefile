@@ -22,6 +22,10 @@ df, dataset_df = parse_config_file(config_tsv,
                        datasets_per_run=datasets_per_run,
                        auto_dedupe=auto_dedupe)
 
+# # TODO - rm this
+# df = df.loc[df.study=='ad004']
+# dataset_df = dataset_df.loc[dataset_df.study=='ad004']
+
 # from the df w/ one line for each file
 batches = df.batch.tolist()
 datasets = df.dataset.tolist()
@@ -63,6 +67,8 @@ def get_dataset_df_col(wc, df, col):
 # config formatting errors
 if len(df.batch.unique()) > 1:
     raise ValueError('Must only have one batch per config')
+else:
+    batch = batches[0]
 
 rule all:
     input:
@@ -76,10 +82,12 @@ rule all:
           batch=batches,
           dataset=datasets,
           flowcell=flowcells),
-        expand(config['data']['talon_db'],
-          batch=batches,
+        expand(expand(config['data']['talon_db'],
+          zip,
           study=studies,
-          talon_run=max_talon_runs),
+          talon_run=max_talon_runs, allow_missing=True),
+          batch=batch)
+
         # expand(config['data']['sg'], batch=batches),
         # expand(expand(config['data']['die_tsv'],
         #        zip,
@@ -467,24 +475,28 @@ use rule talon as first_talon with:
     input:
         ref = config['ref']['talon_db'],
         config = expand(config['data']['talon_config'],
-                        batch=batches,
-                        study=studies,
-                        talon_run=1)[0]
+                        zip,
+                        study=wc.study,
+                        talon_run=1,
+                        batch=batch)[0]
     params:
         genome = 'mm10',
         opref = expand(config['data']['talon_db'],
-                        batch=batches,
-                        study=studies,
-                        talon_run=1)[0].rsplit('_talon', maxsplit=1)[0],
+                        zip,
+                        study=wc.study,
+                        talon_run=1,
+                        batch=batch)[0].rsplit('_talon', maxsplit=1)[0],
     output:
         db = expand(config['data']['talon_db'],
-                        batch=batches,
-                        study=studies,
-                        talon_run=1)[0],
+                        zip,
+                        study=wc.study,
+                        talon_run=1,
+                        batch=batch)[0],
         annot = expand(config['data']['read_annot'],
-                        batch=batches,
-                        study=studies,
-                        talon_run=1)[0]
+                        zip,
+                        study=wc.study,
+                        talon_run=1,
+                        batch=batch)[0]
 
 use rule talon as seq_talon with:
     input:

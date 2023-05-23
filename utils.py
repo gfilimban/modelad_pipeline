@@ -136,7 +136,7 @@ def parse_config_file(fname,
         # when we hit the max. # datasets / run
         if study_ind % datasets_per_run == 0:
             run_num += 1
-            
+
         # actually assignment of number
         dataset_df.loc[ind, 'talon_run_num'] = run_num
 
