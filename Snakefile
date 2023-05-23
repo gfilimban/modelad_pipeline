@@ -468,24 +468,29 @@ use rule talon as first_talon with:
         ref = config['ref']['talon_db'],
         config = expand(config['data']['talon_config'],
                         batch=batches,
+                        study=studies,
                         talon_run=1)[0]
     params:
         genome = 'mm10',
         opref = expand(config['data']['talon_db'],
                         batch=batches,
+                        study=studies,
                         talon_run=1)[0].rsplit('_talon', maxsplit=1)[0],
     output:
         db = expand(config['data']['talon_db'],
                         batch=batches,
+                        study=studies,
                         talon_run=1)[0],
         annot = expand(config['data']['read_annot'],
                         batch=batches,
+                        study=studies,
                         talon_run=1)[0]
 
 use rule talon as seq_talon with:
     input:
         ref = lambda wc: expand(config['data']['talon_db'],
                         batch=wc.batch,
+                        study=wc.study,
                         talon_run=int(wc.talon_run)-1)[0],
         config = config['data']['talon_config']
     params:
@@ -499,7 +504,8 @@ rule talon_unfilt_ab:
     input:
         db = expand(config['data']['talon_db'],
                         batch=batches,
-                        talon_run=max_talon_run)[0]
+                        study=studies,
+                        talon_run=max_talon_runs)[0]
     resources:
         threads = 1,
         mem_gb = 32
@@ -522,7 +528,8 @@ rule talon_filt:
     input:
         db = expand(config['data']['talon_db'],
                         batch=batches,
-                        talon_run=max_talon_run)[0]
+                        study=studies,
+                        talon_run=max_talon_runs)[0]
     resources:
         threads = 1,
         mem_gb = 128
@@ -545,7 +552,8 @@ rule talon_filt_ab:
     input:
         db = expand(config['data']['talon_db'],
                         batch=batches,
-                        talon_run=max_talon_run)[0],
+                        study=studies,
+                        talon_run=max_talon_runs)[0],
         filt = config['data']['filt_list']
     resources:
         threads = 1,
@@ -570,7 +578,8 @@ rule talon_gtf:
     input:
         db = expand(config['data']['talon_db'],
                         batch=batches,
-                        talon_run=max_talon_run)[0],
+                        study=studies,
+                        talon_run=max_talon_runs)[0],
         filt = config['data']['filt_list']
     resources:
         threads = 1,
