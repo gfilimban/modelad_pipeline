@@ -105,28 +105,71 @@ def parse_config_file(fname,
 
     # talon dataset should be sample + bio rep
     df['dataset'] = df['sample']+'_'+df['biorep_num'].astype(str)
-    return df
 
-    # # # dataset should be sample + bio rep + flow cel
-    # # df['dataset'] = df['talon_dataset']+'_'+df['flowcell'].astype(str)
+    # # dataset should be sample + bio rep + flow cel
+    # df['dataset'] = df['talon_dataset']+'_'+df['flowcell'].astype(str)
+
+    ############ TALON dataset df
+
+    # create a dataset-level df that will represent the aggregate
+    cols = ['sample', 'mouse_id', 'genotype', 'sex', 'study', \
+            'age', 'tissue', 'biorep_num', 'dataset', 'platform']
+    dataset_df = df[cols].drop_duplicates()
+
+    # get the talon run number these will go into
+    dataset_df = dataset_df.sort_values(by='study', ascending=False)
+    dataset_df = dataset_df.reset_index(drop=True)
+    dataset_df['talon_run_num'] = np.nan
+    for ind, entry in dataset_df.iterrows():
+        curr_study = entry.study
+        # first entry
+        if ind == 0:
+            run_num = 0
+            study_ind = 0
+            prev_study = curr_study
+
+        # when we find a new study
+        if curr_study != prev_study:
+            run_num = 0
+            study_ind = 0
+
+        # when we hit the max. # datasets / run
+        if study_ind % datasets_per_run == 0:
+            run_num += 1
+            
+        # actually assignment of number
+        dataset_df.loc[ind, 'talon_run_num'] = run_num
+
+        # keep track of last study that was assigned a number
+        prev_study = curr_study
+
+        # inc study ind
+        study_ind += 1
+
+    dataset_df['talon_run_num'] = dataset_df.talon_run_num.astype(int)
+
+
+
+
     #
-    # ############ TALON dataset df
-    #
-    # # create a dataset-level df that will represent the aggregate
-    # cols = ['sample', 'mouse_id', 'genotype', 'sex', \
-    #         'age', 'tissue', 'biorep_num', 'dataset', 'platform']
-    # dataset_df = df[cols].drop_duplicates().reset_index()
-    #
-    # # get the talon run number these will go into
     # talon_run_num = 0
+    # study_ind = 0
     # df['talon_run_num'] = np.nan
+    # prev_study = ''
+    # dataset_df.sort_values(by='study', ascending=False, inplace=True)
+    # dataset_df.reset_index(drop=True)
     # for ind, entry, in dataset_df.iterrows():
-    #     if ind % datasets_per_run == 0:
+    #     curr_study = entry['study']
+    #     if curr_study != prev_study:
+    #         talon_run_num = 0
+    #         study_ind = 0
+    #     if study_ind % datasets_per_run == 0:
     #         talon_run_num += 1
+    #         study_ind += 1
     #     dataset_df.loc[ind, 'talon_run_num'] = talon_run_num
     # dataset_df['talon_run_num'] = dataset_df.talon_run_num.astype(int)
-    #
-    # return df, dataset_df
+
+    return df, dataset_df
 
 def rev_comp(seq):
     """ Returns the reverse complement of a DNA sequence,
