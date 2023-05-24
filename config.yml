@@ -46,17 +46,17 @@ data:
   filt_ab: data/{batch}/{study}/talon/annot_talon_abundance_filtered.tsv
   filt_gtf: data/{batch}/{study}/talon/annot_talon_observedOnly.gtf
 
+  # lapa
+  lapa_config: data/{batch}/lapa/{study}/lapa_config.csv
+  lapa_ends: data/{batch}/lapa/{study}/{end_mode}/{end_mode}_clusters.bed
+  lapa_links: data/{batch}/lapa/{study}/tss_to_tes_links.csv
+  lapa_gtf: data/{batch}/lapa/{study}/lapa_corrected.gtf
+  lapa_ab: data/{batch}/lapa/{study}/lapa_corrected_abundance.tsv
+
   # swan
   sg: data/{batch}/swan/swan.p
   die_tsv: data/{batch}/swan/{genotype1}_{genotype2}_die.tsv
   adata: data/{batch}/swan/swan_{feature}_adata.h5ad
-
-  # lapa
-  lapa_config: data/{batch}/lapa/lapa_config.csv
-  lapa_ends: data/{batch}/lapa/{end_mode}/{end_mode}_clusters.bed
-  lapa_links: data/{batch}/lapa/tss_to_tes_links.csv
-  lapa_gtf: data/{batch}/lapa/lapa_corrected.gtf
-  lapa_ab: data/{batch}/lapa/lapa_corrected_abundance.tsv
 
   # lapa filtering
   lapa_filt_list: data/{batch}/lapa/lapa_pass_list.tsv

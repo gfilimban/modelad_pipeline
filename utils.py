@@ -137,7 +137,7 @@ def parse_config_file(fname,
         if study_ind % datasets_per_run == 0:
             run_num += 1
 
-        # actually assignment of number
+        # actual assignment of number
         dataset_df.loc[ind, 'talon_run_num'] = run_num
 
         # keep track of last study that was assigned a number
@@ -146,28 +146,9 @@ def parse_config_file(fname,
         # inc study ind
         study_ind += 1
 
+    # clean up some typing
     dataset_df['talon_run_num'] = dataset_df.talon_run_num.astype(int)
-
-
-
-
-    #
-    # talon_run_num = 0
-    # study_ind = 0
-    # df['talon_run_num'] = np.nan
-    # prev_study = ''
-    # dataset_df.sort_values(by='study', ascending=False, inplace=True)
-    # dataset_df.reset_index(drop=True)
-    # for ind, entry, in dataset_df.iterrows():
-    #     curr_study = entry['study']
-    #     if curr_study != prev_study:
-    #         talon_run_num = 0
-    #         study_ind = 0
-    #     if study_ind % datasets_per_run == 0:
-    #         talon_run_num += 1
-    #         study_ind += 1
-    #     dataset_df.loc[ind, 'talon_run_num'] = talon_run_num
-    # dataset_df['talon_run_num'] = dataset_df.talon_run_num.astype(int)
+    df['flowcell'] = df.flowcell.astype(str)
 
     return df, dataset_df
 
