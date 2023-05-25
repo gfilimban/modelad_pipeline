@@ -463,16 +463,16 @@ rule talon:
         threads = 30
     shell:
         """
-        cp {input.ref} {input.ref}_back
+        ref_db={input.ref}_{wildcards.batch}_{wildcards.study}
+        cp {input.ref} ${ref_db}
         talon \
             --f {input.config} \
-            --db {input.ref} \
+            --db ${ref_db} \
             --build {params.genome} \
             --tmpDir {params.opref}_temp/ \
             --threads {resources.threads} \
             --o {params.opref}
-        mv {input.ref} {params.opref}_talon.db
-        mv {input.ref}_back {input.ref}
+        mv ${ref_db} {params.opref}_talon.db
         """
 
 use rule talon as first_talon with:
