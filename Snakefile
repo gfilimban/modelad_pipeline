@@ -464,15 +464,15 @@ rule talon:
     shell:
         """
         ref_db={input.ref}_{wildcards.batch}_{wildcards.study}
-        cp {input.ref} ${ref_db}
+        cp {input.ref} ${{ref_db}}
         talon \
             --f {input.config} \
-            --db ${ref_db} \
+            --db ${{ref_db}} \
             --build {params.genome} \
             --tmpDir {params.opref}_temp/ \
             --threads {resources.threads} \
             --o {params.opref}
-        mv ${ref_db} {params.opref}_talon.db
+        mv ${{ref_db}} {params.opref}_talon.db
         """
 
 use rule talon as first_talon with:
