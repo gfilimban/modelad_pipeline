@@ -35,16 +35,18 @@ data:
   # merge labelled sams
   bam_label_merge: data/{batch}/talon/{dataset}_labeled_merged.bam
 
-  # talon
+  # talon files - split by talon run + study
   talon_config: data/{batch}/talon/{study}/talon_{talon_run}_config.csv
   talon_db: data/{batch}/talon/{study}/annot_{talon_run}_talon.db
   read_annot: data/{batch}/talon/{study}/annot_{talon_run}_talon_read_annot.tsv
   temp_db: data/{batch}/talon/{study}/temp_annot_2_talon.db
 
+  # talon files - split only by study
   ab: data/{batch}/talon/{study}/annot_talon_abundance.tsv
   filt_list: data/{batch}/{study}/talon/talon_pass_list.tsv
-  filt_ab: data/{batch}/{study}/talon/annot_talon_abundance_filtered.tsv
-  filt_gtf: data/{batch}/{study}/talon/annot_talon_observedOnly.gtf
+  filt_ab: data/{batch}/talon/{study}/annot_talon_abundance_filtered.tsv
+  filt_gtf: data/{batch}/talon/{study}/annot_talon_observedOnly.gtf
+  full_read_annot: data/{batch}/talon/{study}/talon_read_annot.tsv
 
   # lapa
   lapa_config: data/{batch}/lapa/{study}/lapa_config.csv
@@ -61,7 +63,7 @@ data:
   # lapa filtering
   lapa_filt_list: data/{batch}/lapa/lapa_pass_list.tsv
   lapa_filt_gtf: data/{batch}/lapa/lapa_corrected_filtered.gtf
-  lapa_ab: data/{batch}/lapa/lapa_corrected_abundance_filtered.tsv
+  lapa_filt_ab: data/{batch}/lapa/lapa_corrected_abundance_filtered.tsv
 
   # degs and dets
   de_tsv: data/{batch}/de/{genotype1}_{genotype2}_de_{feature}.tsv

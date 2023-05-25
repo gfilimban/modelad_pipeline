@@ -77,14 +77,20 @@ rule all:
           batch=batches,
           dataset=datasets,
           flowcell=flowcells),
-        expand(expand(config['data']['talon_db'],
-          zip,
-          study=studies,
-          talon_run=max_talon_runs, allow_missing=True),
-          batch=batch),
-         expand(expand(config['data']['lapa_config'],
+        # expand(expand(config['data']['talon_db'],
+        #   zip,
+        #   study=studies,
+        #   talon_run=max_talon_runs, allow_missing=True),
+        #   batch=batch),
+          # expand(expand(config['data']['full_read_annot'],
+          #   zip,
+          #   study=studies,
+          #   allow_missing=True),
+          #   batch=batch),
+         expand(expand(config['data']['lapa_ab'],
                 zip,
-                study=studies, allow_missing=True),
+                study=studies,
+                allow_missing=True),
                 batch=batch)
 
         # expand(config['data']['sg'], batch=batches),
@@ -506,6 +512,36 @@ use rule talon as seq_talon with:
         db = config['data']['talon_db'],
         annot = config['data']['read_annot']
 
+def get_talon_max_output_file(wc, df, config_entry):
+    datasets = get_study_datasets(wc, df)
+    temp = df.loc[df.dataset.isin(datasets)]
+    n = temp.talon_run_num.max()
+    file = expand(config_entry,
+                  zip,
+                  batch=wc.batch,
+                  study=wc.study,
+                  talon_run=n)[0]
+    return file
+
+rule talon_read_annot:
+    input:
+        db = lambda wc: get_talon_max_output_file(wc, dataset_df, config['data']['talon_db'])
+    resources:
+        mem_gb = 32,
+        threads = 1
+    params:
+        genome = 'mm10',
+        opref = config['data']['full_read_annot'].rsplit('_talon', maxsplit=1)[0]
+    output:
+        tsv = config['data']['full_read_annot']
+    shell:
+        """
+        talon_fetch_reads \
+            --db {input.db} \
+            --build {params.genome} \
+            --o {params.opref}
+        """
+
 rule talon_unfilt_ab:
 # TODO - will probably have to update this expand
 # probably need to expand across all max_talon_run dbs
@@ -515,7 +551,10 @@ rule talon_unfilt_ab:
         #                 batch=batches,
         #                 study=studies,
         #                 talon_run=max_talon_runs)[0]
-        db = config['data']['talon_db']
+        # db = config['data']['talon_db']
+        db = lambda wc: get_talon_max_output_file(wc,
+                                                  dataset_df,
+                                                  config['data']['talon_db'])
     resources:
         threads = 1,
         mem_gb = 32
@@ -543,7 +582,10 @@ rule talon_filt:
         #                 batch=batches,
         #                 study=studies,
         #                 talon_run=max_talon_runs)[0]
-        db = config['data']['talon_db']
+        # db = config['data']['talon_db']
+        db = lambda wc: get_talon_max_output_file(wc,
+                                                  dataset_df,
+                                                  config['data']['talon_db'])
     resources:
         threads = 1,
         mem_gb = 128
@@ -571,7 +613,10 @@ rule talon_filt_ab:
         #                 batch=batches,
         #                 study=studies,
         #                 talon_run=max_talon_runs)[0],
-        db = config['data']['talon_db'],
+        # db = config['data']['talon_db'],
+        db = lambda wc: get_talon_max_output_file(wc,
+                                                  dataset_df,
+                                                  config['data']['talon_db']),
         filt = config['data']['filt_list']
     resources:
         threads = 1,
@@ -601,7 +646,10 @@ rule talon_gtf:
         #                 batch=batches,
         #                 study=studies,
         #                 talon_run=max_talon_runs)[0],
-        db = config['data']['talon_db'],
+        # db = config['data']['talon_db'],
+        db = lambda wc: get_talon_max_output_file(wc,
+                                                  dataset_df,
+                                                  config['data']['talon_db']),
         filt = config['data']['filt_list']
     resources:
         threads = 1,
@@ -690,7 +738,11 @@ rule swan_output_adata:
 ################################# LAPA #########################################
 ################################################################################
 def get_lapa_settings(wc, lapa_ends, kind):
-    lapa_ends = expand(lapa_ends, zip, batch=wc.batch, end_mode=wc.end_mode)[0]
+    lapa_ends = expand(lapa_ends,
+                       zip,
+                       batch=wc.batch,
+                       study=wc.study,
+                       end_mode=wc.end_mode)[0]
     if kind == 'temp_file':
         temp = os.path.dirname(lapa_ends)+'/'
         if wc.end_mode == 'tes':
@@ -707,15 +759,6 @@ def get_lapa_settings(wc, lapa_ends, kind):
 def get_study_datasets(wc, dataset_df):
     datasets = dataset_df.loc[dataset_df.study==wc.study, 'dataset'].tolist()
     return datasets
-
-# def get_lapa_files(wc, dataset_df, config_entry):
-#     datasets = get_study_datasets(wc, dataset_df)
-#     files = expand(expand(config_entry,
-#                           zip,
-#                           dataset=datasets,
-#                           allow_missing=True),
-#                           batch=batch)
-#     return files
 
 def get_lapa_run_info(wc, df, config_entry=None, col=False):
     temp = df.copy(deep=True)
@@ -750,109 +793,109 @@ rule lapa_config:
         config.columns = ['sample', 'dataset', 'path']
         config.to_csv(output.config, sep=',', index=False)
 
-# rule lapa_call_ends:
-#     input:
-#         config = config['data']['lapa_config'],
-#         fa = config['ref']['fa'],
-#         gtf = config['ref']['gtf_utr'],
-#         chrom_sizes = config['ref']['chrom_sizes']
-#     resources:
-#         threads = 4,
-#         mem_gb = 32
-#     params:
-#         opref = config['data']['lapa_ends'].rsplit('/', maxsplit=1)[0]+'/',
-#         lapa_cmd = lambda wc: get_lapa_settings(wc, config['data']['lapa_ends'], 'lapa_cmd'),
-#         lapa_end_temp = lambda wc: get_lapa_settings(wc, config['data']['lapa_ends'], 'temp_file'),
-#     output:
-#         ends = config['data']['lapa_ends']
-#     shell:
-#         """
-#         rm -rf {params.opref}
-#         {params.lapa_cmd} \
-#             --alignment {input.config} \
-#             --fasta {input.fa} \
-#             --annotation {input.gtf} \
-#             --chrom_sizes {input.chrom_sizes} \
-#             --output_dir {params.opref}
-#         if [ {params.lapa_end_temp} != {output.ends} ]
-#         then
-#             cp {params.lapa_end_temp} {output.ends}
-#         fi
-#         """
-#
-# rule lapa_link:
-#     input:
-#         annot = config['data']['read_annot'],
-#         tss = expand(config['data']['lapa_ends'], end_mode='tss', allow_missing=True)[0],
-#         tes = expand(config['data']['lapa_ends'], end_mode='tes', allow_missing=True)[0]
-#     resources:
-#         threads = 1,
-#         mem_gb = 64
-#     params:
-#         tss_dir = expand(config['data']['lapa_ends'], end_mode='tss', allow_missing=True)[0].rsplit('/', maxsplit=1)[0]+'/',
-#         tes_dir = expand(config['data']['lapa_ends'], end_mode='tes', allow_missing=True)[0].rsplit('/', maxsplit=1)[0]+'/'
-#     output:
-#         links = config['data']['lapa_links']
-#     shell:
-#         """
-#         lapa_link_tss_to_tes \
-#             --alignment {input.annot} \
-#             --lapa_dir {params.tes_dir} \
-#             --lapa_tss_dir {params.tss_dir} \
-#             --output {output.links}
-#         """
-#
-# rule lapa_correct_talon:
-#     input:
-#         gtf = config['data']['filt_gtf'],
-#         ab = config['data']['filt_ab'],
-#         annot = config['data']['read_annot'],
-#         links = config['data']['lapa_links']
-#     resources:
-#         threads = 1,
-#         mem_gb = 64
-#     output:
-#         gtf = config['data']['lapa_gtf'],
-#         ab = config['data']['lapa_ab']
-#     shell:
-#         """
-#         lapa_correct_talon \
-#                 --links {input.links} \
-#                 --read_annot {input.annot} \
-#                 --gtf_input {input.gtf} \
-#                 --gtf_output {output.gtf} \
-#                 --abundance_input {input.ab} \
-#                 --abundance_output {output.ab} \
-#                 --keep_unsupported
-#         """
-#
-# rule filt_lapa:
-#     input:
-#         ab = config['data']['lapa_ab'],
-#         gtf = config['data']['lapa_gtf']
-#     resources:
-#         threads = 1,
-#         mem_gb = 4
-#     params:
-#         t_nov = ['Known', 'NIC', 'NNC', 'ISM_rescue'],
-#         g_nov = ['Known'],
-#         filt_spikes = True
-#     output:
-#         filt_list = config['data']['lapa_filt_list']
-#     run:
-#         # filter based on novelty after defining
-#         # rescue ISMS
-#         df = ab_add_rescue_ism_cat(input.ab)
-#         filt_df = filter_lapa_on_nov(df,
-#                                      params.t_novs,
-#                                      params.g_novs)
-#
-#         # filter out spike-ins
-#         if params.filt_spikes:
-#             temp = filter_spikes(input.gtf)
-#             filt_df = filt_df.merge(temp, how='inner')
-#
-#         filt_df.to_csv(output.filt_list, index=False, sep='\t')
+rule lapa_call_ends:
+    input:
+        config = config['data']['lapa_config'],
+        fa = config['ref']['fa'],
+        gtf = config['ref']['gtf_utr'],
+        chrom_sizes = config['ref']['chrom_sizes']
+    resources:
+        threads = 4,
+        mem_gb = 32
+    params:
+        opref = config['data']['lapa_ends'].rsplit('/', maxsplit=1)[0]+'/',
+        lapa_cmd = lambda wc: get_lapa_settings(wc, config['data']['lapa_ends'], 'lapa_cmd'),
+        lapa_end_temp = lambda wc: get_lapa_settings(wc, config['data']['lapa_ends'], 'temp_file'),
+    output:
+        ends = config['data']['lapa_ends']
+    shell:
+        """
+        rm -rf {params.opref}
+        {params.lapa_cmd} \
+            --alignment {input.config} \
+            --fasta {input.fa} \
+            --annotation {input.gtf} \
+            --chrom_sizes {input.chrom_sizes} \
+            --output_dir {params.opref}
+        if [ {params.lapa_end_temp} != {output.ends} ]
+        then
+            cp {params.lapa_end_temp} {output.ends}
+        fi
+        """
+
+rule lapa_link:
+    input:
+        annot = config['data']['full_read_annot'],
+        tss = expand(config['data']['lapa_ends'], end_mode='tss', allow_missing=True)[0],
+        tes = expand(config['data']['lapa_ends'], end_mode='tes', allow_missing=True)[0]
+    resources:
+        threads = 1,
+        mem_gb = 64
+    params:
+        tss_dir = expand(config['data']['lapa_ends'], end_mode='tss', allow_missing=True)[0].rsplit('/', maxsplit=1)[0]+'/',
+        tes_dir = expand(config['data']['lapa_ends'], end_mode='tes', allow_missing=True)[0].rsplit('/', maxsplit=1)[0]+'/'
+    output:
+        links = config['data']['lapa_links']
+    shell:
+        """
+        lapa_link_tss_to_tes \
+            --alignment {input.annot} \
+            --lapa_dir {params.tes_dir} \
+            --lapa_tss_dir {params.tss_dir} \
+            --output {output.links}
+        """
+
+rule lapa_correct_talon:
+    input:
+        gtf = config['data']['filt_gtf'],
+        ab = config['data']['filt_ab'],
+        annot = config['data']['full_read_annot'],
+        links = config['data']['lapa_links']
+    resources:
+        threads = 1,
+        mem_gb = 64
+    output:
+        gtf = config['data']['lapa_gtf'],
+        ab = config['data']['lapa_ab']
+    shell:
+        """
+        lapa_correct_talon \
+                --links {input.links} \
+                --read_annot {input.annot} \
+                --gtf_input {input.gtf} \
+                --gtf_output {output.gtf} \
+                --abundance_input {input.ab} \
+                --abundance_output {output.ab} \
+                --keep_unsupported
+        """
+
+rule filt_lapa:
+    input:
+        ab = config['data']['lapa_ab'],
+        gtf = config['data']['lapa_gtf']
+    resources:
+        threads = 1,
+        mem_gb = 4
+    params:
+        t_nov = ['Known', 'NIC', 'NNC', 'ISM_rescue'],
+        g_nov = ['Known'],
+        filt_spikes = True
+    output:
+        filt_list = config['data']['lapa_filt_list']
+    run:
+        # filter based on novelty after defining
+        # rescue ISMS
+        df = ab_add_rescue_ism_cat(input.ab)
+        filt_df = filter_lapa_on_nov(df,
+                                     params.t_novs,
+                                     params.g_novs)
+
+        # filter out spike-ins
+        if params.filt_spikes:
+            temp = filter_spikes(input.gtf)
+            filt_df = filt_df.merge(temp, how='inner')
+
+        filt_df.to_csv(output.filt_list, index=False, sep='\t')
 
 # rule filt_lapa_ab:
 #     input:
