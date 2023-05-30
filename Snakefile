@@ -87,11 +87,16 @@ rule all:
           #   study=studies,
           #   allow_missing=True),
           #   batch=batch),
-         expand(expand(config['data']['lapa_ab'],
+         expand(expand(config['data']['lapa_filt_gtf'],
                 zip,
                 study=studies,
                 allow_missing=True),
-                batch=batch)
+                batch=batch),
+        expand(expand(config['data']['lapa_filt_ab'],
+               zip,
+               study=studies,
+               allow_missing=True),
+               batch=batch)
 
         # expand(config['data']['sg'], batch=batches),
         # expand(expand(config['data']['die_tsv'],
@@ -440,7 +445,7 @@ rule talon_init:
 	output:
 		db = config['ref']['talon_db']
 	params:
-		talon_opref = config['ref']['talon_db'].rsplit('_talon', maxsplit=1)[0],
+		talon_opref = config['ref']['talon_db'].rsplit('.db', maxsplit=1)[0],
 		genome = 'mm10',
 		annot = 'vM21'
 	resources:
@@ -543,15 +548,7 @@ rule talon_read_annot:
         """
 
 rule talon_unfilt_ab:
-# TODO - will probably have to update this expand
-# probably need to expand across all max_talon_run dbs
-# in all rule
     input:
-        # db = expand(config['data']['talon_db'],
-        #                 batch=batches,
-        #                 study=studies,
-        #                 talon_run=max_talon_runs)[0]
-        # db = config['data']['talon_db']
         db = lambda wc: get_talon_max_output_file(wc,
                                                   dataset_df,
                                                   config['data']['talon_db'])
@@ -574,15 +571,7 @@ rule talon_unfilt_ab:
         """
 
 rule talon_filt:
-# TODO - will probably have to update this expand
-# probably need to expand across all max_talon_run dbs
-# in all rule
     input:
-        # db = expand(config['data']['talon_db'],
-        #                 batch=batches,
-        #                 study=studies,
-        #                 talon_run=max_talon_runs)[0]
-        # db = config['data']['talon_db']
         db = lambda wc: get_talon_max_output_file(wc,
                                                   dataset_df,
                                                   config['data']['talon_db'])
@@ -605,15 +594,7 @@ rule talon_filt:
         """
 
 rule talon_filt_ab:
-# TODO - will probably have to update this expand
-# probably need to expand across all max_talon_run dbs
-# in all rule
     input:
-        # db = expand(config['data']['talon_db'],
-        #                 batch=batches,
-        #                 study=studies,
-        #                 talon_run=max_talon_runs)[0],
-        # db = config['data']['talon_db'],
         db = lambda wc: get_talon_max_output_file(wc,
                                                   dataset_df,
                                                   config['data']['talon_db']),
@@ -639,14 +620,6 @@ rule talon_filt_ab:
 
 rule talon_gtf:
     input:
-    # TODO - will probably have to update this expand
-    # probably need to expand across all max_talon_run dbs
-    # in all rule
-        # db = expand(config['data']['talon_db'],
-        #                 batch=batches,
-        #                 study=studies,
-        #                 talon_run=max_talon_runs)[0],
-        # db = config['data']['talon_db'],
         db = lambda wc: get_talon_max_output_file(wc,
                                                   dataset_df,
                                                   config['data']['talon_db']),
@@ -670,69 +643,6 @@ rule talon_gtf:
             --observed \
             --o {params.opref}
         """
-
-################################################################################
-################################ Swan ##########################################
-################################################################################
-def make_sg(input, params, wildcards):
-
-    # initialize
-    sg = swan.SwanGraph()
-    sg.add_annotation(input.annot)
-    sg.add_transcriptome(input.gtf, include_isms=True)
-    sg.add_abundance(input.filt_ab)
-    sg.add_abundance(input.ab, how='gene')
-
-    # add metadata
-    adatas = sg.get_adatas()
-    for adata in adatas:
-        adata.obs['genotype'] = adata.obs.dataset.str.rsplit('_', n=2, expand=True)[0]
-
-    sg.save_graph(params.prefix)
-
-rule make_sg:
-    input:
-        annot = config['ref']['gtf'],
-        gtf = config['data']['filt_gtf'],
-        filt_ab = config['data']['filt_ab'],
-        ab = config['data']['ab']
-    params:
-        prefix = config['data']['sg'].replace('.p', '')
-    resources:
-        mem_gb = 128,
-        threads = 1
-    output:
-        sg = config['data']['sg']
-    run:
-        make_sg(input, params, wildcards)
-
-rule swan_die:
-    input:
-        sg = config['data']['sg']
-    resources:
-        mem_gb = 128,
-        threads = 8
-    output:
-        out = config['data']['die_tsv']
-    run:
-        sg = swan.read(input.sg)
-        die, genes = sg.die_gene_test(obs_col='genotype',
-                                      obs_conditions=[wildcards.genotype1,
-                                                      wildcards.genotype2])
-        die.to_csv(output.out, sep='\t')
-
-rule swan_output_adata:
-    input:
-        sg = config['data']['sg']
-    resources:
-        mem_gb = 64,
-        threads = 1
-    output:
-        out = config['data']['adata']
-    run:
-        save_swan_adata(input.sg,
-                        output.out,
-                        how=wildcards.feature)
 
 ################################################################################
 ################################# LAPA #########################################
@@ -830,7 +740,7 @@ rule lapa_link:
         tes = expand(config['data']['lapa_ends'], end_mode='tes', allow_missing=True)[0]
     resources:
         threads = 1,
-        mem_gb = 64
+        mem_gb = 256
     params:
         tss_dir = expand(config['data']['lapa_ends'], end_mode='tss', allow_missing=True)[0].rsplit('/', maxsplit=1)[0]+'/',
         tes_dir = expand(config['data']['lapa_ends'], end_mode='tes', allow_missing=True)[0].rsplit('/', maxsplit=1)[0]+'/'
@@ -897,12 +807,99 @@ rule filt_lapa:
 
         filt_df.to_csv(output.filt_list, index=False, sep='\t')
 
-# rule filt_lapa_ab:
-#     input:
-#
-#
-# rule filt_lapa_gtf:
-#
+rule filt_lapa_ab:
+    input:
+        ab = config['data']['lapa_ab'],
+        filt_list = config['data']['lapa_filt_list']
+    resources:
+        threads = 4,
+        mem_gb = 32
+    output:
+        ab = config['data']['lapa_filt_ab']
+    run:
+        df = filt_lapa_ab(input.ab,
+                          input.filt_list)
+        df.to_csv(output.ab)
+
+
+
+rule filt_lapa_gtf:
+    input:
+        gtf = config['data']['lapa_gtf'],
+        filt_list = config['data']['lapa_filt_list']
+    resources:
+        threads = 4,
+        mem_gb = 32
+    output:
+        gtf = config['data']['lapa_filt_gtf']
+    run:
+        gtf = filt_lapa_gtf(input.gtf,
+                            input.filt_list)
+        gtf.to_gtf(output.gtf)
+
+################################################################################
+################################ Swan ##########################################
+################################################################################
+def make_sg(input, params, wildcards):
+
+    # initialize
+    sg = swan.SwanGraph()
+    sg.add_annotation(input.annot)
+    sg.add_transcriptome(input.gtf, include_isms=True)
+    sg.add_abundance(input.filt_ab)
+    sg.add_abundance(input.ab, how='gene')
+
+    # add metadata
+    adatas = sg.get_adatas()
+    for adata in adatas:
+        adata.obs['genotype'] = adata.obs.dataset.str.rsplit('_', n=2, expand=True)[0]
+
+    sg.save_graph(params.prefix)
+
+rule make_sg:
+    input:
+        annot = config['ref']['gtf'],
+        gtf = config['data']['filt_gtf'],
+        filt_ab = config['data']['filt_ab'],
+        ab = config['data']['ab']
+    params:
+        prefix = config['data']['sg'].replace('.p', '')
+    resources:
+        mem_gb = 128,
+        threads = 1
+    output:
+        sg = config['data']['sg']
+    run:
+        make_sg(input, params, wildcards)
+
+rule swan_die:
+    input:
+        sg = config['data']['sg']
+    resources:
+        mem_gb = 128,
+        threads = 8
+    output:
+        out = config['data']['die_tsv']
+    run:
+        sg = swan.read(input.sg)
+        die, genes = sg.die_gene_test(obs_col='genotype',
+                                      obs_conditions=[wildcards.genotype1,
+                                                      wildcards.genotype2])
+        die.to_csv(output.out, sep='\t')
+
+rule swan_output_adata:
+    input:
+        sg = config['data']['sg']
+    resources:
+        mem_gb = 64,
+        threads = 1
+    output:
+        out = config['data']['adata']
+    run:
+        save_swan_adata(input.sg,
+                        output.out,
+                        how=wildcards.feature)
+
 
 ################################################################################
 ##################################### DEG / DET ################################

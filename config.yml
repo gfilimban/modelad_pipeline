@@ -43,7 +43,7 @@ data:
 
   # talon files - split only by study
   ab: data/{batch}/talon/{study}/annot_talon_abundance.tsv
-  filt_list: data/{batch}/{study}/talon/talon_pass_list.tsv
+  filt_list: data/{batch}/talon/{study}/talon_pass_list.tsv
   filt_ab: data/{batch}/talon/{study}/annot_talon_abundance_filtered.tsv
   filt_gtf: data/{batch}/talon/{study}/annot_talon_observedOnly.gtf
   full_read_annot: data/{batch}/talon/{study}/annot_talon_read_annot.tsv
