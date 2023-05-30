@@ -295,7 +295,7 @@ def filter_spikes(gtf):
     Returns:
         filt_df (pandas df): DataFrame of gene id, transcript id passing filt
     """
-    df = pr.read_gtf(input.lapa_gtf, as_df=True)
+    df = pr.read_gtf(gtf, as_df=True)
     df = df.loc[~df.Chromosome.str.contains('SIRV')]
     df = df.loc[~df.Chromosome.str.contains('ERCC')]
     df = df.locc[df.Feature == 'transcript']

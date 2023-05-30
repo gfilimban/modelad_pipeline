@@ -787,8 +787,8 @@ rule filt_lapa:
         threads = 1,
         mem_gb = 4
     params:
-        t_nov = ['Known', 'NIC', 'NNC', 'ISM_rescue'],
-        g_nov = ['Known'],
+        t_novs = ['Known', 'NIC', 'NNC', 'ISM_rescue'],
+        g_novs = ['Known'],
         filt_spikes = True
     output:
         filt_list = config['data']['lapa_filt_list']

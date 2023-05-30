@@ -61,9 +61,9 @@ data:
   adata: data/{batch}/swan/swan_{feature}_adata.h5ad
 
   # lapa filtering
-  lapa_filt_list: data/{batch}/lapa/lapa_pass_list.tsv
-  lapa_filt_gtf: data/{batch}/lapa/lapa_corrected_filtered.gtf
-  lapa_filt_ab: data/{batch}/lapa/lapa_corrected_abundance_filtered.tsv
+  lapa_filt_list: data/{batch}/lapa/{study}/lapa_pass_list.tsv
+  lapa_filt_gtf: data/{batch}/lapa/{study}/lapa_corrected_filtered.gtf
+  lapa_filt_ab: data/{batch}/lapa/{study}/lapa_corrected_abundance_filtered.tsv
 
   # degs and dets
   de_tsv: data/{batch}/de/{genotype1}_{genotype2}_de_{feature}.tsv
