@@ -266,7 +266,7 @@ rule ca_to_tsv:
         threads = 1,
         mem_gb = 32
     params:
-        opref = config['ref']['ca_ics'].rsplit('/')[1].split('_ics.tsv')[0]
+        opref = config['ref']['ca_ics'].split('_ics.tsv')[0]
     output:
         expand(config['ref']['ca_ends'],
                zip,
