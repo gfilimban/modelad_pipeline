@@ -96,8 +96,39 @@ rule all:
          #        study=studies,
          #        allow_missing=True),
          #        batch=batch),
-        expand(config['data']['ca'],
+        # expand(config['data']['ca_ref'],
+        #        batch=batch),
+
+
+        # testing this stuff
+        # expand(config['ref']['ca_ends'],
+        #        zip,
+        #        end_mode=end_modes),
+        # expand(expand(config['data']['ics'],
+        #        zip,
+        #        study=studies,
+        #        allow_missing=True),
+        #        batch=batch),
+        # expand(expand(config['data']['ends'],
+        #       zip,
+        #       study=studies,
+        #       allow_missing=True),
+        #       batch=batch,
+        #       end_mode=end_modes),
+        # expand(config['data']['agg_ics'],
+        #        batch=batch),
+        # expand(config['data']['agg_ends'],
+        #        batch=batch,
+        #        end_mode=end_modes),
+        # expand(expand(config['data']['agg_ends'],
+        #               zip,
+        #               end_mode=end_modes,
+        #               allow_missing=True),
+        #               batch=batch)),
+        expand(config['data']['ca_ref'],
                batch=batch),
+
+
         expand(expand(config['data']['lapa_filt_ab'],
                zip,
                study=studies,
@@ -234,12 +265,12 @@ rule ca_to_tsv:
         threads = 1,
         mem_gb = 32
     params:
-        opref = config['ref']['ic'].rsplit('/')[1].split('_ics.tsv')[0]
+        opref = config['ref']['ca_ics'].rsplit('/')[1].split('_ics.tsv')[0]
     output:
-        expand(config['ref']['ca'],
+        expand(config['ref']['ca_ends'],
                zip,
                end_mode=end_modes),
-        config['ref']['ic']
+        config['ref']['ca_ics']
     run:
         cerberus.write_h5_to_tsv(input.ca,
                                  params.opref)
@@ -903,7 +934,7 @@ rule cerb_gtf_to_ics:
         mem_gb = 64,
         threads = 1
     output:
-        ics = config['data']['cerberus']['ics']
+        ics = config['data']['ics']
     run:
         cerberus.gtf_to_ics(input.gtf,
                             output.ics)
@@ -922,7 +953,7 @@ def get_agg_settings(wc, param='files'):
     # get reference ics / tsss / tess first
     # first source is 'cerberus' to indicate
     # preservation of source / novelty
-    if ic == True
+    if ic == True:
         files += [config['ref']['ca_ics']]
     else:
         files += expand(config['ref']['ca_ends'],
@@ -958,7 +989,7 @@ rule cerb_agg_ends:
     resources:
     params:
         add_ends = True,
-        refs = False
+        refs = False,
         slack = lambda wc:get_cerb_settings(wc, cerb_settings, 'agg_slack'),
         sources = lambda wc:get_agg_settings(wc, cerb_settings, 'source')
     output:
@@ -979,7 +1010,7 @@ rule cerb_agg_ics:
       files = lambda wc:get_agg_settings(wc, 'file')
   resources:
   params:
-      refs = False
+      refs = False,
       sources = lambda wc:get_agg_settings(wc, cerb_settings, 'source')
   output:
       ics = config['data']['agg_ics']
@@ -995,15 +1026,15 @@ rule cerb_write_ref:
         ic = config['data']['agg_ics'],
         tss = lambda wc:expand(config['data']['agg_ends'],
                                batch=wc.batch,
-                               end_mode='tss'),
+                               end_mode='tss')[0],
         tes = lambda wc:expand(config['data']['agg_ends'],
                               batch=wc.batch,
-                              end_mode='tes')
+                              end_mode='tes')[0]
     resources:
         threads = 4,
         mem_gb = 32
     output:
-        h5 = config['data']['ca']
+        h5 = config['data']['ca_ref']
     run:
         cerberus.write_reference(input.tss,
                                  input.tes,
