@@ -16,7 +16,7 @@ ref:
   ca_link: https://www.encodeproject.org/files/ENCFF229IBK/@@download/ENCFF229IBK.h5
   ca: ref/ca.h5
   ca_ends: ref/ca_{end_mode}.bed
-  ca_ics: ref/ca_ics.tsv
+  ca_ics: ref/ca_ic.tsv
 
 data:
   fastq: data/{batch}/raw/{dataset}_{flowcell}.fastq

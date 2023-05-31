@@ -82,61 +82,13 @@ rule all:
           batch=batches,
           dataset=datasets,
           flowcell=flowcells),
-        # expand(expand(config['data']['talon_db'],
-        #   zip,
-        #   study=studies,
-        #   talon_run=max_talon_runs, allow_missing=True),
-        #   batch=batch),
-          # expand(expand(config['data']['full_read_annot'],
-          #   zip,
-          #   study=studies,
-          #   allow_missing=True),
-          #   batch=batch),
-         # expand(expand(config['data']['lapa_filt_gtf'],
-         #        zip,
-         #        study=studies,
-         #        allow_missing=True),
-         #        batch=batch),
-        # expand(config['data']['ca_ref'],
-        #        batch=batch),
-
-
-        # testing this stuff
-        # expand(config['ref']['ca_ends'],
-        #        zip,
-        #        end_mode=end_modes),
-        # expand(expand(config['data']['ics'],
-        #        zip,
-        #        study=studies,
-        #        allow_missing=True),
-        #        batch=batch),
-        # expand(expand(config['data']['ends'],
-        #       zip,
-        #       study=studies,
-        #       allow_missing=True),
-        #       batch=batch,
-        #       end_mode=end_modes),
-        # expand(config['data']['agg_ics'],
-        #        batch=batch),
-        # expand(config['data']['agg_ends'],
-        #        batch=batch,
-        #        end_mode=end_modes),
-        # expand(expand(config['data']['agg_ends'],
-        #               zip,
-        #               end_mode=end_modes,
-        #               allow_missing=True),
-        #               batch=batch)),
         expand(config['data']['ca_ref'],
                batch=batch),
-
-
         expand(expand(config['data']['lapa_filt_ab'],
                zip,
                study=studies,
                allow_missing=True),
                batch=batch),
-
-
         # expand(config['data']['sg'], batch=batches),
         # expand(expand(config['data']['die_tsv'],
         #        zip,
@@ -266,7 +218,7 @@ rule ca_to_tsv:
         threads = 1,
         mem_gb = 32
     params:
-        opref = config['ref']['ca_ics'].split('_ics.tsv')[0]
+        opref = config['ref']['ca_ics'].split('_ic.tsv')[0]
     output:
         expand(config['ref']['ca_ends'],
                zip,
@@ -988,16 +940,18 @@ rule cerb_agg_ends:
     input:
         files = lambda wc:get_agg_settings(wc, 'file')
     resources:
+      threads = 4,
+      mem_gb = 32
     params:
         add_ends = True,
         refs = False,
         slack = lambda wc:get_cerb_settings(wc, cerb_settings, 'agg_slack'),
-        sources = lambda wc:get_agg_settings(wc, cerb_settings, 'source')
+        sources = lambda wc:get_agg_settings(wc, 'source')
     output:
         ends = config['data']['agg_ends']
     run:
-        refs = [refs for i in range(len(input.files))]
-        add_ends = [add_ends for i in range(len(input.files))]
+        refs = [params.refs for i in range(len(input.files))]
+        add_ends = [params.add_ends for i in range(len(input.files))]
         cerberus.agg_ends(input.files,
                           add_ends,
                           refs,
@@ -1010,13 +964,15 @@ rule cerb_agg_ics:
   input:
       files = lambda wc:get_agg_settings(wc, 'file')
   resources:
+    threads = 4,
+    mem_gb = 32
   params:
       refs = False,
-      sources = lambda wc:get_agg_settings(wc, cerb_settings, 'source')
+      sources = lambda wc:get_agg_settings(wc, 'source')
   output:
       ics = config['data']['agg_ics']
   run:
-      refs = [refs for i in range(len(input.files))]
+      refs = [params.refs for i in range(len(input.files))]
       cerberus.agg_ics(input.files,
                         refs,
                         params.sources,
@@ -1033,7 +989,7 @@ rule cerb_write_ref:
                               end_mode='tes')[0]
     resources:
         threads = 4,
-        mem_gb = 32
+        mem_gb = 64
     output:
         h5 = config['data']['ca_ref']
     run:
