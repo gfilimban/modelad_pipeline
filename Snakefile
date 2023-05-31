@@ -3,6 +3,7 @@ import os
 import sys
 import swan_vis as swan
 import itertools
+import cerberus
 
 p = os.path.dirname(os.getcwd())
 sys.path.append(p)
@@ -922,7 +923,7 @@ rule cerb_gtf_to_bed:
         dist = lambda wc:get_cerb_settings(wc, cerb_settings, 'dist')
     run:
         cerberus.gtf_to_bed(input.gtf,
-                            wildcards.end_type,
+                            wildcards.end_mode,
                             output.ends,
                             dist=params.dist,
                             slack=params.slack)
@@ -1001,7 +1002,7 @@ rule cerb_agg_ends:
                           add_ends,
                           refs,
                           params.sources,
-                          wildcards.end_type,
+                          wildcards.end_mode,
                           params.slack,
                           output.ends)
 
