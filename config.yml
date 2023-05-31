@@ -13,6 +13,10 @@ ref:
   gtf_utr: ref/annot_utr.gtf
   sjs: ref/annot_junc.bed
   talon_db: ref/ref.db
+  ca_link: https://www.encodeproject.org/files/ENCFF229IBK/@@download/ENCFF229IBK.h5
+  ca: ref/ca.h5
+  ca_ends: ref/ca_{end_mode}.bed
+  ca_ics: ref/ca_ics.tsv
 
 data:
   fastq: data/{batch}/raw/{dataset}_{flowcell}.fastq
@@ -55,15 +59,23 @@ data:
   lapa_gtf: data/{batch}/lapa/{study}/lapa_corrected.gtf
   lapa_ab: data/{batch}/lapa/{study}/lapa_corrected_abundance.tsv
 
-  # swan
-  sg: data/{batch}/swan/swan.p
-  die_tsv: data/{batch}/swan/{genotype1}_{genotype2}_die.tsv
-  adata: data/{batch}/swan/swan_{feature}_adata.h5ad
-
   # lapa filtering
   lapa_filt_list: data/{batch}/lapa/{study}/lapa_pass_list.tsv
   lapa_filt_gtf: data/{batch}/lapa/{study}/lapa_corrected_filtered.gtf
   lapa_filt_ab: data/{batch}/lapa/{study}/lapa_corrected_abundance_filtered.tsv
+
+  # cerberus
+  ics: data/{batch}/cerberus/{study}/ics.tsv
+  ends: data/{batch}/cerberus/{study}/{end_mode}.bed
+  agg_ics: data/{batch}/cerberus/agg_ics.tsv
+  agg_ends: data/{batch}/cerberus/agg_{end_mode}.bed
+  ca_ref: data/{batch}/cerberus/ca_ref.h5
+  ca: data/{batch}/talon/{study}/annot_{talon_run}_talon.db
+
+  # swan
+  sg: data/{batch}/swan/swan.p
+  die_tsv: data/{batch}/swan/{genotype1}_{genotype2}_die.tsv
+  adata: data/{batch}/swan/swan_{feature}_adata.h5ad
 
   # degs and dets
   de_tsv: data/{batch}/de/{genotype1}_{genotype2}_de_{feature}.tsv

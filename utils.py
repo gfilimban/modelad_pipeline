@@ -298,7 +298,7 @@ def filter_spikes(gtf):
     df = pr.read_gtf(gtf, as_df=True)
     df = df.loc[~df.Chromosome.str.contains('SIRV')]
     df = df.loc[~df.Chromosome.str.contains('ERCC')]
-    df = df.locc[df.Feature == 'transcript']
+    df = df.loc[df.Feature == 'transcript']
     filt_df = df[['gene_id', 'transcript_id']].drop_duplicates()
     filt_df = filt_df.rename({'gene_id':'gid',
                               'transcript_id':'tid'}, axis=1)

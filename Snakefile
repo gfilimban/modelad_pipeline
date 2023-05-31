@@ -12,10 +12,14 @@ from utils import *
 # settings we can change each time it's run
 configfile: 'config.yml'
 config_tsv = '230516_config.tsv'
-# config_tsv = '230429_config.tsv'
-meta_tsv = 'mouse_metadata.tsv'
+cerb_tsv = 'cerberus.tsv' # gtf_to_bed and agg_ends settings
 datasets_per_run = 4 # number of datasets per talon run
 auto_dedupe = True # deduplicate runs w/ same stem but different chop numbers
+cerb_settings = pd.read_csv(cerb_tsv, sep='\t')
+
+# should be static
+meta_tsv = 'mouse_metadata.tsv'
+
 
 df, dataset_df = parse_config_file(config_tsv,
                        meta_tsv,
@@ -87,16 +91,19 @@ rule all:
           #   study=studies,
           #   allow_missing=True),
           #   batch=batch),
-         expand(expand(config['data']['lapa_filt_gtf'],
-                zip,
-                study=studies,
-                allow_missing=True),
-                batch=batch),
+         # expand(expand(config['data']['lapa_filt_gtf'],
+         #        zip,
+         #        study=studies,
+         #        allow_missing=True),
+         #        batch=batch),
+        expand(config['data']['ca'],
+               batch=batch),
         expand(expand(config['data']['lapa_filt_ab'],
                zip,
                study=studies,
                allow_missing=True),
-               batch=batch)
+               batch=batch),
+
 
         # expand(config['data']['sg'], batch=batches),
         # expand(expand(config['data']['die_tsv'],
@@ -213,6 +220,29 @@ rule get_annot_sjs:
              --minIntronSize 21 \
              --o {output.sjs}
         """
+
+use rule dl as dl_ca with:
+    params:
+        link = config['ref']['ca_link']
+    output:
+        out = config['ref']['ca']
+
+rule ca_to_tsv:
+    input:
+        ca = config['ref']['ca']
+    resources:
+        threads = 1,
+        mem_gb = 32
+    params:
+        opref = config['ref']['ic'].rsplit('/')[1].split('_ics.tsv')[0]
+    output:
+        expand(config['ref']['ca'],
+               zip,
+               end_mode=end_modes),
+        config['ref']['ic']
+    run:
+        cerberus.write_h5_to_tsv(input.ca,
+                                 params.opref)
 
 ################################################################################
 ############################# General rules ####################################
@@ -785,7 +815,7 @@ rule filt_lapa:
         gtf = config['data']['lapa_gtf']
     resources:
         threads = 1,
-        mem_gb = 4
+        mem_gb = 32
     params:
         t_novs = ['Known', 'NIC', 'NNC', 'ISM_rescue'],
         g_novs = ['Known'],
@@ -836,6 +866,151 @@ rule filt_lapa_gtf:
         gtf = filt_lapa_gtf(input.gtf,
                             input.filt_list)
         gtf.to_gtf(output.gtf)
+
+
+################################################################################
+############################## Cerberus ########################################
+################################################################################
+def get_cerb_settings(wc, df, col):
+    """
+    Get Cerberus end-related settings
+    """
+    col = f'{wc.end_mode}_{col}'
+    return df[col].tolist()[0]
+
+rule cerb_gtf_to_bed:
+    input:
+        gtf = config['data']['lapa_filt_gtf']
+    resources:
+        mem_gb = 64,
+        threads = 1
+    output:
+        ends = config['data']['ends']
+    params:
+        slack = lambda wc:get_cerb_settings(wc, cerb_settings, 'slack'),
+        dist = lambda wc:get_cerb_settings(wc, cerb_settings, 'dist')
+    run:
+        cerberus.gtf_to_bed(input.gtf,
+                            wildcards.end_type,
+                            output.ends,
+                            dist=params.dist,
+                            slack=params.slack)
+
+rule cerb_gtf_to_ics:
+    input:
+        gtf = config['data']['lapa_filt_gtf']
+    resources:
+        mem_gb = 64,
+        threads = 1
+    output:
+        ics = config['data']['cerberus']['ics']
+    run:
+        cerberus.gtf_to_ics(input.gtf,
+                            output.ics)
+
+
+def get_agg_settings(wc, param='files'):
+    settings = {}
+    files = []
+    sources = []
+
+    if 'end_mode' in wc.keys():
+        ic = False
+    else:
+        ic = True
+
+    # get reference ics / tsss / tess first
+    # first source is 'cerberus' to indicate
+    # preservation of source / novelty
+    if ic == True
+        files += [config['ref']['ca_ics']]
+    else:
+        files += expand(config['ref']['ca_ends'],
+                        zip,
+                        end_mode=wc.end_mode)
+    sources += ['cerberus']
+
+    # then get the files from each study
+    # use the studies as the sources
+    if ic == True:
+        files += expand(expand(config['data']['ics'],
+               zip,
+               study=studies,
+               allow_missing=True),
+               batch=batch)
+    else:
+        files += expand(expand(config['data']['ends'],
+               zip,
+               study=studies,
+               allow_missing=True),
+               batch=batch,
+               end_mode=wc.end_mode)
+    sources += studies
+
+    settings['file'] = files
+    settings['source'] = sources
+
+    return settings[param]
+
+rule cerb_agg_ends:
+    input:
+        files = lambda wc:get_agg_settings(wc, 'file')
+    resources:
+    params:
+        add_ends = True,
+        refs = False
+        slack = lambda wc:get_cerb_settings(wc, cerb_settings, 'agg_slack'),
+        sources = lambda wc:get_agg_settings(wc, cerb_settings, 'source')
+    output:
+        ends = config['data']['agg_ends']
+    run:
+        refs = [refs for i in range(len(input.files))]
+        add_ends = [add_ends for i in range(len(input.files))]
+        cerberus.agg_ends(input.files,
+                          add_ends,
+                          refs,
+                          params.sources,
+                          wildcards.end_type,
+                          params.slack,
+                          output.ends)
+
+rule cerb_agg_ics:
+  input:
+      files = lambda wc:get_agg_settings(wc, 'file')
+  resources:
+  params:
+      refs = False
+      sources = lambda wc:get_agg_settings(wc, cerb_settings, 'source')
+  output:
+      ics = config['data']['agg_ics']
+  run:
+      refs = [refs for i in range(len(input.files))]
+      cerberus.agg_ics(input.files,
+                        refs,
+                        params.sources,
+                        output.ics)
+
+rule cerb_write_ref:
+    input:
+        ic = config['data']['agg_ics'],
+        tss = lambda wc:expand(config['data']['agg_ends'],
+                               batch=wc.batch,
+                               end_mode='tss'),
+        tes = lambda wc:expand(config['data']['agg_ends'],
+                              batch=wc.batch,
+                              end_mode='tes')
+    resources:
+        threads = 4,
+        mem_gb = 32
+    output:
+        h5 = config['data']['ca']
+    run:
+        cerberus.write_reference(input.tss,
+                                 input.tes,
+                                 input.ic,
+                                 output.h5)
+
+
 
 ################################################################################
 ################################ Swan ##########################################
