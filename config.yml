@@ -13,7 +13,7 @@ ref:
   gtf_utr: ref/annot_utr.gtf
   sjs: ref/annot_junc.bed
   talon_db: ref/ref.db
-  ca_link: https://www.encodeproject.org/files/ENCFF229IBK/@@download/ENCFF229IBK.h5
+  ca_link: https://www.encodeproject.org/files/ENCFF999KXH/@@download/ENCFF999KXH.h5
   ca: ref/ca.h5
   ca_ends: ref/ca_{end_mode}.bed
   ca_ics: ref/ca_ic.tsv

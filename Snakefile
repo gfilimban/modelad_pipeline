@@ -72,6 +72,12 @@ else:
 
 rule all:
     input:
+        # expand(expand(config['data']['lapa_gtf'],
+        #        zip,
+        #        study=studies,
+        #        allow_missing=True),
+        #        batch=batch)
+        # curr working
         expand(config['data']['map_stats'],
            zip,
            batch=batches,
@@ -89,6 +95,8 @@ rule all:
                study=studies,
                allow_missing=True),
                batch=batch),
+
+        # need to clean up these guyes
         # expand(config['data']['sg'], batch=batches),
         # expand(expand(config['data']['die_tsv'],
         #        zip,
@@ -103,8 +111,6 @@ rule all:
         #        allow_missing=True),
         #        batch=batches[0],
         #        feature=['gene', 'iso'])
-
-
         # expand(expand(config['data']['de_tsv'],
         #        zip,
         #        genotype1=get_genotype_pairs(df, 0)[0],
@@ -112,9 +118,6 @@ rule all:
         #        allow_missing=True),
         #        batch=batches[0],
         #        feature=['gene', 'iso'])
-
-
-        # expand(config['data']['lapa_ab'], batch=batches)
 
 ################################################################################
 ########################### Ref. processing ####################################
