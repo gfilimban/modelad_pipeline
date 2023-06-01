@@ -95,6 +95,7 @@ rule all:
           dataset=datasets,
           flowcell=flowcells),
         # expand(config['data']['ca_annot'],
+        #        zip,
         #        batch=batch,
         #        source=source_df.loc[source_df.index.max(), 'source'],
         #        cerb_run=source_df.index.max()),
@@ -1029,7 +1030,7 @@ rule cerb_annot:
 use rule cerb_annot as first_cerb_annot with:
     input:
         h5 = expand(config['data']['ca_ref'],
-                    batch=wc.batch),
+                    batch=batch),
         gtf = config['ref']['gtf']
     params:
         source = 'vM21',
