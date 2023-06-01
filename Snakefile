@@ -1040,20 +1040,20 @@ use rule cerb_annot as first_cerb_annot with:
                source=source_df.loc[0, 'source'],
                cerb_run=0)
 
-use rule cerb_annot as seq_cerb_annot with:
-    input:
-        h5 = lambda wc: expand(config['data']['ca_annot'],
-                               zip,
-                               batch=wc.batch,
-                               source=source_df.loc[wc.cerb_run-1, 'source'],
-                               cerb_run=wc.cerb_run-1),
-        gtf = config['data']['lapa_gtf']
-    params:
-        source = lambda wc:wc.source,
-        gene_source = 'vM21'
-    output:
-        db = config['data']['talon_db'],
-        annot = config['data']['read_annot']
+# use rule cerb_annot as seq_cerb_annot with:
+#     input:
+#         h5 = lambda wc: expand(config['data']['ca_annot'],
+#                                zip,
+#                                batch=wc.batch,
+#                                source=source_df.loc[wc.cerb_run-1, 'source'],
+#                                cerb_run=wc.cerb_run-1),
+#         gtf = config['data']['lapa_gtf']
+#     params:
+#         source = lambda wc:wc.source,
+#         gene_source = 'vM21'
+#     output:
+#         db = config['data']['talon_db'],
+#         annot = config['data']['read_annot']
 
 ################################################################################
 ################################ Swan ##########################################
