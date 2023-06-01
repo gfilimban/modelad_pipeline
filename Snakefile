@@ -38,8 +38,13 @@ genotypes = df.genotype.unique().tolist()
 # from the df w/ one line for each dataset / mouse
 temp = dataset_df[['study', 'talon_run_num']].drop_duplicates()
 temp = temp.groupby('study').max().reset_index()
-studies = temp.study.tolist()
 max_talon_runs = temp.talon_run_num.tolist()
+studies = temp.study.tolist()
+
+# for cerberus annotate_transcriptome
+sources = ['vM21']+studies
+source_df = pd.DataFrame()
+source_df['source'] = sources
 
 wildcard_constraints:
     genotype1= '|'.join([re.escape(x) for x in genotypes]),
@@ -88,8 +93,10 @@ rule all:
           batch=batches,
           dataset=datasets,
           flowcell=flowcells),
-        expand(config['data']['ca_ref'],
-               batch=batch),
+        expand(config['data']['ca_annot'],
+               batch=batch,
+               source=source_df.loc[source_df.index.max(), 'source'].tolist()[0],
+               cerb_run=source_df.index.max()),
         expand(expand(config['data']['lapa_filt_ab'],
                zip,
                study=studies,
@@ -1001,7 +1008,46 @@ rule cerb_write_ref:
                                  input.ic,
                                  output.h5)
 
+rule cerb_annot:
+    resources:
+        mem_gb = 64,
+        threads = 16
+    run:
+        cerberus.annotate_transcriptome(input.gtf,
+                                        input.h5,
+                                        params.source,
+                                        params.gene_source,
+                                        output.h5)
 
+# first one should be with vM21
+use rule cerb_annot as first_cerb_annot with:
+    input:
+        h5 = config['data']['ca_ref'],
+        gtf = config['ref']['gtf']
+    params:
+        source = 'vM21',
+        gene_source = None
+    output:
+        h5 = expand(config['data']['ca_annot'],
+               batch=batch,
+               source=source_df.loc[0, 'source'].tolist()[0],
+               cerb_run=0),
+
+
+use rule cerb_annot as seq_cerb_annot with:
+    input:
+        h5 = lambda wc: expand(config['data']['ca_annot'],
+                               zip,
+                               source=source_df.loc[wc.cerb_run-1, 'source'].tolist()[0],
+                               cerb_run=wc.cerb_run-1,
+                               allow_missing=True),
+        gtf = config['data']['lapa_gtf']
+    params:
+        source = lambda wc:wc.source,
+        gene_source = 'vM21'
+    output:
+        db = config['data']['talon_db'],
+        annot = config['data']['read_annot']
 
 ################################################################################
 ################################ Swan ##########################################
