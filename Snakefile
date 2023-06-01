@@ -98,12 +98,12 @@ rule all:
         #        batch=batch,
         #        source=source_df.loc[source_df.index.max(), 'source'],
         #        cerb_run=source_df.index.max()),
-        expand(config['data']['ca_annot'],
-               zip,
-               batch=batch,
-               source=source_df.loc[0, 'source'],
-               cerb_run=0),
-        # 'data/230516/cerberus/ca_vM21_0_annot.h5',
+        # expand(config['data']['ca_annot'],
+        #        zip,
+        #        batch=batch,
+        #        source=source_df.loc[0, 'source'],
+        #        cerb_run=0),
+        'data/230516/cerberus/ca_vM21_0_annot.h5',
         expand(expand(config['data']['lapa_filt_ab'],
                zip,
                study=studies,
@@ -1035,11 +1035,12 @@ use rule cerb_annot as first_cerb_annot with:
         source = 'vM21',
         gene_source = None
     output:
-        h5 = expand(config['data']['ca_annot'],
-               zip,
-               batch=batch,
-               source=source_df.loc[0, 'source'],
-               cerb_run=0),
+        # h5 = expand(config['data']['ca_annot'],
+        #        zip,
+        #        batch=batch,
+        #        source=source_df.loc[0, 'source'],
+        #        cerb_run=0),
+        h5 = 'data/230516/cerberus/ca_vM21_0_annot.h5'
 
 
 use rule cerb_annot as seq_cerb_annot with:
