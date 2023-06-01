@@ -46,10 +46,6 @@ sources = ['vM21']+studies
 source_df = pd.DataFrame()
 source_df['source'] = sources
 
-wildcard_constraints:
-    genotype1= '|'.join([re.escape(x) for x in genotypes]),
-    genotype2= '|'.join([re.escape(x) for x in genotypes])
-
 end_modes = ['tss', 'tes']
 
 def get_genotype_pairs(df, pair_num):
@@ -74,6 +70,11 @@ if len(df.batch.unique()) > 1:
     raise ValueError('Must only have one batch per config')
 else:
     batch = batches[0]
+
+wildcard_constraints:
+    genotype1= '|'.join([re.escape(x) for x in genotypes]),
+    genotype2= '|'.join([re.escape(x) for x in genotypes]),
+    batch=batch
 
 rule all:
     input:
@@ -102,6 +103,7 @@ rule all:
                batch=batch,
                source=source_df.loc[0, 'source'],
                cerb_run=0),
+        # 'data/230516/cerberus/ca_vM21_0_annot.h5',
         expand(expand(config['data']['lapa_filt_ab'],
                zip,
                study=studies,
