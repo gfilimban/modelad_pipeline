@@ -98,6 +98,7 @@ rule all:
         #        source=source_df.loc[source_df.index.max(), 'source'],
         #        cerb_run=source_df.index.max()),
         expand(config['data']['ca_annot'],
+               zip,
                batch=batch,
                source=source_df.loc[0, 'source'],
                cerb_run=0),
