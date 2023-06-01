@@ -1028,7 +1028,8 @@ rule cerb_annot:
 # first one should be with vM21
 use rule cerb_annot as first_cerb_annot with:
     input:
-        h5 = config['data']['ca_ref'],
+        h5 = expand(config['data']['ca_ref'],
+                    batch=wc.batch),
         gtf = config['ref']['gtf']
     params:
         source = 'vM21',
