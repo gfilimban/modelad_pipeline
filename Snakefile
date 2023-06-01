@@ -95,7 +95,7 @@ rule all:
           flowcell=flowcells),
         expand(config['data']['ca_annot'],
                batch=batch,
-               source=source_df.loc[source_df.index.max(), 'source'].tolist()[0],
+               source=source_df.loc[source_df.index.max(), 'source'],
                cerb_run=source_df.index.max()),
         expand(expand(config['data']['lapa_filt_ab'],
                zip,
@@ -1029,8 +1029,9 @@ use rule cerb_annot as first_cerb_annot with:
         gene_source = None
     output:
         h5 = expand(config['data']['ca_annot'],
+               zip,
                batch=batch,
-               source=source_df.loc[0, 'source'].tolist()[0],
+               source=source_df.loc[0, 'source'],
                cerb_run=0),
 
 
@@ -1038,9 +1039,8 @@ use rule cerb_annot as seq_cerb_annot with:
     input:
         h5 = lambda wc: expand(config['data']['ca_annot'],
                                zip,
-                               source=source_df.loc[wc.cerb_run-1, 'source'].tolist()[0],
-                               cerb_run=wc.cerb_run-1,
-                               allow_missing=True),
+                               source=source_df.loc[wc.cerb_run-1, 'source'],
+                               cerb_run=wc.cerb_run-1),
         gtf = config['data']['lapa_gtf']
     params:
         source = lambda wc:wc.source,
