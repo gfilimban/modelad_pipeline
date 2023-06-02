@@ -11,6 +11,7 @@ snakemake \
 snakemake -s Snakefile --dag | dot -Tpng > ruledag.png
 ```
 
+
 ```bash
 snakemake \
   -s Snakefile \

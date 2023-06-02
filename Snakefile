@@ -84,26 +84,31 @@ rule all:
         #        allow_missing=True),
         #        batch=batch)
         # curr working
-        expand(config['data']['map_stats'],
-           zip,
-           batch=batches,
-           dataset=datasets,
-           flowcell=flowcells),
-        expand(config['data']['tc_stats'],
-          zip,
-          batch=batches,
-          dataset=datasets,
-          flowcell=flowcells),
-        # expand(config['data']['ca_annot'],
-        #        zip,
-        #        batch=batch,
-        #        source=source_df.loc[source_df.index.max(), 'source'],
-        #        cerb_run=source_df.index.max()),
+        # expand(config['data']['map_stats'],
+        #    zip,
+        #    batch=batches,
+        #    dataset=datasets,
+        #    flowcell=flowcells),
+        # expand(config['data']['tc_stats'],
+        #   zip,
+        #   batch=batches,
+        #   dataset=datasets,
+        #   flowcell=flowcells),
         expand(config['data']['ca_annot'],
                zip,
                batch=batch,
-               source=source_df.loc[0, 'source'],
-               cerb_run=0),
+               study=source_df.loc[source_df.index.max(), 'source'],
+               cerb_run=source_df.index.max()),
+        # expand(config['data']['ca_annot'],
+        #        zip,
+        #        batch=batch,
+        #        study=source_df.loc[1, 'source'],
+        #        cerb_run=1),
+        # expand(config['data']['ca_annot'],
+        #        zip,
+        #        batch=batch,
+        #        study=source_df.loc[0, 'source'],
+        #        cerb_run=0),
         expand(expand(config['data']['lapa_filt_ab'],
                zip,
                study=studies,
@@ -1019,6 +1024,14 @@ rule cerb_annot:
     resources:
         mem_gb = 64,
         threads = 16
+    # shell:
+    #     """
+    #     cerberus annotate_transcriptome \
+    #         --gtf {input.gtf} \
+    #         --h5 {input.h5} \
+    #         --source {params.source} \
+    #         -o {output.h5}
+    #     """
     run:
         cerberus.annotate_transcriptome(input.gtf,
                                         input.h5,
@@ -1030,7 +1043,7 @@ rule cerb_annot:
 use rule cerb_annot as first_cerb_annot with:
     input:
         h5 = expand(config['data']['ca_ref'],
-                    batch=batch),
+                    batch=batch)[0],
         gtf = config['ref']['gtf']
     params:
         source = 'vM21',
@@ -1039,23 +1052,41 @@ use rule cerb_annot as first_cerb_annot with:
         h5 = expand(config['data']['ca_annot'],
                zip,
                batch=batch,
-               source=source_df.loc[0, 'source'],
-               cerb_run=0)
+               study=source_df.loc[0, 'source'],
+               cerb_run=0)[0]
 
-# use rule cerb_annot as seq_cerb_annot with:
-#     input:
-#         h5 = lambda wc: expand(config['data']['ca_annot'],
-#                                zip,
-#                                batch=wc.batch,
-#                                source=source_df.loc[wc.cerb_run-1, 'source'],
-#                                cerb_run=wc.cerb_run-1),
-#         gtf = config['data']['lapa_gtf']
-#     params:
-#         source = lambda wc:wc.source,
-#         gene_source = 'vM21'
-#     output:
-#         db = config['data']['talon_db'],
-#         annot = config['data']['read_annot']
+# TODO - rewrite this
+def get_seq_cerb_h5(wc, df):
+    cerb_run = int(wc.cerb_run)-1
+    if cerb_run < 0:
+        cerb_run = 0
+    study = df.loc[cerb_run, 'source']
+    h5 = expand(config['data']['ca_annot'],
+                           zip,
+                           batch=wc.batch,
+                           study=study,
+                           cerb_run=cerb_run)[0]
+    return h5
+
+use rule cerb_annot as seq_cerb_annot with:
+    input:
+        h5 = lambda wc: get_seq_cerb_h5(wc, source_df),
+        # h5 = lambda wc: expand(config['data']['ca_annot'],
+        #                        zip,
+        #                        batch=wc.batch,
+        #                        study=source_df.loc[int(wc.cerb_run)-1, 'source'],
+        #                        cerb_run=int(wc.cerb_run)-1)[0],
+        # h5 = lambda wc:expand(config['data']['ca_annot'],
+        #        zip,
+        #        batch=wc.batch,
+        #        study=source_df.loc[0, 'source'],
+        #        cerb_run=0)[0],
+        gtf = config['data']['lapa_filt_gtf']
+    params:
+        source = lambda wc:wc.study,
+        gene_source = 'vM21'
+    output:
+        h5 = config['data']['ca_annot']
 
 ################################################################################
 ################################ Swan ##########################################

@@ -71,7 +71,7 @@ data:
   agg_ics: data/{batch}/cerberus/agg_ics.tsv
   agg_ends: data/{batch}/cerberus/agg_{end_mode}.bed
   ca_ref: data/{batch}/cerberus/ca_ref.h5
-  ca_annot: data/{batch}/cerberus/ca_{source}_{cerb_run}_annot.h5
+  ca_annot: data/{batch}/cerberus/ca_{study}_{cerb_run}_annot.h5
 
   # swan
   sg: data/{batch}/swan/swan.p
