@@ -78,11 +78,6 @@ wildcard_constraints:
 
 rule all:
     input:
-        # expand(expand(config['data']['lapa_gtf'],
-        #        zip,
-        #        study=studies,
-        #        allow_missing=True),
-        #        batch=batch)
         # curr working
         # expand(config['data']['map_stats'],
         #    zip,
@@ -94,11 +89,23 @@ rule all:
         #   batch=batches,
         #   dataset=datasets,
         #   flowcell=flowcells),
-        expand(config['data']['ca_annot'],
+        expand(expand(config['data']['lapa_filt_ab'],
                zip,
-               batch=batch,
-               study=source_df.loc[source_df.index.max(), 'source'],
-               cerb_run=source_df.index.max()),
+               study=studies,
+               allow_missing=True),
+               batch=batch),
+        expand(expand(config['data']['ca_annot_2'],
+               zip,
+               study=studies,
+               allow_missing=True),
+               batch=batch),
+
+        # trying to figure out stupid sequential Cerberus
+        # expand(config['data']['ca_annot'],
+        #        zip,
+        #        batch=batch,
+        #        study=source_df.loc[source_df.index.max(), 'source'],
+        #        cerb_run=source_df.index.max()),
         # expand(config['data']['ca_annot'],
         #        zip,
         #        batch=batch,
@@ -109,11 +116,6 @@ rule all:
         #        batch=batch,
         #        study=source_df.loc[0, 'source'],
         #        cerb_run=0),
-        expand(expand(config['data']['lapa_filt_ab'],
-               zip,
-               study=studies,
-               allow_missing=True),
-               batch=batch),
 
         # need to clean up these guyes
         # expand(config['data']['sg'], batch=batches),
@@ -1039,54 +1041,63 @@ rule cerb_annot:
                                         params.gene_source,
                                         output.h5)
 
-# first one should be with vM21
-use rule cerb_annot as first_cerb_annot with:
+use rule cerb_annot as ref_cerb_annot with:
     input:
-        h5 = expand(config['data']['ca_ref'],
-                    batch=batch)[0],
+        h5 = config['data']['ca_ref'],
         gtf = config['ref']['gtf']
     params:
         source = 'vM21',
         gene_source = None
     output:
-        h5 = expand(config['data']['ca_annot'],
-               zip,
-               batch=batch,
-               study=source_df.loc[0, 'source'],
-               cerb_run=0)[0]
+        h5 = config['ref']['ca_ref_annot']
 
-# TODO - rewrite this
-def get_seq_cerb_h5(wc, df):
-    cerb_run = int(wc.cerb_run)-1
-    if cerb_run < 0:
-        cerb_run = 0
-    study = df.loc[cerb_run, 'source']
-    h5 = expand(config['data']['ca_annot'],
-                           zip,
-                           batch=wc.batch,
-                           study=study,
-                           cerb_run=cerb_run)[0]
-    return h5
-
-use rule cerb_annot as seq_cerb_annot with:
+use rule cerb_annot as study_cerb_annot with:
     input:
-        h5 = lambda wc: get_seq_cerb_h5(wc, source_df),
-        # h5 = lambda wc: expand(config['data']['ca_annot'],
-        #                        zip,
-        #                        batch=wc.batch,
-        #                        study=source_df.loc[int(wc.cerb_run)-1, 'source'],
-        #                        cerb_run=int(wc.cerb_run)-1)[0],
-        # h5 = lambda wc:expand(config['data']['ca_annot'],
-        #        zip,
-        #        batch=wc.batch,
-        #        study=source_df.loc[0, 'source'],
-        #        cerb_run=0)[0],
+        h5 = config['data']['ca_ref_annot'],
         gtf = config['data']['lapa_filt_gtf']
     params:
         source = lambda wc:wc.study,
         gene_source = 'vM21'
     output:
         h5 = config['data']['ca_annot']
+
+# # first one should be with vM21
+# use rule cerb_annot as first_cerb_annot with:
+#     input:
+#         h5 = expand(config['data']['ca_ref'],
+#                     batch=batch)[0],
+#         gtf = config['ref']['gtf']
+#     params:
+#         source = 'vM21',
+#         gene_source = None
+#     output:
+#         h5 = expand(config['data']['ca_annot'],
+#                zip,
+#                batch=batch,
+#                study=source_df.loc[0, 'source'],
+#                cerb_run=0)[0]
+#
+# def get_seq_cerb_h5(wc, df):
+#     cerb_run = int(wc.cerb_run)-1
+#     if cerb_run < 0:
+#         cerb_run = 0
+#     study = df.loc[cerb_run, 'source']
+#     h5 = expand(config['data']['ca_annot'],
+#                            zip,
+#                            batch=wc.batch,
+#                            study=study,
+#                            cerb_run=cerb_run)[0]
+#     return h5
+#
+# use rule cerb_annot as seq_cerb_annot with:
+#     input:
+#         h5 = lambda wc: get_seq_cerb_h5(wc, source_df),
+#         gtf = config['data']['lapa_filt_gtf']
+#     params:
+#         source = lambda wc:wc.study,
+#         gene_source = 'vM21'
+#     output:
+#         h5 = config['data']['ca_annot']
 
 ################################################################################
 ################################ Swan ##########################################
