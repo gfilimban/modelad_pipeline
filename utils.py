@@ -41,6 +41,10 @@ def parse_config_file(fname,
 
     df = pd.read_csv(fname, sep='\t')
 
+    ############ Basename + fname
+    df['basename'] = df.fname.str.rsplit('/', n=1, expand=True)[1]
+    df['path'] = df.fname.str.rsplit('/', n=1, expand=True)[0]
+
     ############ Dataset + flowcell df
 
     # get flowcell
