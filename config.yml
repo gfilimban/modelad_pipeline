@@ -18,7 +18,6 @@ ref:
   ca_ends: ref/ca_{end_mode}.bed
   ca_ics: ref/ca_ic.tsv
   ca_annot: ref/ca_annot.h5
-  ca_ref_annot: ref/ca_vM21_annot.h5
 
 data:
   fastq: data/{batch}/raw/{dataset}_{flowcell}.fastq
@@ -72,11 +71,18 @@ data:
   agg_ics: data/{batch}/cerberus/agg_ics.tsv
   agg_ends: data/{batch}/cerberus/agg_{end_mode}.bed
   ca_ref: data/{batch}/cerberus/ca_ref.h5
+
+  # ceberus annot
+  ca_ref_annot: data/{batch}/cerberus/ca_vM21_annot.h5
   ca_annot: data/{batch}/cerberus/ca_{study}_{cerb_run}_annot.h5 # sequential
   ca_annot_2: data/{batch}/cerberus/{study}/ca_annot.h5 # parallel / non-overlapping
+  ca_ref_gtf: data/{batch}/cerberus/ca_vM21.gtf
+  ca_gtf: data/{batch}/cerberus/{study}/ca.gtf
+  ca_ab: data/{batch}/cerberus/{study}ca_ab.tsv
 
   # swan
-  sg: data/{batch}/swan/swan.p
+  swan_meta: data/{batch}/swan/swan_metadata.tsv
+  sg: data/{batch}/swan/{study}/swan.p
   die_tsv: data/{batch}/swan/{genotype1}_{genotype2}_die.tsv
   adata: data/{batch}/swan/swan_{feature}_adata.h5ad
 

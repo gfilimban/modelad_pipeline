@@ -12,7 +12,7 @@ from utils import *
 
 # settings we can change each time it's run
 configfile: 'config.yml'
-config_tsv = '230516_config.tsv'
+config_tsv = '230607_config.tsv'
 cerb_tsv = 'cerberus.tsv' # gtf_to_bed and agg_ends settings
 datasets_per_run = 4 # number of datasets per talon run
 auto_dedupe = True # deduplicate runs w/ same stem but different chop numbers
@@ -76,6 +76,9 @@ wildcard_constraints:
     genotype2= '|'.join([re.escape(x) for x in genotypes]),
     batch=batch
 
+ruleorder:
+    first_talon > seq_talon
+
 rule all:
     input:
         # curr working
@@ -89,16 +92,40 @@ rule all:
         #   batch=batches,
         #   dataset=datasets,
         #   flowcell=flowcells),
-        expand(expand(config['data']['lapa_filt_ab'],
+        # expand(expand(config['data']['lapa_filt_ab'],
+        #        zip,
+        #        study=studies,
+        #        allow_missing=True),
+        #        batch=batch),
+        # expand(expand(config['data']['ca_annot_2'],
+        #        zip,
+        #        study=studies,
+        #        allow_missing=True),
+        #        batch=batch),
+        expand(expand(config['data']['sg'],
                zip,
                study=studies,
                allow_missing=True),
                batch=batch),
-        expand(expand(config['data']['ca_annot_2'],
-               zip,
-               study=studies,
-               allow_missing=True),
-               batch=batch),
+        # expand(config['data']['ca_ref_gtf'],
+        #        zip,
+        #        batch=batch),
+        # expand(expand(config['data']['ca_gtf'],
+        #        zip,
+        #        study=studies,
+        #        allow_missing=True),
+        #        batch=batch),
+        # expand(expand(config['data']['ca_ab'],
+        #        zip,
+        #        study=studies,
+        #        allow_missing=True),
+        #        batch=batch),
+
+        # expand(expand(config['data']['ca_annot_2'],
+        #        zip,
+        #        study=studies,
+        #        allow_missing=True),
+        #        batch=batch),
 
         # trying to figure out stupid sequential Cerberus
         # expand(config['data']['ca_annot'],
@@ -857,7 +884,7 @@ rule filt_lapa_ab:
     run:
         df = filt_lapa_ab(input.ab,
                           input.filt_list)
-        df.to_csv(output.ab)
+        df.to_csv(output.ab, sep='\t', index=False)
 
 
 
@@ -1022,18 +1049,15 @@ rule cerb_write_ref:
                                  input.ic,
                                  output.h5)
 
+
+################################################################################
+######################### Cerberus annot + ID replacement ######################
+################################################################################
+
 rule cerb_annot:
     resources:
         mem_gb = 64,
         threads = 16
-    # shell:
-    #     """
-    #     cerberus annotate_transcriptome \
-    #         --gtf {input.gtf} \
-    #         --h5 {input.h5} \
-    #         --source {params.source} \
-    #         -o {output.h5}
-    #     """
     run:
         cerberus.annotate_transcriptome(input.gtf,
                                         input.h5,
@@ -1049,7 +1073,7 @@ use rule cerb_annot as ref_cerb_annot with:
         source = 'vM21',
         gene_source = None
     output:
-        h5 = config['ref']['ca_ref_annot']
+        h5 = config['data']['ca_ref_annot']
 
 use rule cerb_annot as study_cerb_annot with:
     input:
@@ -1059,7 +1083,7 @@ use rule cerb_annot as study_cerb_annot with:
         source = lambda wc:wc.study,
         gene_source = 'vM21'
     output:
-        h5 = config['data']['ca_annot']
+        h5 = config['data']['ca_annot_2']
 
 # # first one should be with vM21
 # use rule cerb_annot as first_cerb_annot with:
@@ -1099,9 +1123,71 @@ use rule cerb_annot as study_cerb_annot with:
 #     output:
 #         h5 = config['data']['ca_annot']
 
+
+rule cerb_gtf_ids:
+    resources:
+        mem_gb = 64,
+        threads = 16
+    run:
+        cerberus.replace_gtf_ids(input.h5,
+                                 input.gtf,
+                                 params.source,
+                                 True,
+                                 True,
+                                 output.gtf)
+
+use rule cerb_gtf_ids as ref_cerb_gtf with:
+    input:
+        h5 = config['data']['ca_ref_annot'],
+        gtf = config['ref']['gtf']
+    params:
+        source = 'vM21',
+    output:
+        gtf = config['data']['ca_ref_gtf']
+
+use rule cerb_gtf_ids as study_cerb_gtf with:
+    input:
+        h5 = config['data']['ca_annot_2'],
+        gtf = config['data']['lapa_filt_gtf']
+    params:
+        source = lambda wc:wc.study,
+    output:
+        gtf = config['data']['ca_gtf']
+
+rule cerb_ab_ids:
+    resources:
+        mem_gb = 64,
+        threads = 16
+    run:
+        cerberus.replace_ab_ids(input.ab,
+                                input.h5,
+                                params.source,
+                                True,
+                                output.ab)
+
+use rule cerb_ab_ids as study_cerb_ab with:
+    input:
+        h5 = config['data']['ca_annot_2'],
+        ab = config['data']['lapa_filt_ab']
+    params:
+        source = lambda wc:wc.study,
+    output:
+        ab = config['data']['ca_ab']
+
 ################################################################################
 ################################ Swan ##########################################
 ################################################################################
+
+rule save_swan_metadata:
+    resources:
+        mem_gb = 8,
+        threads = 1
+    output:
+        meta = config['data']['swan_meta']
+    run:
+        dataset_df.to_csv(output.meta, sep='\t', index=False)
+
+
 def make_sg(input, params, wildcards):
 
     # initialize
@@ -1110,20 +1196,23 @@ def make_sg(input, params, wildcards):
     sg.add_transcriptome(input.gtf, include_isms=True)
     sg.add_abundance(input.filt_ab)
     sg.add_abundance(input.ab, how='gene')
+    sg.save_graph(params.prefix)
 
+    sg.add_metadata(input.meta)
     # add metadata
-    adatas = sg.get_adatas()
-    for adata in adatas:
-        adata.obs['genotype'] = adata.obs.dataset.str.rsplit('_', n=2, expand=True)[0]
+    # adatas = sg.get_adatas()
+    # for adata in adatas:
+    #     adata.obs['genotype'] = adata.obs.dataset.str.rsplit('_', n=2, expand=True)[0]
 
     sg.save_graph(params.prefix)
 
 rule make_sg:
     input:
-        annot = config['ref']['gtf'],
-        gtf = config['data']['filt_gtf'],
-        filt_ab = config['data']['filt_ab'],
-        ab = config['data']['ab']
+        annot = config['data']['ca_ref_gtf'],
+        gtf = config['data']['ca_gtf'],
+        filt_ab = config['data']['ca_ab'],
+        ab = config['data']['ab'],
+        meta = config['data']['swan_meta']
     params:
         prefix = config['data']['sg'].replace('.p', '')
     resources:
