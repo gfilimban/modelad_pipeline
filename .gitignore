@@ -1,0 +1,9 @@
+*fai
+*.fa
+*.fasta
+*.gtf
+*.fastq
+*.gz
+.snakemake
+*.DS_Store*
+*__pycache__*
