@@ -1,0 +1,94 @@
+# things to update
+tc_path: ~/mortazavi_lab/bin/TranscriptClean/
+
+
+ref:
+  fa_link: https://www.encodeproject.org/files/mm10_no_alt_analysis_set_ENCODE/@@download/mm10_no_alt_analysis_set_ENCODE.fasta.gz
+  fa_gz: ref/genome.fa.gz
+  fa: ref/genome.fa
+  chrom_sizes: ref/genome_chrom_sizes.tsv
+  gtf_link: https://www.encodeproject.org/files/gencode.vM21.primary_assembly.annotation_UCSC_names/@@download/gencode.vM21.primary_assembly.annotation_UCSC_names.gtf.gz
+  gtf_gz: ref/annot.gtf.gz
+  gtf: ref/annot.gtf
+  gtf_utr: ref/annot_utr.gtf
+  sjs: ref/annot_junc.bed
+  talon_db: ref/ref.db
+  ca_link: https://www.encodeproject.org/files/ENCFF999KXH/@@download/ENCFF999KXH.h5
+  ca: ref/ca.h5
+  ca_ends: ref/ca_{end_mode}.bed
+  ca_ics: ref/ca_ic.tsv
+  ca_annot: ref/ca_annot.h5
+
+  hclu_fa: ref/hClu.fa
+
+  ref_fa: ref/hClu/genome.fa
+
+data:
+  fastq: data/{batch}/raw/{dataset}_{flowcell}.fastq
+
+  # mapping
+  map_stats: data/{batch}/minimap2/{dataset}_{flowcell}_map_stats.txt
+  sam: data/{batch}/minimap2/{dataset}_{flowcell}.sam
+  bam: data/{batch}/minimap2/{dataset}_{flowcell}.bam
+  sam_log: data/{batch}/minimap2/{dataset}_{flowcell}_minimap.log
+  sam_rev: data/{batch}/minimap2/{dataset}_{flowcell}.rev.sam
+
+  # transcriptclean
+  sam_clean: data/{batch}/tc/{dataset}_{flowcell}_clean.sam
+  tc_stats: data/{batch}/tc/{dataset}_{flowcell}_tc_stats.txt
+
+  # talon label
+  sam_label: data/{batch}/talon/{dataset}_{flowcell}_labeled.sam
+  bam_label_sorted: data/{batch}/talon/{dataset}_{flowcell}_labeled.sorted.bam
+
+  # merge labelled sams
+  bam_label_merge: data/{batch}/talon/{dataset}_labeled_merged.bam
+
+  # talon files - split by talon run + study
+  talon_config: data/{batch}/talon/{study}/talon_{talon_run}_config.csv
+  talon_db: data/{batch}/talon/{study}/annot_{talon_run}_talon.db
+  read_annot: data/{batch}/talon/{study}/annot_{talon_run}_talon_read_annot.tsv
+  temp_db: data/{batch}/talon/{study}/temp_annot_2_talon.db
+
+  # talon files - split only by study
+  ab: data/{batch}/talon/{study}/annot_talon_abundance.tsv
+  filt_list: data/{batch}/talon/{study}/talon_pass_list.tsv
+  filt_ab: data/{batch}/talon/{study}/annot_talon_abundance_filtered.tsv
+  filt_gtf: data/{batch}/talon/{study}/annot_talon_observedOnly.gtf
+  full_read_annot: data/{batch}/talon/{study}/annot_talon_read_annot.tsv
+
+  # lapa
+  lapa_config: data/{batch}/lapa/{study}/lapa_config.csv
+  lapa_ends: data/{batch}/lapa/{study}/{end_mode}/{end_mode}_clusters.bed
+  lapa_links: data/{batch}/lapa/{study}/tss_to_tes_links.csv
+  lapa_gtf: data/{batch}/lapa/{study}/lapa_corrected.gtf
+  lapa_ab: data/{batch}/lapa/{study}/lapa_corrected_abundance.tsv
+
+  # lapa filtering
+  lapa_filt_list: data/{batch}/lapa/{study}/lapa_pass_list.tsv
+  lapa_filt_gtf: data/{batch}/lapa/{study}/lapa_corrected_filtered.gtf
+  lapa_filt_ab: data/{batch}/lapa/{study}/lapa_corrected_abundance_filtered.tsv
+
+  # cerberus
+  ics: data/{batch}/cerberus/{study}/ics.tsv
+  ends: data/{batch}/cerberus/{study}/{end_mode}.bed
+  agg_ics: data/{batch}/cerberus/agg_ics.tsv
+  agg_ends: data/{batch}/cerberus/agg_{end_mode}.bed
+  ca_ref: data/{batch}/cerberus/ca_ref.h5
+
+  # ceberus annot
+  ca_ref_annot: data/{batch}/cerberus/ca_vM21_annot.h5
+  ca_annot: data/{batch}/cerberus/ca_{study}_{cerb_run}_annot.h5 # sequential
+  ca_annot_2: data/{batch}/cerberus/{study}/ca_annot.h5 # parallel / non-overlapping
+  ca_ref_gtf: data/{batch}/cerberus/ca_vM21.gtf
+  ca_gtf: data/{batch}/cerberus/{study}/ca.gtf
+  ca_ab: data/{batch}/cerberus/{study}ca_ab.tsv
+
+  # swan
+  swan_meta: data/{batch}/swan/swan_metadata.tsv
+  sg: data/{batch}/swan/{study}/swan.p
+  die_tsv: data/{batch}/swan/{genotype1}_{genotype2}_die.tsv
+  adata: data/{batch}/swan/swan_{feature}_adata.h5ad
+
+  # degs and dets
+  de_tsv: data/{batch}/de/{genotype1}_{genotype2}_de_{feature}.tsv
