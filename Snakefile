@@ -13,6 +13,7 @@ from utils import *
 # settings we can change each time it's run
 configfile: 'config.yml'
 config_tsv = '230607_config.tsv'
+study_config_tsv = 'study_config.tsv'
 cerb_tsv = 'cerberus.tsv' # gtf_to_bed and agg_ends settings
 datasets_per_run = 4 # number of datasets per talon run
 auto_dedupe = True # deduplicate runs w/ same stem but different chop numbers
@@ -27,6 +28,7 @@ df, dataset_df = parse_config_file(config_tsv,
                        datasets_per_run=datasets_per_run,
                        auto_dedupe=auto_dedupe)
 
+
 # from the df w/ one line for each file
 batches = df.batch.tolist()
 datasets = df.dataset.tolist()
@@ -40,6 +42,21 @@ temp = dataset_df[['study', 'talon_run_num']].drop_duplicates()
 temp = temp.groupby('study').max().reset_index()
 max_talon_runs = temp.talon_run_num.tolist()
 studies = temp.study.tolist()
+
+# study settings
+study_df = pd.read_csv(study_config_tsv, sep='\t')
+mods = study_df.ref_mod.unique().tolist()
+
+def get_study_ref(wc, study_df, config):
+    """
+    Either return the normal reference fa or a modified one
+    depending on the requirements of the study
+    """
+    study = wc.study
+    mod = study_df.loc[study_df.study==study, 'ref_mod'].values[0]
+    return expand(config['ref']['mod_fa'],
+                      zip,
+                      mod)
 
 # for cerberus annotate_transcriptome
 sources = ['vM21']+studies
@@ -74,6 +91,7 @@ else:
 wildcard_constraints:
     genotype1= '|'.join([re.escape(x) for x in genotypes]),
     genotype2= '|'.join([re.escape(x) for x in genotypes]),
+    mod= '|'.join([re.escape(x) for x in mods]),
     batch=batch
 
 ruleorder:
@@ -102,47 +120,15 @@ rule all:
         #        study=studies,
         #        allow_missing=True),
         #        batch=batch),
-        expand(expand(config['data']['sg'],
+
+        # expand(expand(config['data']['sg'],
+        #        zip,
+        #        study=studies,
+        #        allow_missing=True),
+        #        batch=batch),
+        expand(config['ref']['fa'],
                zip,
-               study=studies,
-               allow_missing=True),
-               batch=batch),
-        # expand(config['data']['ca_ref_gtf'],
-        #        zip,
-        #        batch=batch),
-        # expand(expand(config['data']['ca_gtf'],
-        #        zip,
-        #        study=studies,
-        #        allow_missing=True),
-        #        batch=batch),
-        # expand(expand(config['data']['ca_ab'],
-        #        zip,
-        #        study=studies,
-        #        allow_missing=True),
-        #        batch=batch),
-
-        # expand(expand(config['data']['ca_annot_2'],
-        #        zip,
-        #        study=studies,
-        #        allow_missing=True),
-        #        batch=batch),
-
-        # trying to figure out stupid sequential Cerberus
-        # expand(config['data']['ca_annot'],
-        #        zip,
-        #        batch=batch,
-        #        study=source_df.loc[source_df.index.max(), 'source'],
-        #        cerb_run=source_df.index.max()),
-        # expand(config['data']['ca_annot'],
-        #        zip,
-        #        batch=batch,
-        #        study=source_df.loc[1, 'source'],
-        #        cerb_run=1),
-        # expand(config['data']['ca_annot'],
-        #        zip,
-        #        batch=batch,
-        #        study=source_df.loc[0, 'source'],
-        #        cerb_run=0),
+               mod='hClu')
 
         # need to clean up these guyes
         # expand(config['data']['sg'], batch=batches),
@@ -209,6 +195,25 @@ use rule gunzip as gunzip_ref with:
     output:
         out = config['ref']['fa']
 
+rule ref_add_mod_chr:
+    input:
+        fa = config['ref']['template_fa']
+    params:
+        mod_fa = lambda wc:expand(config['ref']['mod_fa'],
+                                  zip,
+                                  mod=wc.mod)
+    output:
+        fa = config['ref']['fa']
+    shell:
+        """
+        # if we're just using the vanilla genome
+        if [ {wc.mod} == "normal" ]; then
+            ln -s {input.fa} {output.fa}
+        else
+            awk 1 {input.fa} {params.mod_fa} > {output.fa}
+        fi
+        """
+
 rule get_chrom_sizes:
     input:
         fa = config['ref']['fa']
@@ -236,6 +241,7 @@ rule get_utr_fix_gtf:
             --input_gtf {input.gtf} \
             --output_gtf {output.gtf}
         """
+
 rule get_annot_sjs:
     input:
         gtf = config['ref']['gtf'],
@@ -1193,7 +1199,9 @@ def make_sg(input, params, wildcards):
     # initialize
     sg = swan.SwanGraph()
     sg.add_annotation(input.annot)
-    sg.add_transcriptome(input.gtf, include_isms=True)
+    sg.add_transcriptome(input.gtf, include_isms=True)las
+    ls *config*
+
     sg.add_abundance(input.filt_ab)
     sg.add_abundance(input.ab, how='gene')
     sg.save_graph(params.prefix)

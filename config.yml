@@ -5,7 +5,7 @@ tc_path: ~/mortazavi_lab/bin/TranscriptClean/
 ref:
   fa_link: https://www.encodeproject.org/files/mm10_no_alt_analysis_set_ENCODE/@@download/mm10_no_alt_analysis_set_ENCODE.fasta.gz
   fa_gz: ref/genome.fa.gz
-  fa: ref/genome.fa
+  template_fa: ref/genome.fa
   chrom_sizes: ref/genome_chrom_sizes.tsv
   gtf_link: https://www.encodeproject.org/files/gencode.vM21.primary_assembly.annotation_UCSC_names/@@download/gencode.vM21.primary_assembly.annotation_UCSC_names.gtf.gz
   gtf_gz: ref/annot.gtf.gz
@@ -18,6 +18,9 @@ ref:
   ca_ends: ref/ca_{end_mode}.bed
   ca_ics: ref/ca_ic.tsv
   ca_annot: ref/ca_annot.h5
+
+  mod_fa: ref/{mod}.fa
+  fa: ref/{mod}_genome.fa
 
 data:
   fastq: data/{batch}/raw/{dataset}_{flowcell}.fastq
