@@ -80,7 +80,11 @@ ruleorder:
 
 rule all:
     input:
-        config['ref']['ref_fa']
+        expand(expand(config['data']['sg'],
+               zip,
+               study=studies,
+               allow_missing=True),
+               batch=batch)
 
 ################################################################################
 ########################### Ref. processing ####################################
@@ -128,6 +132,9 @@ rule make_mod_ref:
     input:
         fa = config['ref']['fa'],
         hclu_fa = config['ref']['hclu_fa']
+    resources:
+        mem_gb = 64,
+        threads = 4
     output:
         fa = config['ref']['ref_fa']
     shell:
@@ -137,7 +144,7 @@ rule make_mod_ref:
 
 rule get_chrom_sizes:
     input:
-        fa = config['ref']['fa']
+        fa = config['ref']['ref_fa']
     resources:
         threads = 1,
         mem_gb = 8
@@ -165,7 +172,7 @@ rule get_utr_fix_gtf:
 rule get_annot_sjs:
     input:
         gtf = config['ref']['gtf'],
-        fa = config['ref']['fa']
+        fa = config['ref']['ref_fa']
     resources:
         threads = 4,
         mem_gb = 16
@@ -275,7 +282,7 @@ rule merge_alignment:
 use rule map as map_reads with:
     input:
         fastq = lambda wc: get_df_col(wc, df, 'fname'),
-        ref_fa = config['ref']['fa'],
+        ref_fa = config['ref']['ref_fa'],
         sjs = config['ref']['sjs']
     output:
         sam = temporary(config['data']['sam']),
@@ -329,7 +336,7 @@ rule tc:
 use rule tc as tc_sam with:
     input:
         sam = config['data']['sam_rev'],
-        fa = config['ref']['fa']
+        fa = config['ref']['ref_fa']
     params:
         tc = config['tc_path'],
         opref = config['data']['sam_clean'].rsplit('_clean.sam', maxsplit=1)[0]
@@ -347,7 +354,7 @@ use rule alignment_stats as tc_stats with:
 ################################################################################
 rule talon_label:
     input:
-        fa = config['ref']['fa'],
+        fa = config['ref']['ref_fa'],
         sam = config['data']['sam_clean']
     resources:
         threads = 1,
@@ -697,7 +704,7 @@ rule lapa_config:
 rule lapa_call_ends:
     input:
         config = config['data']['lapa_config'],
-        fa = config['ref']['fa'],
+        fa = config['ref']['ref_fa'],
         gtf = config['ref']['gtf_utr'],
         chrom_sizes = config['ref']['chrom_sizes']
     resources:
@@ -779,7 +786,7 @@ rule filt_lapa:
         mem_gb = 32
     params:
         t_novs = ['Known', 'NIC', 'NNC', 'ISM_rescue'],
-        g_novs = ['Known'],
+        g_novs = ['Known', 'Novel'],
         filt_spikes = True
     output:
         filt_list = config['data']['lapa_filt_list']
