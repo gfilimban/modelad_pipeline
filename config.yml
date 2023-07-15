@@ -81,7 +81,7 @@ data:
   ca_ab: data/{batch}/cerberus/{study}ca_ab.tsv
 
   # swan
-  swan_meta: data/{batch}/swan/swan_metadata.tsv
+  swan_meta: data/{batch}/swan/{study}/swan_metadata.tsv
   sg: data/{batch}/swan/{study}/swan.p
   die_tsv: data/{batch}/swan/{genotype1}_{genotype2}_die.tsv
   adata: data/{batch}/swan/swan_{feature}_adata.h5ad
