@@ -208,9 +208,9 @@ ad003_meta = '../'+expand(config['data']['swan_meta'],
 # get concatenated metadata file
 new_meta = 'swan_metadata.tsv'
 meta2 = pd.read_csv(meta, sep='\t')
-meta2.to_csv(new_meta), sep='\t', index=False) # og ad005
+meta2.to_csv(new_meta, sep='\t', index=False) # og ad005
 meta2 = pd.read_csv(ad003_meta, sep='\t')
-meta2.to_csv(new_meta), sep='\t', index=False, mode='a') # ad003
+meta2.to_csv(new_meta, sep='\t', index=False, mode='a') # ad003
 
 # initialize
 sg = swan.SwanGraph()
