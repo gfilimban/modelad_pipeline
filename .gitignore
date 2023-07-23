@@ -1,3 +1,5 @@
+
+*.bam*
 *fai
 *.fa
 *.fasta

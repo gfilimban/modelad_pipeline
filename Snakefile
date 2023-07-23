@@ -445,7 +445,7 @@ use rule sam_to_bam as talon_label_bam with:
     input:
         sam = config['data']['sam_label']
     output:
-        bam = temporary(config['data']['bam_label_sorted'])
+        bam = config['data']['bam_label_sorted']
 
 ################################################################################
 ################################# TALON ########################################
