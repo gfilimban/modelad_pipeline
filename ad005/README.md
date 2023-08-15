@@ -54,3 +54,43 @@ samtools index $mini_bam
 
 ```
 <!-- chr18:32377230-32435737 -->
+
+
+
+
+
+
+
+
+## 230815 compare 3' end usage in short and long read
+
+```bash
+# get bigwigs for each sr bam file
+d=/share/crsp/lab/model-ad/share/bulkRNA/5x_GWAS/5xBin1/5xBin1_4mo/
+
+
+```
+
+```bash
+snakemake \
+  -s Snakefile \
+  -j 30 \
+  --latency-wait 120 \
+  --use-conda \
+  -n
+  ```
+
+```bash
+conda activate viz_snakemake
+snakemake -s Snakefile --dag | dot -Tpng > ruledag.png
+```
+
+
+```bash
+snakemake \
+  -s Snakefile \
+  -j 60 \
+  --latency-wait 120 \
+  --use-conda \
+  --cluster "sbatch -A seyedam_lab --partition=highmem --mem={resources.mem_gb}GB -c {resources.threads} --mail-user=freese@uci.edu --mail-type=START,END,FAIL --time=72:00:00" -n
+  ```

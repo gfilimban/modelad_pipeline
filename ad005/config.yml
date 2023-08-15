@@ -1,0 +1,4 @@
+sr:
+  bam: {sr_file}
+
+  bw: ../data/sr_bulk/{mouse_id}_{strand}.bw

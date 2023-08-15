@@ -1,0 +1,61 @@
+import pandas as pd
+import os
+import sys
+import swan_vis as swan
+import itertools
+import cerberus
+
+p = os.path.dirname(os.path.dirname(os.getcwd()))
+sys.path.append(p)
+
+from utils import *
+
+# settings we can change each time it's run
+configfile: 'config.yml'
+
+sr_files = ['/share/crsp/lab/model-ad/share/bulkRNA/5x_GWAS/5xBin1/5xBin1_4mo/hipp_F_BIN1_HO_4mo_13047_S16-STARAligned.out.bam',
+            '/share/crsp/lab/model-ad/share/bulkRNA/5x_GWAS/5xBin1/5xBin1_4mo/hipp_F_5xFADHEMI_BIN1_HO_4mo_13019_S1-STARAligned.out.bam',
+            '/share/crsp/lab/model-ad/share/bulkRNA/5x_GWAS/5xGWAScontrols_4mo_2021July/hipp_F_5xFADWT_4mo_11627_S43-STARAligned.out.bam',
+            '/share/crsp/lab/model-ad/share/bulkRNA/5x_GWAS/5xGWAScontrols_4mo_2021July/hipp_F_5xFADHEMI_4mo_11616_S21-STARAligned.out.bam']
+sr_df = pd.DataFrame(data=sr_files, columns=['fname'])
+sr_df['mouse_id'] = sr_df['fname'].str.rsplit('_', n=3, expand=True)[2]
+mouse_ids = sr_df.mouse_id.tolist()
+
+strands = ['fwd', 'rev']
+
+wildcard_constraints:
+    mouse_ids= '|'.join([re.escape(x) for x in mouse_ids])
+
+rule all:
+    input:
+        expand(config['sr']['bw'],
+               mouse_id=mouse_ids,
+               strand=strands)
+
+def get_strand_flag(wc):
+    if wc.strand == 'fwd':
+        flag = '--filterRNAstrand reverse'
+    elif wc.strand == 'rev':
+        flag = '--filterRNAstrand forward'
+
+rule bam_to_bw:
+    resources:
+        threads = 4,
+        mem_gb = 64
+    params:
+        strand_flag = lambda wc: get_strand_flag(wc)
+    conda:
+        'deeptools'
+    shell:
+        """
+        bamCoverage -b {input.bam} -o {output.bw} {params.strand_flag}
+        """
+
+def get_input_sr_bam(wc, sr_df):
+    return sr_df.loc[sr_df.mouse_id==wc.mouse_id, 'fname'].values[0]
+
+use rule bam_to_bw as sr_bam_to_bw with:
+    input:
+        bam = lambda wc: get_input_sr_bam(wc, sr_df)
+    output:
+        config['sr']['bw']
