@@ -1,4 +1,6 @@
 sr:
   bam: {sr_file}
+  bam_sorted: ../data/sr_bulk/star/{mouse_id}_sorted.bam
+  bam_index: ../data/sr_bulk/star/{mouse_id}_sorted.bam.bai
 
-  bw: ../data/sr_bulk/{mouse_id}_{strand}.bw
+  bw: ../data/sr_bulk/bigwig/{mouse_id}_{strand}.bw

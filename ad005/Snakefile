@@ -8,7 +8,7 @@ import cerberus
 p = os.path.dirname(os.path.dirname(os.getcwd()))
 sys.path.append(p)
 
-from utils import *
+# from utils import *
 
 # settings we can change each time it's run
 configfile: 'config.yml'
@@ -37,6 +37,29 @@ def get_strand_flag(wc):
         flag = '--filterRNAstrand reverse'
     elif wc.strand == 'rev':
         flag = '--filterRNAstrand forward'
+    return flag
+
+rule sort_bam:
+    resources:
+        threads = 16,
+        mem_gb = 16
+    shell:
+        """
+        module load samtools
+        samtools sort \
+            --threads {resources.threads} \
+            -O bam {input.bam} > {output.bam}
+        """
+
+rule index_bam:
+    resources:
+        threads = 16,
+        mem_gb = 16
+    shell:
+        """
+        module load samtools
+        samtools index -@ {resources.threads} {output.bam}
+        """
 
 rule bam_to_bw:
     resources:
@@ -54,8 +77,21 @@ rule bam_to_bw:
 def get_input_sr_bam(wc, sr_df):
     return sr_df.loc[sr_df.mouse_id==wc.mouse_id, 'fname'].values[0]
 
-use rule bam_to_bw as sr_bam_to_bw with:
+use rule sort_bam as sr_sort_bam with:
     input:
         bam = lambda wc: get_input_sr_bam(wc, sr_df)
     output:
-        config['sr']['bw']
+        bam = config['sr']['bam_sorted']
+
+use rule index_bam as sr_index_bam with:
+    input:
+        bam = config['sr']['bam_sorted']
+    output:
+        bam = config['sr']['bam_index']
+
+use rule bam_to_bw as sr_bam_to_bw with:
+    input:
+        bam = config['sr']['bam_sorted'],
+        bai = config['sr']['bam_index']
+    output:
+        bw = config['sr']['bw']
