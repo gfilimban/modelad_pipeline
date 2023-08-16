@@ -1,6 +1,13 @@
 # things to update
 tc_path: ~/mortazavi_lab/bin/TranscriptClean/
 
+sr:
+  bam: {sr_file}
+  bam_sorted: data/sr_bulk/star/{mouse_id}_sorted.bam
+  bam_index: data/sr_bulk/star/{mouse_id}_sorted.bam.bai
+
+  bw: data/sr_bulk/bigwig/{mouse_id}_{strand}.bw
+
 
 ref:
   fa_link: https://www.encodeproject.org/files/mm10_no_alt_analysis_set_ENCODE/@@download/mm10_no_alt_analysis_set_ENCODE.fasta.gz
@@ -39,6 +46,11 @@ data:
 
   # merge labelled sams
   bam_label_merge: data/{batch}/talon/{dataset}_labeled_merged.bam
+
+  # stuff to get bigwigs
+  bam_label_merge_sorted: data/{batch}/talon/{dataset}_labeled_merged_sorted.bam
+  bam_label_merge_index: data/{batch}/talon/{dataset}_labeled_merged_sorted.bam.bai
+  bw: data/{batch}/bigwig/{dataset}_{strand}.bw
 
   # talon files - split by talon run + study
   talon_config: data/{batch}/talon/{study}/talon_{talon_run}_config.csv
@@ -88,3 +100,8 @@ data:
 
   # degs and dets
   de_tsv: data/{batch}/de/{genotype1}_{genotype2}_de_{feature}.tsv
+
+  # trouble region
+  bam_subset: data/{batch}/debug/{dataset}_subset.bam
+  bam_subset_sorted: data/{batch}/debug/{dataset}_subset_sorted.bam
+  bam_subset_index: data/{batch}/debug/{dataset}_subset.bam.bai

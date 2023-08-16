@@ -94,3 +94,78 @@ snakemake \
   --use-conda \
   --cluster "sbatch -A seyedam_lab --partition=highmem --mem={resources.mem_gb}GB -c {resources.threads} --mail-user=freese@uci.edu --mail-type=START,END,FAIL --time=72:00:00" -n
   ```
+
+
+FUSION READS, WHAT ARE YOU DOING HERE
+
+```bash
+module load samtools
+chr11:102881298-102886826
+
+cd ~/mortazavi_lab/bin/modelad_pipeline/data/230516/talon
+for f in *BIN1*merged.bam
+do
+  # samtools sort --threads 8 -O bam $f > ${f}_sorted.bam
+  # samtools index ${f}_sorted.bam
+  samtools view -hb ${f}_sorted.bam chr11:102881298-102886826 > ${f}_subset.bam
+  samtools sort --threads 8 -O bam ${f}_subset.bam > ${f}_subset_sorted.bam
+  samtools index ${f}_subset_sorted.bam
+done
+```
+
+# get just that problem read
+```bash
+module load samtools
+
+bam=~/mortazavi_lab/bin/modelad_pipeline/data/230516/talon/5xBIN1_HO_F_4_months_HC_3_labeled_merged.bam_subset_sorted.bam
+
+read_name=212bf012-20aa-4005-a74b-b3db02810488_1
+output_sam=~/mortazavi_lab/bin/modelad_pipeline/data/230516/talon/test_subset.sam
+samtools view -HS $bam > $output_sam
+samtools view -S $bam | grep $read_name >> $output_sam
+
+```
+
+# run a stupid little talon run
+```bash
+sam=~/mortazavi_lab/bin/modelad_pipeline/data/230516/talon/test_subset.sam
+
+touch test_config.csv
+echo "test,test,pacbio,"${sam} >> test_config.csv
+
+ref_gtf=/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/data/230516/cerberus/ca_vM21.gtf
+talon_initialize_database \
+  --f ${ref_gtf} \
+  --g mm10 \
+  --a ca_vM21 \
+  --o test
+
+talon \
+  --f test_config.csv \
+  --db test.db \
+  --build mm10 \
+  -t 1 \
+  --o test_2
+```
+
+# run another stupid little talon run on the whole file with the new settings
+```bash
+sam=~/mortazavi_lab/bin/modelad_pipeline/data/230516/talon/5xBIN1_HO_F_4_months_HC_3_labeled_merged.bam
+
+touch test_config.csv
+echo "test,test,pacbio,"${sam} >> test_config.csv
+
+ref_gtf=/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/data/230516/cerberus/ca_vM21.gtf
+talon_initialize_database \
+  --f ${ref_gtf} \
+  --g mm10 \
+  --a ca_vM21 \
+  --o test
+
+talon \
+  --f test_config.csv \
+  --db test.db \
+  --build mm10 \
+  -t 16 \
+  --o test_2
+```

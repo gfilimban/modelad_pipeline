@@ -4,3 +4,10 @@ sr:
   bam_index: ../data/sr_bulk/star/{mouse_id}_sorted.bam.bai
 
   bw: ../data/sr_bulk/bigwig/{mouse_id}_{strand}.bw
+
+lr:
+  bam: ../data/230516/talon/{dataset}_labeled_merged.bam
+  bam_sorted: ../data/230516/talon/{dataset}_labeled_merged_sorted.bam
+  bam_index: ../data/230516/talon/{dataset}_labeled_merged_sorted.bam.bai
+
+  bw: ../data/230516/bigwig/{dataset}_labeled_merged_sorted.bam.bai

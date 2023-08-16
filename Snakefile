@@ -48,6 +48,22 @@ source_df['source'] = sources
 
 end_modes = ['tss', 'tes']
 
+sr_files = ['/share/crsp/lab/model-ad/share/bulkRNA/5x_GWAS/5xBin1/5xBin1_4mo/hipp_F_BIN1_HO_4mo_13047_S16-STARAligned.out.bam',
+            '/share/crsp/lab/model-ad/share/bulkRNA/5x_GWAS/5xBin1/5xBin1_4mo/hipp_F_5xFADHEMI_BIN1_HO_4mo_13019_S1-STARAligned.out.bam',
+            '/share/crsp/lab/model-ad/share/bulkRNA/5x_GWAS/5xGWAScontrols_4mo_2021July/hipp_F_5xFADWT_4mo_11627_S43-STARAligned.out.bam',
+            '/share/crsp/lab/model-ad/share/bulkRNA/5x_GWAS/5xGWAScontrols_4mo_2021July/hipp_F_5xFADHEMI_4mo_11616_S21-STARAligned.out.bam']
+sr_df = pd.DataFrame(data=sr_files, columns=['fname'])
+sr_df['mouse_id'] = sr_df['fname'].str.rsplit('_', n=3, expand=True)[2]
+mouse_ids = sr_df.mouse_id.tolist()
+
+# lr
+lr_datasets = ['5xBIN1_HO_F_4_months_HC_1',
+               'BIN1_HO_F_4_months_HC_2',
+               '5xFADHEMI_F_4_months_HC_1',
+               '5xFADWT_F_4_months_HC_1']
+
+strands = ['fwd', 'rev']
+
 def get_genotype_pairs(df, pair_num):
     genotypes = df.genotype.unique().tolist()
     pairs = list(itertools.combinations(genotypes, 2))
@@ -74,7 +90,8 @@ else:
 wildcard_constraints:
     genotype1= '|'.join([re.escape(x) for x in genotypes]),
     genotype2= '|'.join([re.escape(x) for x in genotypes]),
-    batch=batch
+    batch=batch,
+    mouse_ids= '|'.join([re.escape(x) for x in mouse_ids])
 
 ruleorder:
     first_talon > seq_talon
@@ -102,11 +119,18 @@ rule all:
         #        study=studies,
         #        allow_missing=True),
         #        batch=batch),
-        expand(expand(config['data']['sg'],
-               zip,
-               study=studies,
-               allow_missing=True),
-               batch=batch),
+        # expand(expand(config['data']['sg'],
+        #        zip,
+        #        study=studies,
+        #        allow_missing=True),
+        #        batch=batch),
+        # expand(config['sr']['bw'],
+        #        mouse_id=mouse_ids,
+        #        strand=strands),
+        # expand(config['data']['bw'],
+        #        batch=batch,
+        #        dataset=lr_datasets,
+        #        strand=strands)
         # expand(config['data']['ca_ref_gtf'],
         #        zip,
         #        batch=batch),
@@ -166,6 +190,11 @@ rule all:
         #        allow_missing=True),
         #        batch=batches[0],
         #        feature=['gene', 'iso'])
+        expand(expand(config['data']['bam_label_merge'],
+               zip,
+               dataset=datasets,
+               allow_missing=True),
+               batch=batch)
 
 ################################################################################
 ########################### Ref. processing ####################################
@@ -1282,3 +1311,126 @@ rule deg:
 #                                       obs_conditions=[wildcards.genotype1,
 #                                                       wildcards.genotype2])
 #         die.to_csv(output.out, sep='\t')
+
+
+################################################################################
+########################## BigWig stuff ########################################
+################################################################################
+
+def get_strand_flag(wc):
+    if wc.strand == 'fwd':
+        flag = '--filterRNAstrand reverse'
+    elif wc.strand == 'rev':
+        flag = '--filterRNAstrand forward'
+    return flag
+
+rule sort_bam:
+    resources:
+        threads = 16,
+        mem_gb = 16
+    shell:
+        """
+        module load samtools
+        samtools sort \
+            --threads {resources.threads} \
+            -O bam {input.bam} > {output.bam}
+        """
+
+rule index_bam:
+    resources:
+        threads = 16,
+        mem_gb = 16
+    shell:
+        """
+        module load samtools
+        samtools index -@ {resources.threads} {input.bam}
+        """
+
+rule bam_to_bw:
+    resources:
+        threads = 4,
+        mem_gb = 64
+    params:
+        strand_flag = lambda wc: get_strand_flag(wc)
+    conda:
+        'deeptools'
+    shell:
+        """
+        bamCoverage -b {input.bam} -o {output.bw} {params.strand_flag}
+        """
+
+def get_input_sr_bam(wc, sr_df):
+    return sr_df.loc[sr_df.mouse_id==wc.mouse_id, 'fname'].values[0]
+
+use rule sort_bam as sr_sort_bam with:
+    input:
+        bam = lambda wc: get_input_sr_bam(wc, sr_df)
+    output:
+        bam = config['sr']['bam_sorted']
+
+use rule index_bam as sr_index_bam with:
+    input:
+        bam = config['sr']['bam_sorted']
+    output:
+        bam = config['sr']['bam_index']
+
+use rule bam_to_bw as sr_bam_to_bw with:
+    input:
+        bam = config['sr']['bam_sorted'],
+        bai = config['sr']['bam_index']
+    output:
+        bw = config['sr']['bw']
+
+# lr
+use rule sort_bam as lr_sort_bam with:
+    input:
+        bam = config['data']['bam_label_merge']
+    output:
+        bam = config['data']['bam_label_merge_sorted']
+
+use rule index_bam as lr_index_bam with:
+    input:
+        bam = config['data']['bam_label_merge_sorted']
+    output:
+        bam = config['data']['bam_label_merge_index']
+
+use rule bam_to_bw as lr_bam_to_bw with:
+    input:
+        bam = config['data']['bam_label_merge_sorted'],
+        bai = config['data']['bam_label_merge_index']
+    output:
+        bw = config['data']['bw']
+
+
+################################################################################
+############################ Debugging #########################################
+################################################################################
+
+rule subset_bam:
+    input:
+        bam = config['data']['bam_label_merge_sorted'],
+        bai = config['data']['bam_label_merge_index']
+    resources:
+        threads = 4,
+        mem_gb = 16
+    params:
+        region = 'chr11:102881298-102886826'
+    output:
+        bam = config['data']['bam_subset']
+    shell:
+        """
+        module load samtools
+        samtools view -h {input.bam} {params.region} > {output.bam}
+        """
+
+use rule sort_bam as lr_subset_sort_bam with:
+    input:
+        bam = config['data']['bam_subset']
+    output:
+        bam = config['data']['bam_subset_sorted']
+
+use rule index_bam as lr_subset_index_bam with:
+    input:
+        bam = config['data']['bam_subset_sorted']
+    output:
+        bam = config['data']['bam_subset_index']
