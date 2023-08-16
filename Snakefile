@@ -12,7 +12,9 @@ from utils import *
 
 # settings we can change each time it's run
 configfile: 'config.yml'
-config_tsv = '230607_config.tsv'
+# config_tsv = '230607_config.tsv' # use this for everyting
+config_tsv = '230816_config.tsv'
+
 cerb_tsv = 'cerberus.tsv' # gtf_to_bed and agg_ends settings
 datasets_per_run = 4 # number of datasets per talon run
 auto_dedupe = True # deduplicate runs w/ same stem but different chop numbers
@@ -144,13 +146,11 @@ rule all:
         #        study=studies,
         #        allow_missing=True),
         #        batch=batch),
-
         # expand(expand(config['data']['ca_annot_2'],
         #        zip,
         #        study=studies,
         #        allow_missing=True),
         #        batch=batch),
-
         # trying to figure out stupid sequential Cerberus
         # expand(config['data']['ca_annot'],
         #        zip,
@@ -167,9 +167,8 @@ rule all:
         #        batch=batch,
         #        study=source_df.loc[0, 'source'],
         #        cerb_run=0),
-
         # need to clean up these guyes
-        # expand(config['data']['sg'], batch=batches),
+        expand(config['data']['sg'], batch=batches),
         # expand(expand(config['data']['die_tsv'],
         #        zip,
         #        genotype1=get_genotype_pairs(df, 0),

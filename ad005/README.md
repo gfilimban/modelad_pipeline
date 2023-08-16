@@ -168,4 +168,33 @@ talon \
   --build mm10 \
   -t 16 \
   --o test_2
+
+talon_filter_transcripts \
+    --db test.db \
+    -a ca_vM21 \
+    --maxFracA=0.5 \
+    --minCount=5 \
+    --o output_list.csv
+
+talon_create_GTF \
+    --db test.db \
+    -b mm10 \
+    -a ca_vM21 \
+    --whitelist output_list.csv \
+    --observed \
+    --o test_2_gtf
+
 ```
+
+```bash
+# extract only the reads that were hits to the dumb new gene that talon created
+module load samtools
+bam=~/mortazavi_lab/bin/modelad_pipeline/data/230516/talon/5xBIN1_HO_F_4_months_HC_3_labeled_merged.bam
+read_ids=gene_id_110958_reads.txt
+samtools view -N $read_ids -bh $bam > weird_gene.bam
+samtools sort -O bam weird_gene.bam > weird_gene_sorted.bam
+samtools index weird_gene_sorted.bam
+```
+
+All of the reads that were assigned to the weird gene were monoexonic, with the exception of one read.
+Maybe we should consider gene status (ie known or novel) before considering overlap as a a heuristic for calling genes from weird reads, cause this will also affect the gene-level quantification
