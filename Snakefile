@@ -188,11 +188,11 @@ rule all:
         #        allow_missing=True),
         #        batch=batches[0],
         #        feature=['gene', 'iso'])
-        expand(expand(config['data']['bam_label_merge'],
-               zip,
-               dataset=datasets,
-               allow_missing=True),
-               batch=batch)
+        # expand(expand(config['data']['bam_label_merge'],
+        #        zip,
+        #        dataset=datasets,
+        #        allow_missing=True),
+        #        batch=batch)
 
 ################################################################################
 ########################### Ref. processing ####################################
