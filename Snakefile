@@ -121,11 +121,11 @@ rule all:
         #        study=studies,
         #        allow_missing=True),
         #        batch=batch),
-        # expand(expand(config['data']['sg'],
-        #        zip,
-        #        study=studies,
-        #        allow_missing=True),
-        #        batch=batch),
+        expand(expand(config['data']['sg'],
+               zip,
+               study=studies,
+               allow_missing=True),
+               batch=batch),
         # expand(config['sr']['bw'],
         #        mouse_id=mouse_ids,
         #        strand=strands),
@@ -168,7 +168,6 @@ rule all:
         #        study=source_df.loc[0, 'source'],
         #        cerb_run=0),
         # need to clean up these guyes
-        expand(config['data']['sg'], batch=batches),
         # expand(expand(config['data']['die_tsv'],
         #        zip,
         #        genotype1=get_genotype_pairs(df, 0),
@@ -569,6 +568,7 @@ rule talon:
             --build {params.genome} \
             --tmpDir {params.opref}_temp/ \
             --threads {resources.threads} \
+            --create_novel_spliced_genes \
             --o {params.opref}
         mv ${{ref_db}} {params.opref}_talon.db
         """
