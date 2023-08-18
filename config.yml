@@ -38,18 +38,23 @@ data:
 
   # transcriptclean
   sam_clean: data/{batch}/tc/{dataset}_{flowcell}_clean.sam
+  fa_clean: data/{batch}/tc/{dataset}_{flowcell}_clean.fa
+  sam_clean_log: data/{batch}/tc/{dataset}_{flowcell}_clean.log
+  sam_clean_te_log: data/{batch}/tc/{dataset}_{flowcell}_clean.TE.log
   tc_stats: data/{batch}/tc/{dataset}_{flowcell}_tc_stats.txt
 
+
+  # TODO -- put these in a separate talon_label --> study directory?
   # talon label
   sam_label: data/{batch}/talon/{dataset}_{flowcell}_labeled.sam
   bam_label_sorted: data/{batch}/talon/{dataset}_{flowcell}_labeled.sorted.bam
 
   # merge labelled sams
   bam_label_merge: data/{batch}/talon/{dataset}_labeled_merged.bam
-
-  # stuff to get bigwigs
   bam_label_merge_sorted: data/{batch}/talon/{dataset}_labeled_merged_sorted.bam
   bam_label_merge_index: data/{batch}/talon/{dataset}_labeled_merged_sorted.bam.bai
+
+  # stuff to get bigwigs
   bw: data/{batch}/bigwig/{dataset}_{strand}.bw
 
   # talon files - split by talon run + study

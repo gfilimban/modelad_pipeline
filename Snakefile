@@ -350,7 +350,7 @@ rule map:
      		    {input.ref_fa} {input.fastq} > {output.sam} 2> {output.log}
     """
 
-rule sam_to_bam:
+rule :
     resources:
         threads = 16,
         mem_gb = 16
@@ -382,7 +382,7 @@ use rule map as map_reads with:
         sam = temporary(config['data']['sam']),
         log = config['data']['sam_log']
 
-# use rule sam_to_bam as convert_sam:
+# use rule  as convert_sam:
 #     input:
 #         sam = config['data']['sam']
 #     output:
@@ -435,7 +435,10 @@ use rule tc as tc_sam with:
         tc = config['tc_path'],
         opref = config['data']['sam_clean'].rsplit('_clean.sam', maxsplit=1)[0]
     output:
-        sam = temporary(config['data']['sam_clean'])
+        sam = temporary(config['data']['sam_clean']),
+        fa = temporary(config['data']['fa_clean']),
+        sam_clean_log = temporary(config['data']['sam_clean_log']),
+        sam_clean_te_log = temporary(config['data']['sam_clean_te_log'])
 
 use rule alignment_stats as tc_stats with:
     input:
@@ -468,7 +471,10 @@ rule talon_label:
             --o {params.opref}
         """
 
-use rule sam_to_bam as talon_label_bam with:
+use rule
+
+/
+ as talon_label_bam with:
     input:
         sam = config['data']['sam_label']
     output:
@@ -497,7 +503,13 @@ use rule merge_alignment as merge_talon_label with:
                                                       df,
                                                       config['data']['bam_label_sorted'])
     output:
-        bam = config['data']['bam_label_merge']
+        bam = temporary(config['data']['bam_label_merge'])
+
+use rule  as talon_label_merged_bam with:
+    input:
+        sam = config['data']['bam_label_merge']
+    output:
+        bam = config['data']['bam_label_merge_sorted']
 
 def get_talon_run_info(wc, df, config_entry=None, col=False):
     temp = df.loc[df.talon_run_num == int(wc.talon_run)]
@@ -517,7 +529,7 @@ def get_talon_run_info(wc, df, config_entry=None, col=False):
 
 rule talon_config:
     input:
-        files = lambda wc:get_talon_run_info(wc, dataset_df, config['data']['bam_label_merge'], col='file')
+        files = lambda wc:get_talon_run_info(wc, dataset_df, config['data']['bam_label_merge_sorted'], col='file')
     resources:
         threads = 1,
         mem_gb = 1
@@ -591,10 +603,10 @@ use rule talon as first_talon with:
                    zip,
                    talon_run=1,
                    allow_missing=True)[0],
-        annot = expand(config['data']['read_annot'],
+        annot = temporary(expand(config['data']['read_annot'],
                                   zip,
                                   talon_run=1,
-                                  allow_missing=True)[0]
+                                  allow_missing=True)[0])
 
 use rule talon as seq_talon with:
     input:
@@ -608,7 +620,7 @@ use rule talon as seq_talon with:
         opref = config['data']['talon_db'].rsplit('_talon', maxsplit=1)[0]
     output:
         db = config['data']['talon_db'],
-        annot = config['data']['read_annot']
+        annot = temporary(config['data']['read_annot'])
 
 def get_talon_max_output_file(wc, df, config_entry):
     datasets = get_study_datasets(wc, df)
@@ -1380,18 +1392,18 @@ use rule bam_to_bw as sr_bam_to_bw with:
     output:
         bw = config['sr']['bw']
 
-# lr
-use rule sort_bam as lr_sort_bam with:
-    input:
-        bam = config['data']['bam_label_merge']
-    output:
-        bam = config['data']['bam_label_merge_sorted']
-
-use rule index_bam as lr_index_bam with:
-    input:
-        bam = config['data']['bam_label_merge_sorted']
-    output:
-        bam = config['data']['bam_label_merge_index']
+# # lr
+# use rule sort_bam as lr_sort_bam with:
+#     input:
+#         bam = config['data']['bam_label_merge']
+#     output:
+#         bam = config['data']['bam_label_merge_sorted']
+#
+# use rule index_bam as lr_index_bam with:
+#     input:
+#         bam = config['data']['bam_label_merge_sorted']
+#     output:
+#         bam = config['data']['bam_label_merge_index']
 
 use rule bam_to_bw as lr_bam_to_bw with:
     input:
