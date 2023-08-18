@@ -502,7 +502,7 @@ use rule merge_alignment as merge_talon_label with:
     output:
         bam = temporary(config['data']['bam_label_merge'])
 
-use rule  as talon_label_merged_bam with:
+use rule sam_to_bam as talon_label_merged_bam with:
     input:
         sam = config['data']['bam_label_merge']
     output:
