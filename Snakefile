@@ -471,10 +471,7 @@ rule talon_label:
             --o {params.opref}
         """
 
-use rule
-
-/
- as talon_label_bam with:
+use rule sam_to_bam as talon_label_bam with:
     input:
         sam = config['data']['sam_label']
     output:
