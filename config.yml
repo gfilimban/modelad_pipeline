@@ -48,6 +48,7 @@ data:
   # talon label
   sam_label: data/{batch}/talon/{dataset}_{flowcell}_labeled.sam
   bam_label_sorted: data/{batch}/talon/{dataset}_{flowcell}_labeled.sorted.bam
+  bam_label_sorted_index: data/{batch}/talon/{dataset}_{flowcell}_labeled.sorted.bam.bai
 
   # merge labelled sams
   bam_label_merge: data/{batch}/talon/{dataset}_labeled_merged.bam
@@ -61,7 +62,7 @@ data:
   talon_config: data/{batch}/talon/{study}/talon_{talon_run}_config.csv
   talon_db: data/{batch}/talon/{study}/annot_{talon_run}_talon.db
   read_annot: data/{batch}/talon/{study}/annot_{talon_run}_talon_read_annot.tsv
-  temp_db: data/{batch}/talon/{study}/temp_annot_2_talon.db
+  talon_temp: data/{batch}/talon/{study}/annot_{talon_run}_temp/
 
   # talon files - split only by study
   ab: data/{batch}/talon/{study}/annot_talon_abundance.tsv
@@ -95,7 +96,7 @@ data:
   ca_annot_2: data/{batch}/cerberus/{study}/ca_annot.h5 # parallel / non-overlapping
   ca_ref_gtf: data/{batch}/cerberus/ca_vM21.gtf
   ca_gtf: data/{batch}/cerberus/{study}/ca.gtf
-  ca_ab: data/{batch}/cerberus/{study}ca_ab.tsv
+  ca_ab: data/{batch}/cerberus/{study}/ca_ab.tsv
 
   # swan
   swan_meta: data/{batch}/swan/{study}/swan_metadata.tsv
