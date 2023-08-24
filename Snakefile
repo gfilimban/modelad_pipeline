@@ -23,6 +23,8 @@ cerb_settings = pd.read_csv(cerb_tsv, sep='\t')
 # should be static
 meta_tsv = 'mouse_metadata.tsv'
 
+# troublesome fusions
+fusion_df = pd.read_csv('fusion_regions.tsv', sep='\t')
 
 df, dataset_df = parse_config_file(config_tsv,
                        meta_tsv,
@@ -106,16 +108,23 @@ rule all:
         #        dataset=datasets,
         #        allow_missing=True),
         #        batch=batch),
-        expand(expand(config['data']['bam_eftud2_gfap_subset_index'],
-              zip,
-              dataset=datasets,
-              allow_missing=True),
-              batch=batch),
-        expand(expand(config['data']['bam_bc_plp1_subset_index'],
-            zip,
-            dataset=datasets,
-            allow_missing=True),
-            batch=batch)
+        expand(expand(config['data']['bam_fusion_subset'],
+                      zip,
+                      fusion_gene1=fusion_df.gene1.tolist(),
+                      fusion_gene2=fusion_df.gene2.tolist(),
+                      allow_missing=True),
+                      dataset=datasets,
+                      batch=batch)
+        # expand(expand(config['data']['bam_eftud2_gfap_subset_index'],
+        #       zip,
+        #       dataset=datasets,
+        #       allow_missing=True),
+        #       batch=batch),
+        # expand(expand(config['data']['bam_bc_plp1_subset_index'],
+        #     zip,
+        #     dataset=datasets,
+        #     allow_missing=True),
+        #     batch=batch)
         # curr working
         # expand(config['data']['map_stats'],
         #    zip,
@@ -1455,94 +1464,142 @@ use rule index_bam as lr_subset_index_bam with:
         bam = config['data']['bam_subset_index']
 
 ################################################################################
+###################### Removing fusion reads ###################################
+################################################################################
+def get_fusion_col(wc, df, col):
+    temp = df.copy(deep=True)
+    temp = temp.loc[(temp.gene1==wc.fusion_gene1)&\
+                    (temp.gene2==wc.fusion_gene2)]
+    return temp[col].values[0]
+
+rule double_subset_bam:
+    input:
+        bam = config['data']['bam_label_merge_sorted'],
+        bai = config['data']['bam_label_merge_index']
+    resources:
+        threads = 4,
+        mem_gb = 16
+    params:
+        fusion_region1 = lambda wc:get_fusion_col(wc, fusion_df, 'gene1_region'),
+        fusion_region2 = lambda wc:get_fusion_col(wc, fusion_df, 'gene2_region')
+    output:
+        bam = temporary(config['data']['bam_fusion_subset'])
+    shell:
+        """
+        module load samtools
+        samtools view -h {input.bam} {params.fusion_region1} | samtools view -h - {params.fusion_region2} > {output.bam}
+        """
+
+################################################################################
 ########################### Debugging 2 ########################################
 ################################################################################
-
-# gfap
-use rule subset_bam as subset_bam_gfap with:
-    input:
-        bam = config['data']['bam_label_merge_sorted'],
-        bai = config['data']['bam_label_merge_index']
-    params:
-        region = 'chr11:102886939-102901104'
-    output:
-        bam = temporary(config['data']['bam_gfap_subset'])
-
-use rule sort_bam as lr_subset_sort_bam_gfap with:
-    input:
-        bam = config['data']['bam_gfap_subset']
-    output:
-        bam = temporary(config['data']['bam_gfap_subset_sorted'])
-
-use rule index_bam as lr_subset_index_bam_gfap with:
-    input:
-        bam = config['data']['bam_gfap_subset_sorted']
-    output:
-        bam = temporary(config['data']['bam_gfap_subset_index'])
-
-# eftud2
-use rule subset_bam as subset_bam_eftud2 with:
-    input:
-        bam = config['data']['bam_gfap_subset_sorted'],
-        bai = config['data']['bam_gfap_subset_index']
-    params:
-        region = 'chr11:102838417-102881132' # eftud2 region
-    output:
-        bam = temporary(config['data']['bam_eftud2_gfap_subset'])
-
-use rule sort_bam as lr_subset_sort_bam_eftud2 with:
-    input:
-        bam = config['data']['bam_eftud2_gfap_subset']
-    output:
-        bam = config['data']['bam_eftud2_gfap_subset_sorted']
-
-use rule index_bam as lr_subset_index_bam_eftud2 with:
-    input:
-        bam = config['data']['bam_eftud2_gfap_subset_sorted']
-    output:
-        bam = config['data']['bam_eftud2_gfap_subset_index']
-
-
-# plp1
-use rule subset_bam as subset_bam_plp1 with:
-    input:
-        bam = config['data']['bam_label_merge_sorted'],
-        bai = config['data']['bam_label_merge_index']
-    params:
-        region = 'chrX:136822472-136840064' # plp1
-    output:
-        bam = temporary(config['data']['bam_plp1_subset'])
-
-use rule sort_bam as lr_subset_sort_bam_plp1 with:
-    input:
-        bam = config['data']['bam_plp1_subset']
-    output:
-        bam = temporary(config['data']['bam_plp1_subset_sorted'])
-
-use rule index_bam as lr_subset_index_bam_plp1 with:
-    input:
-        bam = config['data']['bam_plp1_subset_sorted']
-    output:
-        bam = temporary(config['data']['bam_plp1_subset_index'])
-
-# bc whatever
-use rule subset_bam as subset_bam_eftud2 with:
-    input:
-        bam = config['data']['bam_plp1_subset_sorted'],
-        bai = config['data']['bam_plp1_subset_index']
-    params:
-        region = 'chrX:136738919-136804394' # bc whatever region
-    output:
-        bam = temporary(config['data']['bam_bc_plp1_subset'])
-
-use rule sort_bam as lr_subset_sort_bam_bc with:
-    input:
-        bam = config['data']['bam_bc_plp1_subset']
-    output:
-        bam = config['data']['bam_bc_plp1_subset_sorted']
-
-use rule index_bam as lr_subset_index_bam_bc with:
-    input:
-        bam = config['data']['bam_bc_plp1_subset_sorted']
-    output:
-        bam = config['data']['bam_bc_plp1_subset_index']
+#
+# rule get_alignment_read_names:
+#     resources:
+#         threads = 4,
+#         mem_gb = 16
+#     shell:
+#         """
+#         module load samtools
+#         samtools view {input.align} | cut -f1 > {output.read_names}
+#         """
+#
+# # gfap
+# use rule subset_bam as subset_bam_gfap with:
+#     input:
+#         bam = config['data']['bam_label_merge_sorted'],
+#         bai = config['data']['bam_label_merge_index']
+#     params:
+#         region = 'chr11:102886939-102901104'
+#     output:
+#         bam = temporary(config['data']['bam_gfap_subset'])
+#
+# use rule sort_bam as lr_subset_sort_bam_gfap with:
+#     input:
+#         bam = config['data']['bam_gfap_subset']
+#     output:
+#         bam = temporary(config['data']['bam_gfap_subset_sorted'])
+#
+# use rule index_bam as lr_subset_index_bam_gfap with:
+#     input:
+#         bam = config['data']['bam_gfap_subset_sorted']
+#     output:
+#         bam = temporary(config['data']['bam_gfap_subset_index'])
+#
+# # eftud2
+# use rule subset_bam as subset_bam_eftud2 with:
+#     input:
+#         bam = config['data']['bam_gfap_subset_sorted'],
+#         bai = config['data']['bam_gfap_subset_index']
+#     params:
+#         region = 'chr11:102838417-102881132' # eftud2 region
+#     output:
+#         bam = temporary(config['data']['bam_eftud2_gfap_subset'])
+#
+# use rule sort_bam as lr_subset_sort_bam_eftud2 with:
+#     input:
+#         bam = config['data']['bam_eftud2_gfap_subset']
+#     output:
+#         bam = config['data']['bam_eftud2_gfap_subset_sorted']
+#
+# use rule index_bam as lr_subset_index_bam_eftud2 with:
+#     input:
+#         bam = config['data']['bam_eftud2_gfap_subset_sorted']
+#     output:
+#         bam = config['data']['bam_eftud2_gfap_subset_index']
+#
+# use rule get_alignment_read_names as get_eftud2_gfap_reads with:
+#     input:
+#         align = config['data']['bam_eftud2_gfap_subset_sorted']
+#     output:
+#         read_names = config['data']['bam_eftud2_gfap_fusion_names']
+#
+# # plp1
+# use rule subset_bam as subset_bam_plp1 with:
+#     input:
+#         bam = config['data']['bam_label_merge_sorted'],
+#         bai = config['data']['bam_label_merge_index']
+#     params:
+#         region = 'chrX:136822472-136840064' # plp1
+#     output:
+#         bam = temporary(config['data']['bam_plp1_subset'])
+#
+# use rule sort_bam as lr_subset_sort_bam_plp1 with:
+#     input:
+#         bam = config['data']['bam_plp1_subset']
+#     output:
+#         bam = temporary(config['data']['bam_plp1_subset_sorted'])
+#
+# use rule index_bam as lr_subset_index_bam_plp1 with:
+#     input:
+#         bam = config['data']['bam_plp1_subset_sorted']
+#     output:
+#         bam = temporary(config['data']['bam_plp1_subset_index'])
+#
+# # bc whatever
+# use rule subset_bam as subset_bam_bc with:
+#     input:
+#         bam = config['data']['bam_plp1_subset_sorted'],
+#         bai = config['data']['bam_plp1_subset_index']
+#     params:
+#         region = 'chrX:136738919-136804394' # bc whatever region
+#     output:
+#         bam = temporary(config['data']['bam_bc_plp1_subset'])
+#
+# use rule sort_bam as lr_subset_sort_bam_bc with:
+#     input:
+#         bam = config['data']['bam_bc_plp1_subset']
+#     output:
+#         bam = config['data']['bam_bc_plp1_subset_sorted']
+#
+# use rule index_bam as lr_subset_index_bam_bc with:
+#     input:
+#         bam = config['data']['bam_bc_plp1_subset_sorted']
+#     output:
+#         bam = config['data']['bam_bc_plp1_subset_index']
+#
+# use rule get_alignment_read_names as get_plp1_bc_reads with:
+#     input:
+#         align = config['data']['bam_bc_plp1_subset_sorted']
+#     output:
+#         read_names = config['data']['bam_bc_plp1_fusion_names']
