@@ -110,4 +110,13 @@ data:
   # trouble region
   bam_subset: data/{batch}/debug/{dataset}_subset.bam
   bam_subset_sorted: data/{batch}/debug/{dataset}_subset_sorted.bam
-  bam_subset_index: data/{batch}/debug/{dataset}_subset.bam.bai
+  bam_subset_index: data/{batch}/debug/{dataset}_subset_sorted.bam.bai
+
+  # trouble regions
+  bam_gfap_subset: data/{batch}/debug/gfap_eftud2/{dataset}_gfap_subset.bam
+  bam_gfap_subset_sorted: data/{batch}/debug/gfap_eftud2/{dataset}_gfap_subset_sorted.bam
+  bam_gfap_subset_index: data/{batch}/debug/gfap_eftud2/{dataset}_gfap_subset_sorted.bam.bai
+  
+  bam_eftud2_gfap_subset: data/{batch}/debug/gfap_eftud2/{dataset}_gfap_eftud2_subset.bam
+  bam_eftud2_gfap_subset_sorted: data/{batch}/debug/gfap_eftud2/{dataset}_gfap_eftud2_subset_sorted.bam
+  bam_eftud2_gfap_subset_index: data/{batch}/debug/gfap_eftud2/{dataset}_gfap_eftud2_subset_sorted.bam.bai

@@ -100,6 +100,16 @@ ruleorder:
 
 rule all:
     input:
+        # expand(expand(config['data']['bam_subset_index'],
+        #        zip,
+        #        dataset=datasets,
+        #        allow_missing=True),
+        #        batch=batch),
+        expand(expand(config['data']['bam_eftud2_gfap_subset_index'],
+              zip,
+              dataset=datasets,
+              allow_missing=True),
+              batch=batch)
         # curr working
         # expand(config['data']['map_stats'],
         #    zip,
@@ -126,11 +136,6 @@ rule all:
         #        study=studies,
         #        allow_missing=True),
         #        batch=batch),
-        expand(expand(config['data']['bam_subset_index'],
-               zip,
-               study=studies,
-               allow_missing=True),
-               batch=batch)
         # expand(config['sr']['bw'],
         #        mouse_id=mouse_ids,
         #        strand=strands),
@@ -1421,9 +1426,10 @@ rule subset_bam:
         threads = 4,
         mem_gb = 16
     params:
-        region = 'chr11:102881298-102886826'
+        # region = 'chr11:102881298-102886826'
+        region = 'chrX:136753799-136828198'
     output:
-        bam = config['data']['bam_subset']
+        bam = temporary(config['data']['bam_subset'])
     shell:
         """
         module load samtools
@@ -1441,3 +1447,51 @@ use rule index_bam as lr_subset_index_bam with:
         bam = config['data']['bam_subset_sorted']
     output:
         bam = config['data']['bam_subset_index']
+
+################################################################################
+########################### Debugging 2 ########################################
+################################################################################
+
+# gfap
+use rule subset_bam as subset_bam_gfap with:
+    input:
+        bam = config['data']['bam_label_merge_sorted'],
+        bai = config['data']['bam_label_merge_index']
+    params:
+        region = 'chr11:102886939-102901104'
+    output:
+        bam = temporary(config['data']['bam_gfap_subset'])
+
+use rule sort_bam as lr_subset_sort_bam with:
+    input:
+        bam = config['data']['bam_gfap_subset']
+    output:
+        bam = temporary(config['data']['bam_gfap_subset_sorted'])
+
+use rule index_bam as lr_subset_index_bam with:
+    input:
+        bam = config['data']['bam_gfap_subset_sorted']
+    output:
+        bam = temporary(config['data']['bam_gfap_subset_index'])
+
+# eftud2
+use rule subset_bam as subset_bam_gfap with:
+    input:
+        bam = config['data']['bam_gfap_subset'],
+        bai = config['data']['bam_gfap_subset_index']
+    params:
+        region = 'chr11:102838417-102881132' # eftud2 region
+    output:
+        bam = temporary(config['data']['bam_eftud2_gfap_subset'])
+
+use rule sort_bam as lr_subset_sort_bam with:
+    input:
+        bam = config['data']['bam_eftud2_gfap_subset']
+    output:
+        bam = config['data']['bam_eftud2_gfap_subset_sorted']
+
+use rule index_bam as lr_subset_index_bam with:
+    input:
+        bam = config['data']['bam_eftud2_gfap_subset_sorted']
+    output:
+        bam = config['data']['bam_eftud2_gfap_subset_index']
