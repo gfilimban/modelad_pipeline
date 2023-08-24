@@ -1462,20 +1462,20 @@ use rule subset_bam as subset_bam_gfap with:
     output:
         bam = temporary(config['data']['bam_gfap_subset'])
 
-use rule sort_bam as lr_subset_sort_bam with:
+use rule sort_bam as lr_subset_sort_bam_gfap with:
     input:
         bam = config['data']['bam_gfap_subset']
     output:
         bam = temporary(config['data']['bam_gfap_subset_sorted'])
 
-use rule index_bam as lr_subset_index_bam with:
+use rule index_bam as lr_subset_index_bam_gfap with:
     input:
         bam = config['data']['bam_gfap_subset_sorted']
     output:
         bam = temporary(config['data']['bam_gfap_subset_index'])
 
 # eftud2
-use rule subset_bam as subset_bam_gfap with:
+use rule subset_bam as subset_bam_eftud2 with:
     input:
         bam = config['data']['bam_gfap_subset'],
         bai = config['data']['bam_gfap_subset_index']
@@ -1484,13 +1484,13 @@ use rule subset_bam as subset_bam_gfap with:
     output:
         bam = temporary(config['data']['bam_eftud2_gfap_subset'])
 
-use rule sort_bam as lr_subset_sort_bam with:
+use rule sort_bam as lr_subset_sort_bam_eftud2 with:
     input:
         bam = config['data']['bam_eftud2_gfap_subset']
     output:
         bam = config['data']['bam_eftud2_gfap_subset_sorted']
 
-use rule index_bam as lr_subset_index_bam with:
+use rule index_bam as lr_subset_index_bam_eftud2 with:
     input:
         bam = config['data']['bam_eftud2_gfap_subset_sorted']
     output:
