@@ -93,7 +93,8 @@ wildcard_constraints:
     genotype1= '|'.join([re.escape(x) for x in genotypes]),
     genotype2= '|'.join([re.escape(x) for x in genotypes]),
     batch=batch,
-    mouse_ids= '|'.join([re.escape(x) for x in mouse_ids])
+    mouse_ids= '|'.join([re.escape(x) for x in mouse_ids]),
+    dataset='|'.join([re.escape(x) for x in datasets])
 
 ruleorder:
     first_talon > seq_talon
