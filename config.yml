@@ -116,7 +116,16 @@ data:
   bam_gfap_subset: data/{batch}/debug/gfap_eftud2/{dataset}_gfap_subset.bam
   bam_gfap_subset_sorted: data/{batch}/debug/gfap_eftud2/{dataset}_gfap_subset_sorted.bam
   bam_gfap_subset_index: data/{batch}/debug/gfap_eftud2/{dataset}_gfap_subset_sorted.bam.bai
-  
+
   bam_eftud2_gfap_subset: data/{batch}/debug/gfap_eftud2/{dataset}_gfap_eftud2_subset.bam
   bam_eftud2_gfap_subset_sorted: data/{batch}/debug/gfap_eftud2/{dataset}_gfap_eftud2_subset_sorted.bam
   bam_eftud2_gfap_subset_index: data/{batch}/debug/gfap_eftud2/{dataset}_gfap_eftud2_subset_sorted.bam.bai
+
+  # trouble regions
+  bam_plp1_subset: data/{batch}/debug/plp1_bc/{dataset}_plp1_subset.bam
+  bam_plp1_subset_sorted: data/{batch}/debug/plp1_bc/{dataset}_plp1_subset_sorted.bam
+  bam_plp1_subset_index: data/{batch}/debug/plp1_bc/{dataset}_plp1_subset_sorted.bam.bai
+
+  bam_bc_plp1_subset: data/{batch}/debug/plp1_bc/{dataset}_plp1_bc_subset.bam
+  bam_bc_plp1_subset_sorted: data/{batch}/debug/plp1_bc/{dataset}_plp1_bc_subset_sorted.bam
+  bam_bc_plp1_subset_index: data/{batch}/debug/plp1_bc/{dataset}_plp1_bc_subset_sorted.bam.bai

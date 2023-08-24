@@ -110,7 +110,12 @@ rule all:
               zip,
               dataset=datasets,
               allow_missing=True),
-              batch=batch)
+              batch=batch),
+        expand(expand(config['data']['bam_bc_plp1_subset_index'],
+            zip,
+            dataset=datasets,
+            allow_missing=True),
+            batch=batch)
         # curr working
         # expand(config['data']['map_stats'],
         #    zip,
@@ -1478,7 +1483,7 @@ use rule index_bam as lr_subset_index_bam_gfap with:
 # eftud2
 use rule subset_bam as subset_bam_eftud2 with:
     input:
-        bam = config['data']['bam_gfap_subset'],
+        bam = config['data']['bam_gfap_subset_sorted'],
         bai = config['data']['bam_gfap_subset_index']
     params:
         region = 'chr11:102838417-102881132' # eftud2 region
@@ -1496,3 +1501,48 @@ use rule index_bam as lr_subset_index_bam_eftud2 with:
         bam = config['data']['bam_eftud2_gfap_subset_sorted']
     output:
         bam = config['data']['bam_eftud2_gfap_subset_index']
+
+
+# plp1
+use rule subset_bam as subset_bam_plp1 with:
+    input:
+        bam = config['data']['bam_label_merge_sorted'],
+        bai = config['data']['bam_label_merge_index']
+    params:
+        region = 'chrX:136822472-136840064' # plp1
+    output:
+        bam = temporary(config['data']['bam_plp1_subset'])
+
+use rule sort_bam as lr_subset_sort_bam_plp1 with:
+    input:
+        bam = config['data']['bam_plp1_subset']
+    output:
+        bam = temporary(config['data']['bam_plp1_subset_sorted'])
+
+use rule index_bam as lr_subset_index_bam_plp1 with:
+    input:
+        bam = config['data']['bam_plp1_subset_sorted']
+    output:
+        bam = temporary(config['data']['bam_plp1_subset_index'])
+
+# bc whatever
+use rule subset_bam as subset_bam_eftud2 with:
+    input:
+        bam = config['data']['bam_plp1_subset_sorted'],
+        bai = config['data']['bam_plp1_subset_index']
+    params:
+        region = 'chrX:136738919-136804394' # bc whatever region
+    output:
+        bam = temporary(config['data']['bam_bc_plp1_subset'])
+
+use rule sort_bam as lr_subset_sort_bam_bc with:
+    input:
+        bam = config['data']['bam_bc_plp1_subset']
+    output:
+        bam = config['data']['bam_bc_plp1_subset_sorted']
+
+use rule index_bam as lr_subset_index_bam_bc with:
+    input:
+        bam = config['data']['bam_bc_plp1_subset_sorted']
+    output:
+        bam = config['data']['bam_bc_plp1_subset_index']
