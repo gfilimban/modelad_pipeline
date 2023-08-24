@@ -1481,13 +1481,24 @@ rule double_subset_bam:
         mem_gb = 16
     params:
         fusion_region1 = lambda wc:get_fusion_col(wc, fusion_df, 'gene1_region'),
-        fusion_region2 = lambda wc:get_fusion_col(wc, fusion_df, 'gene2_region')
+        fusion_region2 = lambda wc:get_fusion_col(wc, fusion_df, 'gene2_region'),
+        temp_bam = lambda wc: f'temp_{wc.fusion_gene1}_{wc.fusion_gene2}.bam',
+        temp_bam_sorted = lambda wc: f'temp_{wc.fusion_gene1}_{wc.fusion_gene2}_sorted.bam',
+        temp_bam_index = lambda wc: f'temp_{wc.fusion_gene1}_{wc.fusion_gene2}_sorted.bam.bai'
     output:
         bam = temporary(config['data']['bam_fusion_subset'])
     shell:
         """
         module load samtools
-        samtools view -h {input.bam} {params.fusion_region1} | samtools view -h - {params.fusion_region2} > {output.bam}
+        samtools view -h {input.bam} {params.fusion_region1} > {params.temp_bam}
+        samtools sort --threads {resources.threads} -O bam {params.temp_bam} > {params.temp_bam_sorted}
+        samtools index -@ {resources.threads} {params.temp_bam_sorted}
+
+        sam samtools view -h {params.temp_bam_sorted} {params.fusion_region2} > {output.bam}
+
+        rm {params.temp_bam_sorted}
+        rm {params.temp_bam_index}
+        rm {params.temp_bam}
         """
 
 use rule sort_bam as fusion_subset_sort_bam with:
