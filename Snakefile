@@ -1494,7 +1494,7 @@ rule double_subset_bam:
         samtools sort --threads {resources.threads} -O bam {params.temp_bam} > {params.temp_bam_sorted}
         samtools index -@ {resources.threads} {params.temp_bam_sorted}
 
-        sam samtools view -h {params.temp_bam_sorted} {params.fusion_region2} > {output.bam}
+        samtools view -h {params.temp_bam_sorted} {params.fusion_region2} > {output.bam}
 
         rm {params.temp_bam_sorted}
         rm {params.temp_bam_index}
