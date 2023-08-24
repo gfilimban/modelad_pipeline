@@ -114,6 +114,9 @@ data:
 
   # fusions
   bam_fusion_subset: data/{batch}/debug/{fusion_gene1}_{fusion_gene2}/{dataset}_{fusion_gene1}_{fusion_gene2}_subset.bam
+  bam_fusion_subset_sorted: data/{batch}/debug/{fusion_gene1}_{fusion_gene2}/{dataset}_{fusion_gene1}_{fusion_gene2}_subset_sorted.bam
+  bam_fusion_subset_index: data/{batch}/debug/{fusion_gene1}_{fusion_gene2}/{dataset}_{fusion_gene1}_{fusion_gene2}_subset_sorted.bam.bai
+
 
   # # trouble regions
   # bam_gfap_subset: data/{batch}/debug/gfap_eftud2/{dataset}_gfap_subset.bam

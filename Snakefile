@@ -108,7 +108,7 @@ rule all:
         #        dataset=datasets,
         #        allow_missing=True),
         #        batch=batch),
-        expand(expand(config['data']['bam_fusion_subset'],
+        expand(expand(config['data']['bam_fusion_subset_index'],
                       zip,
                       fusion_gene1=fusion_df.gene1.tolist(),
                       fusion_gene2=fusion_df.gene2.tolist(),
@@ -1489,6 +1489,18 @@ rule double_subset_bam:
         module load samtools
         samtools view -h {input.bam} {params.fusion_region1} | samtools view -h - {params.fusion_region2} > {output.bam}
         """
+
+use rule sort_bam as fusion_subset_sort_bam with:
+    input:
+        bam = config['data']['bam_fusion_subset']
+    output:
+        bam = config['data']['bam_fusion_subset_sorted']
+
+use rule index_bam as fusion_subset_index_bam with:
+    input:
+        bam = config['data']['bam_fusion_subset_sorted']
+    output:
+        bam = config['data']['bam_fusion_subset_index']
 
 ################################################################################
 ########################### Debugging 2 ########################################
