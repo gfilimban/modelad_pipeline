@@ -553,7 +553,7 @@ def get_talon_run_info(wc, df, config_entry=None, col=False):
 
 rule talon_config:
     input:
-        files = lambda wc:get_talon_run_info(wc, dataset_df, config['data']['bam_minus_fusion'], col='file')
+        files = lambda wc:get_talon_run_info(wc, dataset_df, config['data']['bam_minus_fusion_sorted'], col='file')
         # files = lambda wc:get_talon_run_info(wc, dataset_df, config['data']['bam_label_merge'], col='file')
 
     resources:
