@@ -103,9 +103,14 @@ ruleorder:
 
 rule all:
     input:
-        expand(config['data']['bam_minus_fusion_index'],
-               batch=batch,
-               dataset=datasets)
+        expand(expand(config['data']['sg'],
+               zip,
+               study=studies,
+               allow_missing=True),
+               batch=batch)
+        # expand(config['data']['bam_minus_fusion_index'],
+        #        batch=batch,
+        #        dataset=datasets)
         # expand(expand(config['data']['bam_subset_index'],
         #        zip,
         #        dataset=datasets,
@@ -548,7 +553,9 @@ def get_talon_run_info(wc, df, config_entry=None, col=False):
 
 rule talon_config:
     input:
-        files = lambda wc:get_talon_run_info(wc, dataset_df, config['data']['bam_label_merge'], col='file')
+        files = lambda wc:get_talon_run_info(wc, dataset_df, config['data']['bam_minus_fusion'], col='file')
+        # files = lambda wc:get_talon_run_info(wc, dataset_df, config['data']['bam_label_merge'], col='file')
+
     resources:
         threads = 1,
         mem_gb = 1
@@ -1555,6 +1562,12 @@ rule combine_fusion_read_names:
         for f in input.files:
             temp2 = pd.read_csv(f, header=None, names=['read_name'])
             temp = pd.concat([temp, temp2], axis=0)
+
+        # add a "dummy" read in the case that there are no reads that
+        # need to be filtered out
+        temp2 = pd.DataFrame(data=['temp'], columns=['read_name'])
+        temp = pd.concat([temp, temp2], axis=0)
+
         temp.to_csv(output.read_names, index=False, header=None)
 
 rule filter_out_read_names:
