@@ -1559,7 +1559,8 @@ rule combine_fusion_read_names:
 
 rule filter_out_read_names:
     input:
-        bam = config['data']['bam_label_merge_sorted']
+        bam = config['data']['bam_label_merge_sorted'],
+        fusion_read_names = config['data']['all_fusion_read_names']
     resources:
         threads = 8,
         mem_gb = 32
