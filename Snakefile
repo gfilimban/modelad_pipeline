@@ -103,7 +103,7 @@ ruleorder:
 
 rule all:
     input:
-        expand(config['data']['all_fusion_read_names'],
+        expand(config['data']['bam_minus_fusion_index'],
                batch=batch,
                dataset=datasets)
         # expand(expand(config['data']['bam_subset_index'],
@@ -1545,29 +1545,48 @@ def get_read_name_files(wc, df):
 rule combine_fusion_read_names:
     input:
         files = lambda wc:get_read_name_files(wc, fusion_df)
+    resources:
+        mem_gb = 4,
+        threads = 1
     output:
         read_names = config['data']['all_fusion_read_names']
     run:
         temp = pd.DataFrame()
         for f in input.files:
-            temp2 = pd.read_csv(files, header=None, names=['read_name'])
+            temp2 = pd.read_csv(f, header=None, names=['read_name'])
             temp = pd.concat([temp, temp2], axis=0)
         temp.to_csv(output.read_names, index=False, header=None)
 
-# rule filter_out_read_names:
-#     resources:
-#         threads = 8,
-#         mem_gb = 32
-#     conda:
-#         "picard"
-#     shell:
-#         """
-#         picard FilterSamReads \
-#           I={input.bam} \
-#           O={output.bam} \
-#           READ_LIST_FILE={input.fusion_read_names} \
-#           FILTER=excludeReadList
-#         """
+rule filter_out_read_names:
+    input:
+        bam = config['data']['bam_label_merge_sorted']
+    resources:
+        threads = 8,
+        mem_gb = 32
+    conda:
+        "picard"
+    output:
+        bam = temporary(config['data']['bam_minus_fusion'])
+    shell:
+        """
+        picard FilterSamReads \
+          I={input.bam} \
+          O={output.bam} \
+          READ_LIST_FILE={input.fusion_read_names} \
+          FILTER=excludeReadList
+        """
+
+use rule sort_bam as sort_minus_fusion with:
+    input:
+        bam = config['data']['bam_minus_fusion']
+    output:
+        bam = config['data']['bam_minus_fusion_sorted']
+
+use rule index_bam as index_minus_fusion with:
+    input:
+        bam = config['data']['bam_minus_fusion_sorted']
+    output:
+        bam = config['data']['bam_minus_fusion_index']
 
 ################################################################################
 ########################### Debugging 2 ########################################

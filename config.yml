@@ -120,7 +120,10 @@ data:
   all_fusion_read_names: data/{batch}/debug/{dataset}_fusion_read_names.txt
 
   # bam minus fusion reads
-  # bam_minus_fusion:
+  bam_minus_fusion: data/{batch}/talon/minus_fusion/{dataset}.bam
+  bam_minus_fusion_sorted: data/{batch}/talon/minus_fusion/{dataset}_sorted.bam
+  bam_minus_fusion_index: data/{batch}/talon/minus_fusion/{dataset}_sorted.bam.bai
+
 
   # # trouble regions
   # bam_gfap_subset: data/{batch}/debug/gfap_eftud2/{dataset}_gfap_subset.bam
