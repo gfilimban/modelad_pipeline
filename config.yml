@@ -116,7 +116,11 @@ data:
   bam_fusion_subset: data/{batch}/debug/{fusion_gene1}_{fusion_gene2}/{dataset}_{fusion_gene1}_{fusion_gene2}_subset.bam
   bam_fusion_subset_sorted: data/{batch}/debug/{fusion_gene1}_{fusion_gene2}/{dataset}_{fusion_gene1}_{fusion_gene2}_subset_sorted.bam
   bam_fusion_subset_index: data/{batch}/debug/{fusion_gene1}_{fusion_gene2}/{dataset}_{fusion_gene1}_{fusion_gene2}_subset_sorted.bam.bai
+  fusion_read_names: data/{batch}/debug/{fusion_gene1}_{fusion_gene2}/{dataset}_{fusion_gene1}_{fusion_gene2}_read_names.txt
+  all_fusion_read_names: data/{batch}/debug/{dataset}_fusion_read_names.txt
 
+  # bam minus fusion reads
+  # bam_minus_fusion:
 
   # # trouble regions
   # bam_gfap_subset: data/{batch}/debug/gfap_eftud2/{dataset}_gfap_subset.bam

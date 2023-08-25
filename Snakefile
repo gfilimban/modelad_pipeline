@@ -103,18 +103,21 @@ ruleorder:
 
 rule all:
     input:
+        expand(config['data']['all_fusion_read_names'],
+               batch=batch,
+               dataset=datasets)
         # expand(expand(config['data']['bam_subset_index'],
         #        zip,
         #        dataset=datasets,
         #        allow_missing=True),
         #        batch=batch),
-        expand(expand(config['data']['bam_fusion_subset_index'],
-                      zip,
-                      fusion_gene1=fusion_df.gene1.tolist(),
-                      fusion_gene2=fusion_df.gene2.tolist(),
-                      allow_missing=True),
-                      dataset=datasets,
-                      batch=batch)
+        # expand(expand(config['data']['bam_fusion_subset_index'],
+        #               zip,
+        #               fusion_gene1=fusion_df.gene1.tolist(),
+        #               fusion_gene2=fusion_df.gene2.tolist(),
+        #               allow_missing=True),
+        #               dataset=datasets,
+        #               batch=batch)
         # expand(expand(config['data']['bam_eftud2_gfap_subset_index'],
         #       zip,
         #       dataset=datasets,
@@ -1513,19 +1516,64 @@ use rule index_bam as fusion_subset_index_bam with:
     output:
         bam = config['data']['bam_fusion_subset_index']
 
+rule get_alignment_read_names:
+    resources:
+        threads = 4,
+        mem_gb = 16
+    shell:
+        """
+        module load samtools
+        samtools view {input.align} | cut -f1 > {output.read_names}
+        """
+
+use rule get_alignment_read_names as get_fusion_read_names with:
+    input:
+        align = config['data']['bam_fusion_subset_sorted']
+    output:
+        read_names = config['data']['fusion_read_names']
+
+def get_read_name_files(wc, df):
+    files = list(expand(expand(config['data']['fusion_read_names'],
+                  zip,
+                  fusion_gene1=df.gene1.tolist(),
+                  fusion_gene2=df.gene2.tolist(),
+                  allow_missing=True),
+                  dataset=wc.dataset,
+                  batch=wc.batch))
+    return files
+
+rule combine_fusion_read_names:
+    input:
+        files = lambda wc:get_read_name_files(wc, fusion_df)
+    output:
+        read_names = config['data']['all_fusion_read_names']
+    run:
+        temp = pd.DataFrame()
+        for f in input.files:
+            temp2 = pd.read_csv(files, header=None, names=['read_name'])
+            temp = pd.concat([temp, temp2], axis=0)
+        temp.to_csv(output.read_names, index=False, header=None)
+
+# rule filter_out_read_names:
+#     resources:
+#         threads = 8,
+#         mem_gb = 32
+#     conda:
+#         "picard"
+#     shell:
+#         """
+#         picard FilterSamReads \
+#           I={input.bam} \
+#           O={output.bam} \
+#           READ_LIST_FILE={input.fusion_read_names} \
+#           FILTER=excludeReadList
+#         """
+
 ################################################################################
 ########################### Debugging 2 ########################################
 ################################################################################
 #
-# rule get_alignment_read_names:
-#     resources:
-#         threads = 4,
-#         mem_gb = 16
-#     shell:
-#         """
-#         module load samtools
-#         samtools view {input.align} | cut -f1 > {output.read_names}
-#         """
+
 #
 # # gfap
 # use rule subset_bam as subset_bam_gfap with:
