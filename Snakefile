@@ -107,7 +107,11 @@ rule all:
                zip,
                study=studies,
                allow_missing=True),
-               batch=batch)
+               batch=batch),
+        expand(config['data']['bw'],
+               batch=batch,
+               dataset=lr_datasets,
+               strand=strands)
         # expand(config['data']['bam_minus_fusion_index'],
         #        batch=batch,
         #        dataset=datasets)
@@ -162,10 +166,6 @@ rule all:
         # expand(config['sr']['bw'],
         #        mouse_id=mouse_ids,
         #        strand=strands),
-        # expand(config['data']['bw'],
-        #        batch=batch,
-        #        dataset=lr_datasets,
-        #        strand=strands)
         # expand(config['data']['ca_ref_gtf'],
         #        zip,
         #        batch=batch),
@@ -1419,22 +1419,22 @@ use rule bam_to_bw as sr_bam_to_bw with:
         bw = config['sr']['bw']
 
 # lr
-use rule sort_bam as lr_sort_bam with:
-    input:
-        bam = config['data']['bam_label_merge']
-    output:
-        bam = config['data']['bam_label_merge_sorted']
-
-use rule index_bam as lr_index_bam with:
-    input:
-        bam = config['data']['bam_label_merge_sorted']
-    output:
-        bam = config['data']['bam_label_merge_index']
+# use rule sort_bam as lr_sort_bam with:
+#     input:
+#         bam = config['data']['bam_label_merge']
+#     output:
+#         bam = config['data']['bam_label_merge_sorted']
+#
+# use rule index_bam as lr_index_bam with:
+#     input:
+#         bam = config['data']['bam_label_merge_sorted']
+#     output:
+#         bam = config['data']['bam_label_merge_index']
 
 use rule bam_to_bw as lr_bam_to_bw with:
     input:
-        bam = config['data']['bam_label_merge_sorted'],
-        bai = config['data']['bam_label_merge_index']
+        bam = config['data']['bam_minus_fusion_sorted'],
+        bai = config['data']['bam_minus_fusion_index']
     output:
         bw = config['data']['bw']
 
