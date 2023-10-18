@@ -1,0 +1,61 @@
+import pandas as pd
+import os
+import sys
+import swan_vis as swan
+import itertools
+import cerberus
+
+from utils import *
+from sm_utils import *
+
+include: 'download.smk'
+include: 'samtools.smk'
+include: 'refs.smk'
+include: 'talon.smk'
+include: 'lapa.smk'
+include: 'mapping.smk'
+include: 'tc.smk'
+
+# settings we can change each time it's run
+configfile: 'config.yml'
+config_tsv = '231018_config.tsv'
+meta_tsv = 'mouse_metadata.tsv'
+auto_dedupe = True
+
+df = parse_config_file(config_tsv,
+                       meta_tsv,
+                       auto_dedupe=auto_dedupe)
+
+wildcard_constraints:
+    genotype='|'.join([re.escape(x) for x in df.genotype.unique().tolist()]),
+    sex='|'.join([re.escape(x) for x in df.sex.unique().tolist()]),
+    age='|'.join([re.escape(x) for x in df.age.unique().tolist()]),
+    tissue='|'.join([re.escape(x) for x in df.tissue.unique().tolist()]),
+    biorep_num='|'.join([re.escape(x) for x in df.biorep_num.unique().tolist()]),
+    flowcell='|'.join([re.escape(x) for x in df.flowcell.unique().tolist()]),
+
+
+
+
+
+
+rule all:
+    input:
+        expand(config['map']['sam'],
+               genotype='5xFADHEMI',
+               sex='F',
+               age='4_months',
+               tissue='HC',
+               biorep_num='1',
+               flowcell='1')
+
+################################################################################
+################################################################################
+use rule map as map_reads with:
+    input:
+        fastq = lambda wc: get_df_col(wc, df, 'fname'),
+        ref_fa = config['ref']['fa'],
+        sjs = config['ref']['sjs']
+    output:
+        sam = temporary(config['map']['sam']),
+        log = config['map']['log']
