@@ -37,7 +37,7 @@ wildcard_constraints:
 
 rule all:
     input:
-        expand(config['map']['sam'],
+        expand(config['tc']['stats'],
                genotype='5xFADHEMI',
                sex='F',
                age='4_months',
@@ -46,6 +46,7 @@ rule all:
                flowcell='1')
 
 ################################################################################
+#################################### Mapping ###################################
 ################################################################################
 use rule map as map_reads with:
     input:
@@ -67,3 +68,25 @@ use rule rev_alignment as map_rev with:
         sam = config['map']['sam']
     output:
         sam_rev = temporary(config['map']['sam_rev'])
+
+################################################################################
+###################### TranscriptClean ##########################################
+################################################################################
+use rule tc as tc_sam with:
+    input:
+        sam = config['map']['sam_rev'],
+        fa = config['ref']['fa']
+    params:
+        tc = config['tc'],
+        opref = config['tc']['sam'].rsplit('_clean.sam', maxsplit=1)[0]
+    output:
+        sam = temporary(config['tc']['sam']),
+        fa = temporary(config['tc']['fa']),
+        sam_clean_log = temporary(config['tc']['log']),
+        sam_clean_te_log = temporary(config['tc']['te_log'])
+
+use rule alignment_stats as tc_stats with:
+    input:
+        alignment = config['tc']['sam']
+    output:
+        stats = config['tc']['stats']

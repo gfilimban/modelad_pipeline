@@ -32,8 +32,12 @@ map:
   stats: data/minimap2/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_minimap_stats.txt
   sam_rev: data/minimap2/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_reverse.sam
 
-
-
 tc:
   path: ~/mortazavi_lab/bin/TranscriptClean/
   min_intron_size: 21
+
+  sam: data/tc/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.sam
+  fa: data/tc/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.fa
+  log: data/tc/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.log
+  te_log: data/tc/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.TE.log
+  stats: data/tc/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_tc_stats.txt

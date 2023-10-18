@@ -13,7 +13,7 @@ def get_df_col(wc, df, col):
         temp = temp.loc[temp[key] == item]
         cols.append(key)
     temp = temp[cols].drop_duplicates()
-
+    
     if len(temp.index) != 1:
         msg = 'Issues getting data from DF with wildcards'
         for key, item in wc.items():

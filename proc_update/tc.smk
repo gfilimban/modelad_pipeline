@@ -18,3 +18,22 @@ rule get_annot_sjs:
              --minIntronSize {params.min_intron_size} \
              --o {output.sjs}
         """
+
+rule tc:
+    resources:
+        mem_gb = 80,
+        threads = 16
+    shell:
+        """
+        python {params.tc}TranscriptClean.py \
+            -t {resources.threads} \
+            --sam {input.sam} \
+            --genome {input.fa} \
+            --canonOnly \
+            --primaryOnly \
+            --deleteTmp \
+            --correctMismatches False \
+            --correctIndels True \
+            --tmpDir {params.opref}_temp/ \
+            --outprefix {params.opref}
+        """
