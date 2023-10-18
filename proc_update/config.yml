@@ -29,6 +29,9 @@ ref:
 map:
   sam: data/minimap2/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}.sam
   log: data/minimap2/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_minimap.log
+  stats: data/minimap2/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_minimap_stats.txt
+  sam_rev: data/minimap2/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_reverse.sam
+
 
 
 tc:
