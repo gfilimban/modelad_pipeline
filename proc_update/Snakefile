@@ -18,7 +18,7 @@ include: 'tc.smk'
 
 # settings we can change each time it's run
 configfile: 'config.yml'
-config_tsv = 'local_test_config.tsv'
+config_tsv = '231018_config.tsv'
 meta_tsv = 'mouse_metadata.tsv'
 auto_dedupe = True
 
