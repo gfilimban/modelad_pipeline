@@ -37,7 +37,7 @@ wildcard_constraints:
 
 rule all:
     input:
-        expand(config['tc']['stats'],
+        expand(config['talon']['sam'],
                genotype='5xFADHEMI',
                sex='F',
                age='4_months',
@@ -90,3 +90,16 @@ use rule alignment_stats as tc_stats with:
         alignment = config['tc']['sam']
     output:
         stats = config['tc']['stats']
+
+################################################################################
+############################## TALON label #####################################
+################################################################################
+use rule talon_label as talon_label_reads with:
+    input:
+        fa = config['ref']['fa'],
+        sam = config['tc']['sam']
+    params:
+        frac_a_range = config['talon']['frac_a_range'],
+        opref = config['tc']['sam'].rsplit('_labeled.sam', maxsplit=1)[0]
+    output:
+        sam = temporary(config['talon']['sam'])
