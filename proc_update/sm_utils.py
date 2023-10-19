@@ -204,7 +204,7 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
     else:
         return files
 
-def get_lapa_settings(wc, cfg_entry, kind):
+def get_lapa_settings(wc, df, cfg_entry, kind):
     """
     Get the command name or file output name
     given whether we're running LAPA in tss or tes mode
