@@ -167,7 +167,7 @@ use rule talon_init as talon_init_db with:
     output:
         db = config['ref']['talon']['db']
     params:
-        talon_opref = config['ref']['talon']['db'].rsplit('.db', maxsplit=1)[0],
+        opref = config['ref']['talon']['db'].rsplit('.db', maxsplit=1)[0],
         genome_ver = config['ref']['fa_ver'],
         annot_ver = config['ref']['gtf_ver'],
         min_transcript_len = config['talon']['min_transcript_len'],
