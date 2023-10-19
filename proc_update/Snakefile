@@ -38,6 +38,7 @@ wildcard_constraints:
 rule all:
     input:
         expand(config['merge']['bam'],
+               study='ad003',
                genotype='5xFADHEMI',
                sex='F',
                age='4_months',
