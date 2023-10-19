@@ -120,7 +120,7 @@ use rule index_bam as bam_ind with:
     input:
         bam = config['talon_label']['sort_bam']
     output:
-        ind = temporary(config['talon_label']['ind_bam']
+        ind = temporary(config['talon_label']['ind_bam'])
 
 ################################################################################
 ################# Merge data from separate flowcells  ##########################
