@@ -36,11 +36,10 @@ rule talon:
         threads = 30
     shell:
         """
-        new_db={output.db}
-        cp {input.ref} ${{new_db}}
+        cp {input.db} {output.db}
         talon \
             --f {input.config} \
-            --db ${{new_db}} \
+            --db {output.db} \
             --build {params.genome_ver} \
             --tmpDir {params.opref}_temp/ \
             --threads {resources.threads} \
