@@ -42,6 +42,12 @@ tc:
   te_log: data/tc/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.TE.log
   stats: data/tc/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_tc_stats.txt
 
-talon:
+talon_label:
   frac_a_range: 20
-  sam: data/talon/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled.sam
+  sam: data/talon_label/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled.sam
+  bam: data/talon_label/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled.bam
+  sort_bam: data/talon_label/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled_sorted.bam
+  ind_bam: data/talon_label/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled_sorted.bam.bai
+
+merge:
+  bam: data/merge/{genotype}_{sex}_{age}_{tissue}_{biorep_num}.bam

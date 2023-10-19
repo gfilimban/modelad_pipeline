@@ -99,7 +99,29 @@ use rule talon_label as talon_label_reads with:
         fa = config['ref']['fa'],
         sam = config['tc']['sam']
     params:
-        frac_a_range = config['talon']['frac_a_range'],
-        opref = config['tc']['sam'].rsplit('_labeled.sam', maxsplit=1)[0]
+        frac_a_range = config['talon_label']['frac_a_range'],
+        opref = config['talon_label']['sam'].rsplit('_labeled.sam', maxsplit=1)[0]
     output:
-        sam = temporary(config['talon']['sam'])
+        sam = temporary(config['talon_label']['sam'])
+
+use rule sam_to_bam as bam_from_sam with:
+    input:
+        sam = config['talon_label']['sam']
+    output:
+        bam = temporary(config['talon_label']['bam'])
+
+use rule sort_bam as bam_sort with:
+    input:
+        bam = config['talon_label']['bam']
+    output:
+        bam = temporary(config['talon_label']['sort_bam'])
+
+use rule index_bam as bam_ind with:
+    input:
+        bam = config['talon_label']['sort_bam']
+    output:
+        ind = temporary(config['talon_label']['ind_bam']
+
+################################################################################
+################# Merge data from separate flowcells  ##########################
+################################################################################
