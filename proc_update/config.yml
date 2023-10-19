@@ -13,9 +13,13 @@ ref:
   fa: ref/ref.fa
   chrom_sizes: ref/chrom_sizes.txt
 
+  # talon reference -- db from the input gtf
+  talon:
+    db: ref/talon/ref.db
+
   # LAPA reference - ENCODE refs + GENCODE UTRs
   lapa:
-    gtf: ref/{species}/lapa/ref.gtf
+    gtf: ref/lapa/ref.gtf
 
   # cerberus references - mouse cerberus annotation from
   # the long read ENCODE4 RNA project
@@ -27,27 +31,43 @@ ref:
     ca_annot: ref/ca_annot.h5
 
 map:
-  sam: data/minimap2/{study}_{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}.sam
-  log: data/minimap2/{study}_{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_minimap.log
-  stats: data/minimap2/{study}_{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_minimap_stats.txt
-  sam_rev: data/minimap2/{study}_{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_reverse.sam
+  sam: data/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}.sam
+  log: data/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_minimap.log
+  stats: data/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_minimap_stats.txt
+  sam_rev: data/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_reverse.sam
 
 tc:
   path: ~/mortazavi_lab/bin/TranscriptClean/
   min_intron_size: 21
 
-  sam: data/tc/{study}_{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.sam
-  fa: data/tc/{study}_{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.fa
-  log: data/tc/{study}_{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.log
-  te_log: data/tc/{study}_{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.TE.log
-  stats: data/tc/{study}_{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_tc_stats.txt
+  sam: data/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.sam
+  fa: data/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.fa
+  log: data/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.log
+  te_log: data/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.TE.log
+  stats: data/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_tc_stats.txt
 
 talon_label:
   frac_a_range: 20
-  sam: data/talon_label/{study}_{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled.sam
-  bam: data/talon_label/{study}_{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled.bam
-  sort_bam: data/talon_label/{study}_{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled_sorted.bam
-  ind_bam: data/talon_label/{study}_{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled_sorted.bam.bai
+  sam: data/talon_label/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled.sam
+  bam: data/talon_label/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled.bam
+  sort_bam: data/talon_label/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled_sorted.bam
+  ind_bam: data/talon_label/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled_sorted.bam.bai
 
 merge:
-  bam: data/merge/{study}_{genotype}_{sex}_{age}_{tissue}_{biorep_num}.bam
+  bam: data/merge/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}.bam
+  sort_bam: data/merge/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_sorted.bam
+  ind_bam: data/merge/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_sorted.bam.bai
+
+# run talon on bioreplicates so that reproducibility
+# metrics for novel isoforms are biologically meaningful
+talon:
+  min_transcript_len: 0
+  max_5_dist: 500
+  max_3_dist: 300
+  max_frac_a: 0.5
+  min_count: 5
+  min_datasets: 2
+
+  config: data/talon/{study}/{genotype}_{sex}_{age}_{tissue}_config.csv
+  db: data/talon/{study}/{genotype}_{sex}_{age}_{tissue}_talon.db
+  annot: data/talon/{study}/{genotype}_{sex}_{age}_{tissue}_talon_read_annot.tsv

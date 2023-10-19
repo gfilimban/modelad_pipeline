@@ -34,12 +34,22 @@ def get_df_col(wc, df, col):
     val = temp[col].tolist()[0]
     return val
 
-def get_cfg_entries(wc, df, cfg_entry):
+
+def get_cfg_entries(wc, df, cfg_entry, return_df=False):
     """
     Expand a config entry based on the wildcards and the
     values in df that satisfy these wildcards
+
+    Parameters:
+        return_df (bool): Return DataFrame with 'file' column
+            as opposed to list of files. Default: False
     """
     temp = subset_df_on_wcs(wc, df)
+
+    # cols = ['study', 'genotype', 'sex',
+    #         'age', 'tissue', 'biorep_num',
+    #         'flowcell']
+
     study = temp.study.tolist()
     genotype = temp.genotype.tolist()
     sex = temp.sex.tolist()
@@ -57,4 +67,16 @@ def get_cfg_entries(wc, df, cfg_entry):
                    tissue=tissue,
                    biorep_num=biorep_num,
                    flowcell=flowcell)
-    return files
+
+    temp['file'] = files
+
+    # make sure we only take unique ones
+    # cols.append('file')
+    # temp = temp[cols]
+    temp = temp.drop_duplicates(subset='file', keep='first')
+    files = temp['file'].tolist()
+
+    if return_df:
+        return temp
+    else:
+        return files
