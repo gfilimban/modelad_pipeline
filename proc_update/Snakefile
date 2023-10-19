@@ -176,7 +176,7 @@ use rule talon as talon_run with:
         db = config['ref']['talon']['db'],
         cfg = config['talon']['config']
     params:
-        genome_ver = config['ref']['fa_ver']
+        genome_ver = config['ref']['fa_ver'],
         opref = config['talon']['db'].rsplit('_talon.db', maxsplit=1)[0]
     output:
         db = config['talon']['db'],
