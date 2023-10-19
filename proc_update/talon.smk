@@ -36,19 +36,17 @@ rule talon:
         threads = 30
     shell:
         """
-        ref_db={input.ref}_{wildcards.species}
-        new_db={}
-        cp {input.ref} ${{ref_db}}
+        new_db={output.db}
+        cp {input.ref} ${{new_db}}
         talon \
             --f {input.config} \
-            --db ${{ref_db}} \
+            --db ${{new_db}} \
             --build {params.genome_ver} \
             --tmpDir {params.opref}_temp/ \
             --threads {resources.threads} \
             --create_novel_spliced_genes \
             --o {params.opref} \
             -v 1
-        mv ${{ref_db}} {params.opref}_talon.db
         """
 
 rule talon_annot:
