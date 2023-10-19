@@ -273,7 +273,7 @@ use rule lapa_call_ends as lapa_call_ends_run with:
 
 use rule lapa_link as lapa_link_run with:
     input:
-        annot = config['talon']['full_annot'],
+        annot = config['talon']['annot'],
         tss = expand(config['lapa']['ends'], end_mode='tss', allow_missing=True)[0],
         tes = expand(config['lapa']['ends'], end_mode='tes', allow_missing=True)[0]
     params:
@@ -286,7 +286,7 @@ use rule lapa_correct_talon as lapa_correct_talon_run with:
     input:
         gtf = config['talon']['gtf'],
         filt_ab = config['talon']['filt_ab'],
-        annot = config['talon']['full_annot'],
+        annot = config['talon']['annot'],
         links = config['lapa']['links']
     output:
         gtf = config['lapa']['corrected']['gtf'],
