@@ -71,3 +71,26 @@ talon:
   config: data/talon/{study}/{genotype}_{sex}_{age}_{tissue}_config.csv
   db: data/talon/{study}/{genotype}_{sex}_{age}_{tissue}_talon.db
   annot: data/talon/{study}/{genotype}_{sex}_{age}_{tissue}_talon_read_annot.tsv
+  pass_list: data/talon/{study}/{genotype}_{sex}_{age}_{tissue}_pass_list.csv
+  ab: data/talon/{study}/{genotype}_{sex}_{age}_{tissue}_unfilt_talon_abundance.tsv
+  filt_ab: data/talon/{study}/{genotype}_{sex}_{age}_{tissue}_talon_abundance_filtered.tsv
+  gtf: data/talon/{study}/{genotype}_{sex}_{age}_{tissue}_talon.gtf
+
+# similarly, run lapa on bioreplicates
+lapa:
+  config: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}_config.csv
+  ends: data/lapa/{study}/{end_mode}/{genotype}_{sex}_{age}_{tissue}_clusters.bed
+  links: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}_tss_to_tes_links.csv
+
+  corrected:
+    gtf: data/lapa/{study}/talon_corrected/{genotype}_{sex}_{age}_{tissue}_corrected.gtf
+    filt_ab: data/lapa/{study}/talon_corrected/{genotype}_{sex}_{age}_{tissue}_filtered_abundance_corrected.tsv
+
+  filt:
+    t_novs: ['Known', 'NIC', 'NNC', 'ISM_rescue']
+    g_novs: ['Known', 'Intergenic', 'Fusion']
+    remove_spikes: True
+
+    pass_list: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}_pass_list.tsv
+    filt_ab: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}_filtered_abundance.tsv
+    gtf: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}.gtf

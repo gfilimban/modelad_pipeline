@@ -82,7 +82,7 @@ rule mkref_utr_fix_gtf:
         threads = 1,
         mem_gb = 8
     output:
-        gtf = config['ref']['lapa']['gtf']
+        gtf = config['ref']['gtf_utr']
     shell:
         """
         gencode_utr_fix \
