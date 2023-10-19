@@ -38,7 +38,7 @@ rule talon:
         """
         cp {input.db} {output.db}
         talon \
-            --f {input.config} \
+            --f {input.cfg} \
             --db {output.db} \
             --build {params.genome_ver} \
             --tmpDir {params.opref}_temp/ \
