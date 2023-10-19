@@ -1,6 +1,7 @@
 # utilities related to defining snakemake rules
 from snakemake.io import expand
 import pandas as pd
+import os
 
 def process_meta(meta_fname):
     """
