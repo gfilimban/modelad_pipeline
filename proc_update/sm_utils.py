@@ -1,4 +1,5 @@
 # utilities related to defining snakemake rules
+from snakemake.io import expand
 
 def subset_df_on_wcs(wc, df):
     """
