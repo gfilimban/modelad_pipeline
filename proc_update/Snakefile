@@ -16,6 +16,7 @@ include: 'lapa.smk'
 include: 'mapping.smk'
 include: 'tc.smk'
 include: 'cerberus.smk'
+include: 'deeptools.smk'
 
 # settings we can change each time it's run
 configfile: 'config.yml'
@@ -30,6 +31,7 @@ df = parse_config_file(config_tsv,
                        auto_dedupe=auto_dedupe,
                        include_humanized=False)
 end_modes = ['tss', 'tes']
+strands = ['fwd', 'rev']
 
 wildcard_constraints:
     genotype='|'.join([re.escape(x) for x in df.genotype.unique().tolist()]),
@@ -52,6 +54,16 @@ rule all:
         get_cfg_entries({'cerberus_run':df.cerberus_run.unique().tolist()},
                         df,
                         config['cerberus']['gtf']),
+        expand(expand(config['merge']['bw'],
+                        zip,
+                        study=df.study.tolist(),
+                        genotype=df.genotype.tolist(),
+                        sex=df.sex.tolist(),
+                        age=df.age.tolist(),
+                        tissue=df.tissue.tolist(),
+                        biorep_num=df.biorep_num.tolist(),
+                        allow_missing=True),
+                        strand=['fwd', 'rev'])
         config['ref']['cerberus']['gtf']
 
 ################################################################################
@@ -132,7 +144,8 @@ use rule index_bam as bam_ind with:
         ind = temporary(config['talon_label']['ind_bam'])
 
 ################################################################################
-################# Merge data from separate flowcells  ##########################
+################# Merge data from separate flowcells ###########################
+##################### Sort, index, make bigwigs ################################
 ################################################################################
 use rule merge_alignment as talon_label_merge with:
     input:
@@ -151,6 +164,13 @@ use rule index_bam as bam_ind_merge with:
         bam = config['merge']['sort_bam']
     output:
         ind = config['merge']['ind_bam']
+
+use rule bam_to_bw as bw with:
+    input:
+        bam = config['merge']['sort_bam'],
+        bai = config['merge']['ind_bam']
+    output:
+        bw = config['merge']['bw']
 
 ################################################################################
 ################################## TALON #######################################

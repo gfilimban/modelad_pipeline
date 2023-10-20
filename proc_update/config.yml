@@ -59,6 +59,7 @@ merge:
   bam: data/merge/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}.bam
   sort_bam: data/merge/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_sorted.bam
   ind_bam: data/merge/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_sorted.bam.bai
+  bw: data/merge/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{strand}.bw
 
 # run talon on bioreplicates so that reproducibility
 # metrics for novel isoforms are biologically meaningful
