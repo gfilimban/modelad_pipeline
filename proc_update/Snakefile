@@ -19,14 +19,16 @@ include: 'cerberus.smk'
 
 # settings we can change each time it's run
 configfile: 'config.yml'
-config_tsv = '231018_config.tsv'
+config_tsv = '231020_config.tsv'
+# config_tsv = '231018_config.tsv'
 # config_tsv = 'test_local_config.tsv'
 meta_tsv = 'mouse_metadata.tsv'
 auto_dedupe = True
 
 df = parse_config_file(config_tsv,
                        meta_tsv,
-                       auto_dedupe=auto_dedupe)
+                       auto_dedupe=auto_dedupe,
+                       include_humanized=False)
 end_modes = ['tss', 'tes']
 
 wildcard_constraints:
