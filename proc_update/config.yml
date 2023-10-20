@@ -28,6 +28,9 @@ ref:
     ca: ref/ca.h5
     ends: ref/ca_{end_mode}.bed
     ics: ref/ca_ic.tsv
+    ca_annot: ref/ca_annot.h5
+    gtf: ref/cerberus.gtf
+
 
 map:
   sam: data/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}.sam
@@ -107,6 +110,9 @@ cerberus:
   ics: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_ic.tsv
   ends: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_{end_mode}.bed
   ca: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}.h5
+  ca_annot: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_annot.h5
+  gtf: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}.gtf
+  ab: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_abundance.tsv
 
   agg:
     tss:

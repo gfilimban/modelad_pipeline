@@ -46,30 +46,11 @@ rule all:
     input:
         get_cfg_entries({'cerberus_run':df.cerberus_run.unique().tolist()},
                         df,
-                        config['cerberus']['ca']),
-        # get_cfg_entries({'cerberus_run':df.cerberus_run.max()},
-        #                 df,
-        #                 config['cerberus']['agg']['ics']),
-        # expand(get_cfg_entries({'cerberus_run':df.cerberus_run.max()},
-        #                 df,
-        #                 config['cerberus']['agg']['ends']),
-        #         end_mode=end_modes)
-
-        # expand(config['lapa']['filt']['gtf'],
-        #        zip,
-        #        study=df.study.tolist(),
-        #        genotype=df.genotype.tolist(),
-        #        sex=df.sex.tolist(),
-        #        age=df.age.tolist(),
-        #        tissue=df.tissue.tolist())
-        # expand(config['lapa']['filt']['gtf'],
-        #        study='ad003',
-        #        genotype=['5xFADHEMI', '5xFADWT'],
-        #        sex='F',
-        #        age='4_months',
-        #        tissue='HC',
-        #        biorep_num='1',
-        #        flowcell='1')
+                        config['cerberus']['ab']),
+        get_cfg_entries({'cerberus_run':df.cerberus_run.unique().tolist()},
+                        df,
+                        config['cerberus']['gtf']),
+        config['ref']['cerberus']['gtf']
 
 ################################################################################
 #################################### Mapping ###################################
@@ -411,3 +392,55 @@ use rule cerb_write_ref as cerb_write_ref_run with:
                         end_mode='tes')[0]
     output:
         h5 = config['cerberus']['ca']
+
+use rule cerb_annot as cerb_annot_ref with:
+    input:
+        h5 = config['ref']['cerberus']['ca'],
+        gtf = config['ref']['gtf']
+    params:
+        source = config['ref']['gtf_ver'],
+        gene_source = None
+    output:
+        h5 = config['ref']['cerberus']['ca_annot']
+
+use rule cerb_annot as cerb_annot_run with:
+    input:
+        h5 = config['cerberus']['ca'],
+        gtf = config['lapa']['filt']['gtf']
+    params:
+        source = lambda wc:get_df_col(wc, df, 'source'),
+        gene_source = None
+    output:
+        h5 = config['cerberus']['ca_annot']
+
+#
+use rule cerb_gtf_ids as cerb_update_ref_gtf with:
+    input:
+        h5 = config['ref']['cerberus']['ca_annot'],
+        gtf = config['ref']['gtf']
+    params:
+        source = config['ref']['gtf_ver'],
+        update_ends = True,
+        agg = True
+    output:
+        gtf = config['ref']['cerberus']['gtf']
+
+use rule cerb_gtf_ids as cerb_update_gtf with:
+    input:
+        h5 = config['cerberus']['ca_annot'],
+        gtf = config['lapa']['filt']['gtf']
+    params:
+        source = lambda wc:get_df_col(wc, df, 'source'),
+        update_ends = True,
+        agg = True
+    output:
+        gtf = config['cerberus']['gtf']
+
+use rule cerb_ab_ids as study_cerb_ab with:
+    input:
+        h5 = config['cerberus']['ca_annot'],
+        ab = config['lapa']['filt']['filt_ab']
+    params:
+        source = lambda wc:get_df_col(wc, df, 'source'),
+    output:
+        ab = config['cerberus']['ab']
