@@ -71,6 +71,10 @@ rule cerb_agg_ends:
                           params.slack,
                           output.ends)
 
+################################################################################
+######################### Cerberus annotation ##################################
+################################################################################
+
 rule cerberus_agg_ics:
     resources:
         mem_gb = 32,
@@ -82,3 +86,13 @@ rule cerberus_agg_ics:
                           refs,
                           params.sources,
                           output.ics)
+
+rule cerb_write_ref:
+  resources:
+      threads = 4,
+      mem_gb = 64
+  run:
+      cerberus.write_reference(input.tss,
+                               input.tes,
+                               input.ic,
+                               output.h5)

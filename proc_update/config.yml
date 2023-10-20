@@ -106,6 +106,7 @@ cerberus:
     agg_slack: 20
   ics: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_ic.tsv
   ends: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_{end_mode}.bed
+  ca: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}.h5
 
   agg:
     tss:
@@ -114,4 +115,3 @@ cerberus:
       slack: 20
     ics: data/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_ic.tsv
     ends: data/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_{end_mode}.bed
-    # ca:
