@@ -27,6 +27,7 @@ auto_dedupe = True
 df = parse_config_file(config_tsv,
                        meta_tsv,
                        auto_dedupe=auto_dedupe)
+end_modes = ['tss', 'tes']
 
 wildcard_constraints:
     genotype='|'.join([re.escape(x) for x in df.genotype.unique().tolist()]),
@@ -38,14 +39,18 @@ wildcard_constraints:
 
 ruleorder:
     # cerberus_agg_ics_first > cerberus_agg_ics_seq
-    cerberus_agg_ics_seq > cerberus_agg_ics_first
+    cerb_agg_ics_seq > cerb_agg_ics_first > cerb_agg_ends_seq > cerb_agg_ends_first
 
 
 rule all:
     input:
         get_cfg_entries({'cerberus_run':df.cerberus_run.max()},
                         df,
-                        config['cerberus']['agg']['ics'])
+                        config['cerberus']['agg']['ics']),
+        expand(get_cfg_entries({'cerberus_run':df.cerberus_run.max()},
+                        df,
+                        config['cerberus']['agg']['ends']),
+                end_mode=end_modes)
 
         # expand(config['lapa']['filt']['gtf'],
         #        zip,
@@ -346,7 +351,7 @@ use rule cerb_gtf_to_ics as cerb_get_gtf_ics with:
     output:
         ics = config['cerberus']['ics']
 
-use rule cerberus_agg_ics as cerberus_agg_ics_first with:
+use rule cerberus_agg_ics as cerb_agg_ics_first with:
     input:
         ref_ics = config['ref']['cerberus']['ics'],
         ics = config['cerberus']['ics']
@@ -356,7 +361,7 @@ use rule cerberus_agg_ics as cerberus_agg_ics_first with:
     output:
         ics = config['cerberus']['agg']['ics']
 
-use rule cerberus_agg_ics as cerberus_agg_ics_seq with:
+use rule cerberus_agg_ics as cerb_agg_ics_seq with:
     input:
         ref_ics = lambda wc: get_prev_cerb_entry(wc, df, config['cerberus']['agg']['ics']),
         ics = config['cerberus']['ics']
@@ -366,5 +371,26 @@ use rule cerberus_agg_ics as cerberus_agg_ics_seq with:
     output:
         ics = config['cerberus']['agg']['ics']
 
+use rule cerb_agg_ends as cerb_agg_ends_first with:
+    input:
+        ref_ends = config['ref']['cerberus']['ends'],
+        ends = config['cerberus']['ends']
+    params:
+        add_ends = True,
+        ref = False,
+        slack = lambda wc:config['cerberus']['agg'][wc.end_mode]['slack'],
+        sources = lambda wc:['cerberus', get_df_col(wc, df, 'source')]
+    output:
+        ends = config['cerberus']['agg']['ends']
 
-# slack = lambda wc:config['cerberus'][wc.end_mode]['agg_slack'],
+use rule cerb_agg_ends as cerb_agg_ends_seq with:
+    input:
+        ref_ends = lambda wc: get_prev_cerb_entry(wc, df, config['cerberus']['agg']['ends']),
+        ends = config['cerberus']['ends']
+    params:
+        add_ends = True,
+        ref = False,
+        slack = lambda wc:config['cerberus']['agg'][wc.end_mode]['slack'],
+        sources = lambda wc:['cerberus', get_df_col(wc, df, 'source')]
+    output:
+        ends = config['cerberus']['agg']['ends']

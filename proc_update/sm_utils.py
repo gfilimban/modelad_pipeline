@@ -262,4 +262,13 @@ def get_prev_cerb_entry(wc, df, cfg_entry):
     file = get_cfg_entries(prev_wc, df, cfg_entry)
     assert len(file) == 1
     file = file[0]
+
+    # add in the end mode if we have it
+    if 'end_mode' in wc.keys():
+        file = expand(file,
+                      zip,
+                      end_mode=wc['end_mode'])
+        assert len(file) == 1
+        file = file[0]
+
     return file

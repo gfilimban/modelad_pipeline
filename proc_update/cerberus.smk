@@ -54,6 +54,23 @@ rule cerb_gtf_to_ics:
 ################################################################################
 ######################### Cerberus aggregation #################################
 ################################################################################
+
+rule cerb_agg_ends:
+    resources:
+        threads = 4,
+        mem_gb = 64
+    run:
+        # only aggregating 2 things at a time
+        ref = [params.ref for i in range(2)]
+        add_ends = [params.add_ends for i in range(2)]
+        cerberus.agg_ends([input.ref_ends, input.ends],
+                          add_ends,
+                          refs,
+                          params.sources,
+                          wildcards.end_mode,
+                          params.slack,
+                          output.ends)
+
 rule cerberus_agg_ics:
     resources:
         mem_gb = 32,
