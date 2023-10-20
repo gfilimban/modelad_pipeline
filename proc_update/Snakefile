@@ -15,6 +15,7 @@ include: 'talon.smk'
 include: 'lapa.smk'
 include: 'mapping.smk'
 include: 'tc.smk'
+include: 'cerberus.smk'
 
 # settings we can change each time it's run
 configfile: 'config.yml'
@@ -27,8 +28,6 @@ df = parse_config_file(config_tsv,
                        meta_tsv,
                        auto_dedupe=auto_dedupe)
 
-
-
 wildcard_constraints:
     genotype='|'.join([re.escape(x) for x in df.genotype.unique().tolist()]),
     sex='|'.join([re.escape(x) for x in df.sex.unique().tolist()]),
@@ -37,16 +36,24 @@ wildcard_constraints:
     biorep_num='|'.join([re.escape(x) for x in df.biorep_num.unique().tolist()]),
     flowcell='|'.join([re.escape(x) for x in df.flowcell.unique().tolist()]),
 
+ruleorder:
+    # cerberus_agg_ics_first > cerberus_agg_ics_seq
+    cerberus_agg_ics_seq > cerberus_agg_ics_first
+
 
 rule all:
     input:
-        expand(config['lapa']['filt']['gtf'],
-               zip,
-               study=df.study.tolist(),
-               genotype=df.genotype.tolist(),
-               sex=df.sex.tolist(),
-               age=df.age.tolist(),
-               tissue=df.tissue.tolist())
+        get_cfg_entries({'cerberus_run':df.cerberus_run.max()},
+                        df,
+                        config['cerberus']['agg']['ics'])
+
+        # expand(config['lapa']['filt']['gtf'],
+        #        zip,
+        #        study=df.study.tolist(),
+        #        genotype=df.genotype.tolist(),
+        #        sex=df.sex.tolist(),
+        #        age=df.age.tolist(),
+        #        tissue=df.tissue.tolist())
         # expand(config['lapa']['filt']['gtf'],
         #        study='ad003',
         #        genotype=['5xFADHEMI', '5xFADWT'],
@@ -319,3 +326,45 @@ use rule lapa_filt_gtf as lapa_filt_gtf_run with:
         filt_list = config['lapa']['filt']['pass_list']
     output:
         gtf = config['lapa']['filt']['gtf']
+
+################################################################################
+################################# Cerberus #####################################
+################################################################################
+
+use rule cerb_gtf_to_bed as cerb_get_gtf_ends with:
+    input:
+        gtf = config['lapa']['filt']['gtf']
+    output:
+        ends = config['cerberus']['ends']
+    params:
+        slack = lambda wc:config['cerberus'][wc.end_mode]['slack'],
+        dist = lambda wc:config['cerberus'][wc.end_mode]['dist']
+
+use rule cerb_gtf_to_ics as cerb_get_gtf_ics with:
+    input:
+        gtf = config['lapa']['filt']['gtf']
+    output:
+        ics = config['cerberus']['ics']
+
+use rule cerberus_agg_ics as cerberus_agg_ics_first with:
+    input:
+        ref_ics = config['ref']['cerberus']['ics'],
+        ics = config['cerberus']['ics']
+    params:
+        ref = False,
+        sources = lambda wc:['cerberus', get_df_col(wc, df, 'source')]
+    output:
+        ics = config['cerberus']['agg']['ics']
+
+use rule cerberus_agg_ics as cerberus_agg_ics_seq with:
+    input:
+        ref_ics = lambda wc: get_prev_cerb_entry(wc, df, config['cerberus']['agg']['ics']),
+        ics = config['cerberus']['ics']
+    params:
+        ref = False,
+        sources = lambda wc:['cerberus', get_df_col(wc, df, 'source')]
+    output:
+        ics = config['cerberus']['agg']['ics']
+
+
+# slack = lambda wc:config['cerberus'][wc.end_mode]['agg_slack'],

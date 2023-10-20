@@ -76,7 +76,6 @@ def parse_config_file(fname,
     exp = '^(ad[0-9]+)'
     df['study'] = df.basename.str.extract(exp)
 
-
     # merge in metadata
     meta = process_meta(meta_fname)
     df['mouse_id'] = df['mouse_id'].astype('int')
@@ -109,11 +108,25 @@ def parse_config_file(fname,
     # talon dataset should be sample + bio rep
     df['dataset'] = df['sample']+'_'+df['biorep_num'].astype(str)
 
+    # source for cerberus should be study + sample
+    df['source'] = df['study']+'_'+df['sample']
+
     # # dataset should be sample + bio rep + flow cel
     # df['dataset'] = df['talon_dataset']+'_'+df['flowcell'].astype(str)
 
+    # assign a cerberus run to each "sample" (study+genotype+sex+age+tissue)
+    # but first sort on study and sample such that they will always be ordered in the same way
+    # this should freeze our results
+    gb_cols = ['study', 'genotype', 'sex', 'age', 'tissue']
+    df = df.sort_values(by=gb_cols, ascending=True)
+    temp = df.copy(deep=True)
+    temp = temp[gb_cols].groupby(gb_cols).count().reset_index()
+    temp['cerberus_run'] = [i+1 for i in range(len(temp.index))]
+    df = df.merge(temp, how='left', on=gb_cols)
+
     df['flowcell'] = df.flowcell.astype(str)
     df['biorep_num'] = df.biorep_num.astype(str)
+    df['cerberus_run'] = df.cerberus_run.astype(str)
 
     return df
 
@@ -143,7 +156,7 @@ def get_df_col(wc, df, col):
     from col. Ensure that this is always a 1:1 relationship, otherwise
     throw an error.
     """
-    cols = [col] + [key for key, item in wc.items()]
+    cols = [col] + [key for key, item in wc.items() if key in df.columns]
 
     temp = subset_df_on_wcs(wc, df)
     temp = temp[cols].drop_duplicates()
@@ -180,6 +193,7 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
     tissue = temp.tissue.tolist()
     biorep_num = temp.biorep_num.tolist()
     flowcell = temp.flowcell.tolist()
+    cerberus_run = temp.cerberus_run.tolist()
 
     files = expand(cfg_entry,
                    zip,
@@ -190,6 +204,7 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
                    tissue=tissue,
                    biorep_num=biorep_num,
                    flowcell=flowcell,
+                   cerberus_run=cerberus_run,
                    allow_missing=True)
 
     temp['file'] = files
@@ -237,3 +252,14 @@ def get_lapa_settings(wc, df, cfg_entry, kind):
             return 'lapa'
         elif wc['end_mode'] == 'tss':
             return 'lapa_tss'
+
+def get_prev_cerb_entry(wc, df, cfg_entry):
+    """
+    Get the previous config entry run for Cerberus. Ensure that
+    only one file meets these criteria.
+    """
+    prev_wc = {'cerberus_run': str(int(wc['cerberus_run'])-1)}
+    file = get_cfg_entries(prev_wc, df, cfg_entry)
+    assert len(file) == 1
+    file = file[0]
+    return file

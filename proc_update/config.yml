@@ -24,11 +24,10 @@ ref:
   # cerberus references - mouse cerberus annotation from
   # the long read ENCODE4 RNA project
   cerberus:
-    ca_link: https://www.encodeproject.org/files/ENCFF999KXH/@@download/ENCFF999KXH.h5
+    link: https://www.encodeproject.org/files/ENCFF999KXH/@@download/ENCFF999KXH.h5
     ca: ref/ca.h5
-    ca_ends: ref/ca_{end_mode}.bed
-    ca_ics: ref/ca_ic.tsv
-    ca_annot: ref/ca_annot.h5
+    ends: ref/ca_{end_mode}.bed
+    ics: ref/ca_ic.tsv
 
 map:
   sam: data/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}.sam
@@ -94,3 +93,25 @@ lapa:
     pass_list: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}_pass_list.tsv
     filt_ab: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}_filtered_abundance.tsv
     gtf: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}.gtf
+
+# TODO - how to run cerberus?
+cerberus:
+  tss:
+    dist: 50
+    slack: 50
+    agg_slack: 20
+  tes:
+    dist: 50
+    slack: 50
+    agg_slack: 20
+  ics: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_ic.tsv
+  ends: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_{end_mode}.bed
+
+  agg:
+    tss:
+      slack: 20
+    tes:
+      slack: 20
+    ics: data/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_ic.tsv
+    ends: data/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_{end_mode}.bed
+    # ca:
