@@ -22,7 +22,7 @@ rule tc:
         threads = 16
     shell:
         """
-        python {params.tc}TranscriptClean.py \
+        python {params.path}TranscriptClean.py \
             -t {resources.threads} \
             --sam {input.sam} \
             --genome {input.fa} \
