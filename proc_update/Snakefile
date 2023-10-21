@@ -63,7 +63,7 @@ rule all:
                         tissue=df.tissue.tolist(),
                         biorep_num=df.biorep_num.tolist(),
                         allow_missing=True),
-                        strand=['fwd', 'rev'])
+                        strand=['fwd', 'rev']),
         config['ref']['cerberus']['gtf']
 
 ################################################################################
