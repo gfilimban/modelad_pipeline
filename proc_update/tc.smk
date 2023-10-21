@@ -5,6 +5,8 @@ rule get_annot_sjs:
     resources:
         threads = 4,
         mem_gb = 16
+    params:
+        path = config['tc']['path']
     output:
         sjs = config['ref']['sjs']
     shell:
