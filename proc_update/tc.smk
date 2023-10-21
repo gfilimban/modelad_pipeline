@@ -6,7 +6,8 @@ rule get_annot_sjs:
         threads = 4,
         mem_gb = 16
     params:
-        path = config['tc']['path']
+        path = config['tc']['path'],
+        min_intron_size = config['tc']['min_intron_size']
     output:
         sjs = config['ref']['sjs']
     shell:
