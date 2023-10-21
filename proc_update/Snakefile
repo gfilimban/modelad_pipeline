@@ -98,7 +98,8 @@ use rule tc as tc_sam with:
         sam = config['map']['sam_rev'],
         fa = config['ref']['fa']
     params:
-        tc = config['tc'],
+        path = config['tc']['path'],
+        min_intron_size = config['tc']['min_intron_size'],
         opref = config['tc']['sam'].rsplit('_clean.sam', maxsplit=1)[0]
     output:
         sam = temporary(config['tc']['sam']),
