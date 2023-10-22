@@ -272,7 +272,7 @@ rule lapa_config:
         temp = get_cfg_entries(wildcards, df, config['merge']['bam'], return_df=True)
         temp = temp[['sample', 'dataset', 'file']].copy(deep=True)
         temp.columns = ['sample', 'dataset', 'path']
-        temp.to_csv(output.config, sep=',', index=False)
+        temp.to_csv(output.cfg, sep=',', index=False)
 
 use rule lapa_call_ends as lapa_call_ends_run with:
         input:
