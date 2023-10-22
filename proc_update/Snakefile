@@ -186,7 +186,7 @@ rule talon_config:
     output:
         cfg = config['talon']['config']
     run:
-        temp = get_cfg_entries(wildcards, df, config['merge']['bam'], return_df=True)
+        temp = get_cfg_entries(wildcards, df, config['merge']['sort_bam'], return_df=True)
         temp = temp[['sample', 'dataset', 'platform', 'file']]
         temp.to_csv(output.cfg, index=False, header=None, sep=',')
 
@@ -269,7 +269,7 @@ rule lapa_config:
     output:
         cfg = config['lapa']['config']
     run:
-        temp = get_cfg_entries(wildcards, df, config['merge']['bam'], return_df=True)
+        temp = get_cfg_entries(wildcards, df, config['merge']['sort_bam'], return_df=True)
         temp = temp[['sample', 'dataset', 'file']].copy(deep=True)
         temp.columns = ['sample', 'dataset', 'path']
         temp.to_csv(output.cfg, sep=',', index=False)
