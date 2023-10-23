@@ -155,6 +155,8 @@ def subset_df_on_wcs(wc, df):
         # for entries that we don't have in the df, such as LAPA end mode
         if key not in df.columns:
             continue
+        if key == 'cerberus_run':
+            import pdb; pdb.set_trace()
 
         # if we're given a list of possibilities
         if type(item) == list:
@@ -293,7 +295,6 @@ def get_prev_cerb_entry(wc, df, cfg_entry):
     """
     prev_wc = {'cerberus_run': str(int(wc['cerberus_run'])-1)}
     file = get_cfg_entries(prev_wc, df, cfg_entry)
-    import pdb; pdb.set_trace()
     assert len(file) == 1
     file = file[0]
 
