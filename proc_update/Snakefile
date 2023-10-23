@@ -29,9 +29,13 @@ auto_dedupe = True
 df = parse_config_file(config_tsv,
                        meta_tsv,
                        auto_dedupe=auto_dedupe,
-                       include_humanized=False)
+                       include_humanized=True)
 end_modes = ['tss', 'tes']
 strands = ['fwd', 'rev']
+
+# TODO - get rid of this at some point
+temp_study_pass_list = ['ad003', 'ad005', 'ad006']
+df = df.loc[df.study.isin(temp_study_pass_list)]
 
 wildcard_constraints:
     genotype='|'.join([re.escape(x) for x in df.genotype.unique().tolist()]),
