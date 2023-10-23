@@ -155,8 +155,8 @@ def subset_df_on_wcs(wc, df):
         # for entries that we don't have in the df, such as LAPA end mode
         if key not in df.columns:
             continue
-        if key == 'cerberus_run':
-            import pdb; pdb.set_trace()
+        # if key == 'cerberus_run':
+        #     import pdb; pdb.set_trace()
 
         # if we're given a list of possibilities
         if type(item) == list:

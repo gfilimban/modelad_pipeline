@@ -44,6 +44,8 @@ wildcard_constraints:
     tissue='|'.join([re.escape(x) for x in df.tissue.unique().tolist()]),
     biorep_num='|'.join([re.escape(x) for x in df.biorep_num.unique().tolist()]),
     flowcell='|'.join([re.escape(x) for x in df.flowcell.unique().tolist()]),
+    cerberus_run='|'.join([re.escape(x) for x in df.cerberus_run.unique().tolist()]),
+
 
 ruleorder:
     # cerberus_agg_ics_first > cerberus_agg_ics_seq
