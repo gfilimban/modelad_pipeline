@@ -123,3 +123,34 @@ def filter_lapa(ab,
         filt_df = filt_df.merge(temp, how='inner')
 
     filt_df.to_csv(ofile, index=False, sep='\t')
+
+def get_ids_from_pass_list(filt_list):
+    filt_df = pd.read_csv(filt_list, sep='\t')
+    gids = filt_df.gid.unique().tolist()
+    tids = filt_df.tid.unique().tolist()
+    return gids, tids
+
+def filt_lapa_ab(ab, filt_list):
+    """
+    Filter LAPA abundance using a TALON-style pass list
+    """
+    df = pd.read_csv(ab, sep='\t')
+    gids, tids = get_ids_from_pass_list(filt_list)
+    df = df.loc[(df.annot_gene_id.isin(gids))&(df.annot_transcript_id.isin(tids))]
+    return df
+
+def filt_lapa_gtf(gtf, filt_list):
+    """
+    Filter LAPA GTF using a TALON-style pass list
+    """
+    gtf = pr.read_gtf(gtf).as_df()
+    gids, tids = get_ids_from_pass_list(filt_list)
+
+    # first filter on tids
+    gtf = gtf.loc[(gtf.transcript_id.isin(tids))|(gtf.Feature=='gene')]
+
+    # then filter on gids
+    gtf = gtf.loc[(gtf.gene_id.isin(gids))]
+
+    gtf = pr.PyRanges(gtf)
+    return gtf
