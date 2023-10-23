@@ -61,7 +61,7 @@ rule cerb_agg_ends:
         mem_gb = 64
     run:
         # only aggregating 2 things at a time
-        ref = [params.ref for i in range(2)]
+        refs = [params.ref for i in range(2)]
         add_ends = [params.add_ends for i in range(2)]
         cerberus.agg_ends([input.ref_ends, input.ends],
                           add_ends,

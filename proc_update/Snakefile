@@ -365,7 +365,7 @@ use rule cerb_gtf_to_ics as cerb_get_gtf_ics with:
 use rule cerberus_agg_ics as cerb_agg_ics_first with:
     input:
         ref_ics = config['ref']['cerberus']['ics'],
-        ics = config['cerberus']['ics']
+        ics = lambda wc:get_first_cerb_entry(wc, df, config['cerberus']['ics'])
     params:
         ref = False,
         sources = lambda wc:['cerberus', get_df_col(wc, df, 'source')]
@@ -385,7 +385,7 @@ use rule cerberus_agg_ics as cerb_agg_ics_seq with:
 use rule cerb_agg_ends as cerb_agg_ends_first with:
     input:
         ref_ends = config['ref']['cerberus']['ends'],
-        ends = config['cerberus']['ends']
+        ends = lambda wc:get_first_cerb_entry(wc, df, config['cerberus']['ends'])
     params:
         add_ends = True,
         ref = False,
