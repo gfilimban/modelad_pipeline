@@ -293,6 +293,7 @@ def get_prev_cerb_entry(wc, df, cfg_entry):
     """
     prev_wc = {'cerberus_run': str(int(wc['cerberus_run'])-1)}
     file = get_cfg_entries(prev_wc, df, cfg_entry)
+    import pdb; pdb.set_trace()
     assert len(file) == 1
     file = file[0]
 
