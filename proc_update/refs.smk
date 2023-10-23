@@ -89,3 +89,31 @@ rule mkref_utr_fix_gtf:
             --input_gtf {input.gtf} \
             --output_gtf {output.gtf}
         """
+
+################################################################################
+######################## Human ref. download ###################################
+################################################################################
+
+use rule dl as dl_human_fa with:
+    params:
+        link = lambda wc:config['human_ref']['fa_link']
+    output:
+        out = temporary(config['human_ref']['fa_gz'])
+
+use rule gunzip as gz_human_fa with:
+    input:
+        gz = config['human_ref']['fa_gz']
+    output:
+        out = config['human_ref']['fa']
+
+use rule dl as dl_human_annot with:
+    params:
+        link = lambda wc:config['human_ref']['gtf_link']
+    output:
+        out = temporary(config['human_ref']['gtf_gz'])
+
+use rule gunzip as gz_human_annot with:
+    input:
+        gz = config['human_ref']['gtf_gz']
+    output:
+        out = config['human_ref']['gtf']

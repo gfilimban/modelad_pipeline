@@ -1,3 +1,15 @@
+human_ref:
+  gtf_ver: 'v29'
+  gtf_link: https://www.encodeproject.org/files/gencode.v29.primary_assembly.annotation_UCSC_names/@@download/gencode.v29.primary_assembly.annotation_UCSC_names.gtf.gz
+  fa_ver: 'hg38'
+  fa_link: https://www.encodeproject.org/files/GRCh38_no_alt_analysis_set_GCA_000001405.15/@@download/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta.gz
+
+  gtf_gz: human_ref/annot.gtf.gz
+  gtf: human_ref/annot.gtf
+
+  fa_gz: human_ref/ref.fa.gz
+  fa: human_ref/ref.fa
+
 ref:
   gtf_ver: 'vM21'
   gtf_link: https://www.encodeproject.org/files/gencode.vM21.primary_assembly.annotation_UCSC_names/@@download/gencode.vM21.primary_assembly.annotation_UCSC_names.gtf.gz
@@ -81,22 +93,22 @@ talon:
 
 # similarly, run lapa on bioreplicates
 lapa:
-  config: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}_config.csv
-  ends: data/lapa/{study}/{end_mode}/{genotype}_{sex}_{age}_{tissue}_clusters.bed
-  links: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}_tss_to_tes_links.csv
+  config: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/config.csv
+  ends: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/{end_mode}/clusters.bed
+  links: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/tss_to_tes_links.csv
 
   corrected:
-    gtf: data/lapa/{study}/talon_corrected/{genotype}_{sex}_{age}_{tissue}_corrected.gtf
-    filt_ab: data/lapa/{study}/talon_corrected/{genotype}_{sex}_{age}_{tissue}_filtered_abundance_corrected.tsv
+    gtf: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/talon_corrected/corrected.gtf
+    filt_ab: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/talon_corrected/filtered_abundance_corrected.tsv
 
   filt:
     t_novs: ['Known', 'NIC', 'NNC', 'ISM_rescue']
     g_novs: ['Known', 'Intergenic', 'Fusion']
     remove_spikes: True
 
-    pass_list: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}_pass_list.tsv
-    filt_ab: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}_filtered_abundance.tsv
-    gtf: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}.gtf
+    pass_list: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/pass_list.tsv
+    filt_ab: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/filtered_abundance.tsv
+    gtf: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/filtered.gtf
 
 # TODO - how to run cerberus?
 cerberus:
