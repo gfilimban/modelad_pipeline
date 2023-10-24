@@ -471,5 +471,6 @@ use rule cerb_ab_ids as study_cerb_ab with:
         ab = config['lapa']['filt']['filt_ab']
     params:
         source = lambda wc:get_df_col(wc, df, 'source'),
+        agg = True
     output:
         ab = config['cerberus']['ab']
