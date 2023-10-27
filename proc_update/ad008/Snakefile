@@ -59,7 +59,7 @@ rule all:
         expand(config['map']['ind_bam'],
                study=df.study.tolist(),
                genotype=df.genotype.tolist(),
-               sex=df.genotype.tolist(),
+               sex=df.sex.tolist(),
                age=df.age.tolist(),
                tissue=df.tissue.tolist(),
                biorep_num=df.biorep_num.tolist(),
