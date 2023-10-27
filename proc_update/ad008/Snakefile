@@ -56,13 +56,15 @@ ruleorder:
 
 rule all:
     input:
-        expand(config['merge']['ind_bam'],
-               study=df.study.tolist(),
-               genotype=df.genotype.tolist(),
-               sex=df.genotype.tolist(),
-               age=df.age.tolist(),
-               tissue=df.tissue.tolist(),
-               biorep_num=df.biorep_num.tolist())
+        expand(config['ref']['pseudochrom']['fa_merge'],
+                   pseudochrom=pseudochrom)
+        # expand(config['merge']['ind_bam'],
+        #        study=df.study.tolist(),
+        #        genotype=df.genotype.tolist(),
+        #        sex=df.genotype.tolist(),
+        #        age=df.age.tolist(),
+        #        tissue=df.tissue.tolist(),
+        #        biorep_num=df.biorep_num.tolist())
 
 ################################################################################
 ###################################### Refs ####################################
@@ -107,7 +109,8 @@ use rule rev_alignment as map_rev with:
 use rule tc as tc_sam with:
     input:
         sam = config['map']['sam_rev'],
-        fa = config['ref']['fa']
+        fa = expand(config['ref']['pseudochrom']['fa_merge'],
+                pseudochrom=pseudochrom)[0]
     params:
         path = config['tc']['path'],
         min_intron_size = config['tc']['min_intron_size'],
@@ -129,7 +132,8 @@ use rule alignment_stats as tc_stats with:
 ################################################################################
 use rule talon_label as talon_label_reads with:
     input:
-        fa = config['ref']['fa'],
+        fa = expand(config['ref']['pseudochrom']['fa_merge'],
+                pseudochrom=pseudochrom)[0],
         sam = config['tc']['sam']
     params:
         frac_a_range = config['talon_label']['frac_a_range'],
