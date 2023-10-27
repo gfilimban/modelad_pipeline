@@ -1,3 +1,6 @@
+If preliminary / exploratory analysis was needed for any study / experiment, then there will be materials in the corresponding folder. Ie
+* ad008 folder, to check out quickly from mapped reads worked
+
 ```bash
 snakemake \
   -s Snakefile \

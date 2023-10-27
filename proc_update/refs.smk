@@ -61,6 +61,16 @@ use rule gunzip as gz_annot with:
 #         cat {input.ercc} >> {output.cat_fa}
 #         """
 
+rule mkref_cat_fas:
+    resources:
+        threads = 1,
+        mem_gb = 4
+    shell:
+        """
+        cat {input.fa1} >> {output.fa}
+        cat {input.fa2} >> {output.fa}
+        """
+
 rule mkref_chrom_sizes:
     input:
         fa = config['ref']['fa']

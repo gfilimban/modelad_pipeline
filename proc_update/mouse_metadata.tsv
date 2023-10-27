@@ -78,3 +78,15 @@ mouse_id	genotype	sex	age	tissue	humanized	humanized_loci
 11440	ABCA7_HO	F	4 months	HC	FALSE	
 11448	ABCA7_HO	F	4 months	HC	FALSE	
 11453	ABCA7_HO	F	4 months	HC	FALSE	
+19614	hABKI_Swe/IB_HET	F	8 weeks	HC	TRUE	
+19613	hABKI_Swe/IB_HET	F	8 weeks	HC	TRUE	
+20564	hABKI_Swe/IB_HET	F	8 weeks	HC	TRUE	
+19573	hABKI_Swe/IB_HET	M	8 weeks	HC	TRUE	
+19574	hABKI_Swe/IB_HET	M	8 weeks	HC	TRUE	
+19994	hABKI_Swe/IB_HET	M	8 weeks	HC	TRUE	
+19575	hABKI_Swe/IB_WT	F	8 weeks	HC	TRUE	
+19612	hABKI_Swe/IB_WT	F	8 weeks	HC	TRUE	
+19995	hABKI_Swe/IB_WT	F	8 weeks	HC	TRUE	
+20362	hABKI_Swe/IB_WT	M	8 weeks	HC	TRUE	
+20363	hABKI_Swe/IB_WT	M	8 weeks	HC	TRUE	
+21021	hABKI_Swe/IB_WT	M	8 weeks	HC	TRUE	

@@ -1,0 +1,6 @@
+ad008_19995_lig-blk_1_t1.fastq.gz
+ad008_19612_lig-blk_1_t1.fastq.gz
+ad008_20564_lig-blk_1_t1.fastq.gz
+ad008_19614_lig-blk_1_t1.fastq.gz
+ad008_19575_lig-blk_1_t1.fastq.gz
+ad008_19613_lig-blk_1_t1.fastq.gz
