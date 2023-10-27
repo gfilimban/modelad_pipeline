@@ -56,13 +56,14 @@ ruleorder:
 
 rule all:
     input:
-        expand(config['merge']['ind_bam'],
+        expand(config['map']['ind_bam'],
                study=df.study.tolist(),
                genotype=df.genotype.tolist(),
                sex=df.genotype.tolist(),
                age=df.age.tolist(),
                tissue=df.tissue.tolist(),
-               biorep_num=df.biorep_num.tolist())
+               biorep_num=df.biorep_num.tolist(),
+               flowcell=df.flowcell.tolist())
 
 ################################################################################
 ###################################### Refs ####################################
@@ -100,6 +101,25 @@ use rule rev_alignment as map_rev with:
         sam = config['map']['sam']
     output:
         sam_rev = temporary(config['map']['sam_rev'])
+
+use rule sam_to_bam as bam_from_sam with:
+    input:
+        sam = config['map']['sam_rev']
+    output:
+        bam = temporary(config['map']['bam'])
+
+use rule sort_bam as bam_sort with:
+    input:
+        bam = config['map']['bam']
+    output:
+        bam = config['map']['sort_bam']
+
+use rule index_bam as bam_ind with:
+    input:
+        bam = config['map']['sort_bam']
+    output:
+        ind = config['map']['ind_bam']
+
 
 ################################################################################
 ###################### TranscriptClean ##########################################
@@ -139,23 +159,23 @@ use rule talon_label as talon_label_reads with:
     output:
         sam = temporary(config['talon_label']['sam'])
 
-use rule sam_to_bam as bam_from_sam with:
-    input:
-        sam = config['talon_label']['sam']
-    output:
-        bam = temporary(config['talon_label']['bam'])
-
-use rule sort_bam as bam_sort with:
-    input:
-        bam = config['talon_label']['bam']
-    output:
-        bam = temporary(config['talon_label']['sort_bam'])
-
-use rule index_bam as bam_ind with:
-    input:
-        bam = config['talon_label']['sort_bam']
-    output:
-        ind = temporary(config['talon_label']['ind_bam'])
+# use rule sam_to_bam as bam_from_sam with:
+#     input:
+#         sam = config['talon_label']['sam']
+#     output:
+#         bam = temporary(config['talon_label']['bam'])
+#
+# use rule sort_bam as bam_sort with:
+#     input:
+#         bam = config['talon_label']['bam']
+#     output:
+#         bam = temporary(config['talon_label']['sort_bam'])
+#
+# use rule index_bam as bam_ind with:
+#     input:
+#         bam = config['talon_label']['sort_bam']
+#     output:
+#         ind = temporary(config['talon_label']['ind_bam'])
 
 ################################################################################
 ################# Merge data from separate flowcells ###########################

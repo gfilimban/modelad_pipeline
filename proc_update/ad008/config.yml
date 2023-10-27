@@ -53,6 +53,11 @@ map:
   log: data/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_minimap.log
   stats: data/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_minimap_stats.txt
   sam_rev: data/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_reverse.sam
+  bam: data/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}.bam
+  sort_bam: data/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_sorted.bam
+  ind_bam: data/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_sorted.bam.bai
+
+
 
 tc:
   path: ~/mortazavi_lab/bin/TranscriptClean/
