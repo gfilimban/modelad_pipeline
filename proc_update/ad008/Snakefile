@@ -147,7 +147,7 @@ use rule alignment_stats as tc_stats with:
 
 use rule sam_to_bam as bam_from_sam with:
     input:
-        sam = rules.tc_sam.output.sam
+        sam = config['tc']['sam']
     output:
         bam = temporary(config['tc']['bam'])
 
