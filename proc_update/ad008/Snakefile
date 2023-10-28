@@ -102,11 +102,11 @@ use rule rev_alignment as map_rev with:
     output:
         sam_rev = temporary(config['map']['sam_rev'])
 
-# use rule sam_to_bam as bam_from_sam with:
-#     input:
-#         sam = config['map']['sam_rev']
-#     output:
-#         bam = temporary(config['map']['bam'])
+use rule sam_to_bam as bam_from_sam with:
+    input:
+        sam = config['map']['sam_rev']
+    output:
+        bam = temporary(config['map']['bam'])
 #
 # use rule sort_bam as bam_sort with:
 #     input:
