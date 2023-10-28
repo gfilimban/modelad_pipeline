@@ -56,7 +56,7 @@ ruleorder:
 
 rule all:
     input:
-        expand(config['map']['ind_bam'],
+        expand(config['tc']['ind_bam'],
                study=df.study.tolist(),
                genotype=df.genotype.tolist(),
                sex=df.sex.tolist(),
@@ -102,24 +102,24 @@ use rule rev_alignment as map_rev with:
     output:
         sam_rev = temporary(config['map']['sam_rev'])
 
-use rule sam_to_bam as bam_from_sam with:
-    input:
-        sam = config['map']['sam_rev']
-    output:
-        bam = temporary(config['map']['bam'])
-
-use rule sort_bam as bam_sort with:
-    input:
-        bam = config['map']['bam']
-    output:
-        bam = config['map']['sort_bam']
-
-use rule index_bam as bam_ind with:
-    input:
-        bam = config['map']['sort_bam']
-    output:
-        ind = config['map']['ind_bam']
-
+# use rule sam_to_bam as bam_from_sam with:
+#     input:
+#         sam = config['map']['sam_rev']
+#     output:
+#         bam = temporary(config['map']['bam'])
+#
+# use rule sort_bam as bam_sort with:
+#     input:
+#         bam = config['map']['bam']
+#     output:
+#         bam = config['map']['sort_bam']
+#
+# use rule index_bam as bam_ind with:
+#     input:
+#         bam = config['map']['sort_bam']
+#     output:
+#         ind = config['map']['ind_bam']
+#
 
 ################################################################################
 ###################### TranscriptClean ##########################################
@@ -144,6 +144,24 @@ use rule alignment_stats as tc_stats with:
         alignment = config['tc']['sam']
     output:
         stats = config['tc']['stats']
+
+use rule sam_to_bam as bam_from_sam with:
+    input:
+        sam = tc_sam.output.sam
+    output:
+        bam = temporary(config['tc']['bam'])
+
+use rule sort_bam as bam_sort with:
+    input:
+        bam = config['map']['bam']
+    output:
+        bam = config['tc']['sort_bam']
+
+use rule index_bam as bam_ind with:
+    input:
+        bam = config['tc']['sort_bam']
+    output:
+        ind = config['tc']['ind_bam']
 
 ################################################################################
 ############################## TALON label #####################################

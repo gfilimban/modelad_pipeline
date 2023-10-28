@@ -64,6 +64,11 @@ tc:
   min_intron_size: 21
 
   sam: data/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.sam
+  bam: data/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}.bam
+  sort_bam: data/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_sorted.bam
+  ind_bam: data/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_sorted.bam.bai
+
+
   fa: data/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.fa
   log: data/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.log
   te_log: data/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.TE.log
