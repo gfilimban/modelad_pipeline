@@ -153,7 +153,7 @@ use rule sam_to_bam as bam_from_sam_tc with:
 
 use rule sort_bam as bam_sort with:
     input:
-        bam = config['map']['bam']
+        bam = config['tc']['bam']
     output:
         bam = config['tc']['sort_bam']
 
