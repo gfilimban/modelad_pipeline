@@ -56,7 +56,7 @@ ruleorder:
 
 rule all:
     input:
-        expand(config['tc']['sam'],
+        expand(config['tc']['ind_bam'],
                study=df.study.tolist(),
                genotype=df.genotype.tolist(),
                sex=df.sex.tolist(),
