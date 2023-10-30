@@ -21,7 +21,7 @@ rule get_annot_sjs:
 
 rule tc:
     resources:
-        mem_gb = 80,
+        mem_gb = 128,
         threads = 16
     shell:
         """
