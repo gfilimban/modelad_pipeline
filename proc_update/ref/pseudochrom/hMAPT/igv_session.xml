@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Session genome="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ref/pseudochrom/hMAPT_merged_ref.fa" locus="hMAPT:0-191583" nextAutoscaleGroup="2" version="8">
+    <Resources>
+        <Resource path="../../../ad008/data/tc/ad008/hABKI_Swe_IB_HET_F_8_weeks_HC_3_1_sorted.bam" type="bam"/>
+        <Resource path="hMAPT_annot.gtf" type="gtf"/>
+        <Resource path="../../../../../../ref/gencode.vM21/gencode.vM21.annotation.sorted.gtf" type="gtf"/>
+    </Resources>
+    <Panel height="7110" name="Panel1698688274345" width="3423">
+        <Track attributeKey="gencode.vM21.annotation.sorted.gtf" clazz="org.broad.igv.track.FeatureTrack" displayMode="EXPANDED" featureVisibilityWindow="1776710" fontSize="10" groupByStrand="true" id="/Users/fairliereese/Documents/programming/mortazavi_lab/ref/gencode.vM21/gencode.vM21.annotation.sorted.gtf" name="gencode.vM21.annotation.sorted.gtf" visible="true"/>
+        <Track attributeKey="hMAPT_annot.gtf" clazz="org.broad.igv.track.FeatureTrack" displayMode="EXPANDED" fontSize="10" groupByStrand="false" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ref/pseudochrom/hMAPT/hMAPT_annot.gtf" name="hMAPT_annot.gtf" visible="true"/>
+        <Track attributeKey="hABKI_Swe_IB_HET_F_8_weeks_HC_3_1_sorted.bam Coverage" autoScale="true" clazz="org.broad.igv.sam.CoverageTrack" fontSize="10" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad008/data/tc/ad008/hABKI_Swe_IB_HET_F_8_weeks_HC_3_1_sorted.bam_coverage" name="hABKI_Swe_IB_HET_F_8_weeks_HC_3_1_sorted.bam Coverage" snpThreshold="0.2" visible="true">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="609.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="hABKI_Swe_IB_HET_F_8_weeks_HC_3_1_sorted.bam Junctions" autoScale="false" clazz="org.broad.igv.sam.SpliceJunctionTrack" fontSize="10" groupByStrand="false" height="60" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad008/data/tc/ad008/hABKI_Swe_IB_HET_F_8_weeks_HC_3_1_sorted.bam_junctions" maxdepth="50" name="hABKI_Swe_IB_HET_F_8_weeks_HC_3_1_sorted.bam Junctions" visible="false"/>
+        <Track attributeKey="hABKI_Swe_IB_HET_F_8_weeks_HC_3_1_sorted.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="THIRD_GEN" fontSize="10" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad008/data/tc/ad008/hABKI_Swe_IB_HET_F_8_weeks_HC_3_1_sorted.bam" name="hABKI_Swe_IB_HET_F_8_weeks_HC_3_1_sorted.bam" visible="true">
+            <RenderOptions/>
+        </Track>
+    </Panel>
+    <Panel height="140" name="FeaturePanel" width="3423">
+        <Track attributeKey="Reference sequence" clazz="org.broad.igv.track.SequenceTrack" fontSize="10" id="Reference sequence" name="Reference sequence" sequenceTranslationStrandValue="POSITIVE" shouldShowTranslation="true" visible="true"/>
+    </Panel>
+    <PanelLayout dividerFractions="0.0057283142389525366,0.881342062193126"/>
+    <HiddenAttributes>
+        <Attribute name="DATA FILE"/>
+        <Attribute name="DATA TYPE"/>
+        <Attribute name="NAME"/>
+    </HiddenAttributes>
+</Session>

@@ -1,4 +1,4 @@
-mouse_id	genotype	sex	age	tissue	humanized	humanized_loci
+mouse_id	genotype	sex	age	tissue	pseudochromosome	pseudochromosome_names
 17	TREM2 R47H CSS	M	12 months	half_brain	FALSE	
 18	TREM2 R47H CSS	M	12 months	half_brain	FALSE	
 19	TREM2 R47H CSS	M	12 months	half_brain	FALSE	
@@ -19,12 +19,12 @@ mouse_id	genotype	sex	age	tissue	humanized	humanized_loci
 11627	5xFADWT	F	4 months	HC	FALSE	
 11628	5xFADWT	F	4 months	HC	FALSE	
 11629	5xFADWT	F	4 months	HC	FALSE	
-12517	5xCLU-h2kbKI_HO	F	4 months	HC	TRUE	
-12648	CLU-h2kbKI_HO	F	4 months	HC	TRUE	
-12649	5xCLU-h2kbKI_HO	F	4 months	HC	TRUE	
-12659	5xCLU-h2kbKI_HO	F	4 months	HC	TRUE	
-12660	CLU-h2kbKI_HO	F	4 months	HC	TRUE	
-12670	CLU-h2kbKI_HO	F	4 months	HC	TRUE	
+12517	5xCLU-h2kbKI_HO	F	4 months	HC	TRUE	hCLU
+12648	CLU-h2kbKI_HO	F	4 months	HC	TRUE	hCLU
+12649	5xCLU-h2kbKI_HO	F	4 months	HC	TRUE	hCLU
+12659	5xCLU-h2kbKI_HO	F	4 months	HC	TRUE	hCLU
+12660	CLU-h2kbKI_HO	F	4 months	HC	TRUE	hCLU
+12670	CLU-h2kbKI_HO	F	4 months	HC	TRUE	hCLU
 13019	5xBIN1_HO	F	4 months	HC	FALSE	
 13020	5xBIN1_HO	F	4 months	HC	FALSE	
 13022	5xBIN1_HO	F	4 months	HC	FALSE	

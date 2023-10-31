@@ -5,25 +5,26 @@ import swan_vis as swan
 import itertools
 import cerberus
 
+p = os.path.dirname(os.getcwd())
+sys.path.append(p)
+
 from utils import *
 from sm_utils import *
 
-include: 'download.smk'
-include: 'samtools.smk'
-include: 'refs.smk'
-include: 'talon.smk'
-include: 'lapa.smk'
-include: 'mapping.smk'
-include: 'tc.smk'
-include: 'cerberus.smk'
-include: 'deeptools.smk'
+include: '../download.smk'
+include: '../samtools.smk'
+include: '../refs.smk'
+include: '../talon.smk'
+include: '../lapa.smk'
+include: '../mapping.smk'
+include: '../tc.smk'
+include: '../cerberus.smk'
+include: '../deeptools.smk'
 
 # settings we can change each time it's run
 configfile: 'config.yml'
-config_tsv = '231020_config.tsv'
-# config_tsv = '231018_config.tsv'
-# config_tsv = 'test_local_config.tsv'
-meta_tsv = 'mouse_metadata.tsv'
+config_tsv = '231027_config.tsv'
+meta_tsv = '../mouse_metadata.tsv'
 auto_dedupe = True
 
 df = parse_config_file(config_tsv,
@@ -34,8 +35,10 @@ end_modes = ['tss', 'tes']
 strands = ['fwd', 'rev']
 
 # TODO - get rid of this at some point
-temp_study_pass_list = ['ad003', 'ad005', 'ad006']
+temp_study_pass_list = ['ad003']
 df = df.loc[df.study.isin(temp_study_pass_list)]
+df = df.loc[df.pseudochromosome==True]
+pseudochrom = 'hCLU'
 
 wildcard_constraints:
     genotype='|'.join([re.escape(x) for x in df.genotype.unique().tolist()]),
@@ -54,23 +57,27 @@ ruleorder:
 
 rule all:
     input:
-        get_cfg_entries({'cerberus_run':df.cerberus_run.unique().tolist()},
-                        df,
-                        config['cerberus']['ab']),
-        get_cfg_entries({'cerberus_run':df.cerberus_run.unique().tolist()},
-                        df,
-                        config['cerberus']['gtf']),
-        expand(expand(config['merge']['bw'],
-                        zip,
-                        study=df.study.tolist(),
-                        genotype=df.genotype.tolist(),
-                        sex=df.sex.tolist(),
-                        age=df.age.tolist(),
-                        tissue=df.tissue.tolist(),
-                        biorep_num=df.biorep_num.tolist(),
-                        allow_missing=True),
-                        strand=['fwd', 'rev']),
-        config['ref']['cerberus']['gtf']
+        expand(config['tc']['ind_bam'],
+               zip,
+               study=df.study.tolist(),
+               genotype=df.genotype.tolist(),
+               sex=df.sex.tolist(),
+               age=df.age.tolist(),
+               tissue=df.tissue.tolist(),
+               biorep_num=df.biorep_num.tolist(),
+               flowcell=df.flowcell.tolist())
+
+################################################################################
+###################################### Refs ####################################
+################################################################################
+use rule mkref_cat_fas as mkref_pseudochrom with:
+    input:
+        fa1 = config['ref']['fa'],
+        fa2 = expand(config['ref']['pseudochrom']['fa'],
+                    pseudochrom=pseudochrom)[0]
+    output:
+        fa = expand(config['ref']['pseudochrom']['fa_merge'],
+                   pseudochrom=pseudochrom)[0]
 
 ################################################################################
 #################################### Mapping ###################################
@@ -78,7 +85,8 @@ rule all:
 use rule map as map_reads with:
     input:
         fastq = lambda wc: get_df_col(wc, df, 'fname'),
-        ref_fa = config['ref']['fa'],
+        ref_fa = expand(config['ref']['pseudochrom']['fa_merge'],
+                   pseudochrom=pseudochrom)[0],
         sjs = config['ref']['sjs']
     output:
         sam = temporary(config['map']['sam']),
@@ -96,13 +104,33 @@ use rule rev_alignment as map_rev with:
     output:
         sam_rev = temporary(config['map']['sam_rev'])
 
+use rule sam_to_bam as bam_from_sam with:
+    input:
+        sam = config['map']['sam_rev']
+    output:
+        bam = temporary(config['map']['bam'])
+#
+# use rule sort_bam as bam_sort with:
+#     input:
+#         bam = config['map']['bam']
+#     output:
+#         bam = config['map']['sort_bam']
+#
+# use rule index_bam as bam_ind with:
+#     input:
+#         bam = config['map']['sort_bam']
+#     output:
+#         ind = config['map']['ind_bam']
+#
+
 ################################################################################
 ###################### TranscriptClean ##########################################
 ################################################################################
 use rule tc as tc_sam with:
     input:
         sam = config['map']['sam_rev'],
-        fa = config['ref']['fa']
+        fa = expand(config['ref']['pseudochrom']['fa_merge'],
+                pseudochrom=pseudochrom)[0]
     params:
         path = config['tc']['path'],
         min_intron_size = config['tc']['min_intron_size'],
@@ -119,12 +147,31 @@ use rule alignment_stats as tc_stats with:
     output:
         stats = config['tc']['stats']
 
+use rule sam_to_bam as bam_from_sam_tc with:
+    input:
+        sam = config['tc']['sam']
+    output:
+        bam = temporary(config['tc']['bam'])
+
+use rule sort_bam as bam_sort with:
+    input:
+        bam = config['tc']['bam']
+    output:
+        bam = config['tc']['sort_bam']
+
+use rule index_bam as bam_ind with:
+    input:
+        bam = config['tc']['sort_bam']
+    output:
+        ind = config['tc']['ind_bam']
+
 ################################################################################
 ############################## TALON label #####################################
 ################################################################################
 use rule talon_label as talon_label_reads with:
     input:
-        fa = config['ref']['fa'],
+        fa = expand(config['ref']['pseudochrom']['fa_merge'],
+                pseudochrom=pseudochrom)[0],
         sam = config['tc']['sam']
     params:
         frac_a_range = config['talon_label']['frac_a_range'],
@@ -132,23 +179,23 @@ use rule talon_label as talon_label_reads with:
     output:
         sam = temporary(config['talon_label']['sam'])
 
-use rule sam_to_bam as bam_from_sam with:
-    input:
-        sam = config['talon_label']['sam']
-    output:
-        bam = temporary(config['talon_label']['bam'])
-
-use rule sort_bam as bam_sort with:
-    input:
-        bam = config['talon_label']['bam']
-    output:
-        bam = temporary(config['talon_label']['sort_bam'])
-
-use rule index_bam as bam_ind with:
-    input:
-        bam = config['talon_label']['sort_bam']
-    output:
-        ind = temporary(config['talon_label']['ind_bam'])
+# use rule sam_to_bam as bam_from_sam with:
+#     input:
+#         sam = config['talon_label']['sam']
+#     output:
+#         bam = temporary(config['talon_label']['bam'])
+#
+# use rule sort_bam as bam_sort with:
+#     input:
+#         bam = config['talon_label']['bam']
+#     output:
+#         bam = temporary(config['talon_label']['sort_bam'])
+#
+# use rule index_bam as bam_ind with:
+#     input:
+#         bam = config['talon_label']['sort_bam']
+#     output:
+#         ind = temporary(config['talon_label']['ind_bam'])
 
 ################################################################################
 ################# Merge data from separate flowcells ###########################

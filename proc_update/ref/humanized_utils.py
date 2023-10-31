@@ -12,7 +12,20 @@ def write_chr(seq, ofile, chr_name, line_lim=None):
                 ofile.write(seq+'\n')
         else:
             ofile.write(str(seq))
+     
+    
+def get_gene_gtf_entry(gtf_file, gene):
+    """
+    Get the GTF entries from the gene
+    """
         
+    gtf_df = pr.read_gtf(gtf_file, as_df=True)
+
+    gtf_df = gtf_df.loc[(gtf_df.gene_name==gene)]
+    
+    return gtf_df
+    
+    
 def get_gene_seq(fa_file,
                 gtf_file, 
                 gene,

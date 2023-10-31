@@ -30,7 +30,7 @@ auto_dedupe = True
 df = parse_config_file(config_tsv,
                        meta_tsv,
                        auto_dedupe=auto_dedupe,
-                       include_humanized=True)
+                       include_pseudochrom=True)
 end_modes = ['tss', 'tes']
 strands = ['fwd', 'rev']
 

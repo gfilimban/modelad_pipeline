@@ -25,7 +25,7 @@ def process_meta(meta_fname):
 def parse_config_file(fname,
                       meta_fname,
                       auto_dedupe=True,
-                      include_humanized=True):
+                      include_pseudochrom=True):
 
     """
     Parameters:
@@ -34,7 +34,7 @@ def parse_config_file(fname,
         datasets_per_run (int): Number of datasets to process in each TALON run
         auto_dedupe (bool): Automatically deduplicate duplicate fastqs that result from
             successive Porechop rounds
-        include_humanized (bool): Include models with humanized loci, which need
+        include_pseudochrom (bool): Include models with pseudochrom loci, which need
             some preprocessing / different treatment
 
     Returns:
@@ -119,14 +119,14 @@ def parse_config_file(fname,
     # df['dataset'] = df['talon_dataset']+'_'+df['flowcell'].astype(str)
 
     # get and verify humanized status
-    assert len(df.loc[(df.humanized==True)&~(df.genotype.str.contains('h'))]) == 0
-    temp = df.loc[(df.humanized==False)&(df.genotype.str.contains('h'))].copy(deep=True)
+    assert len(df.loc[(df.pseudochromosome==True)&~(df.genotype.str.contains('h'))]) == 0
+    temp = df.loc[(df.pseudochromosome==False)&(df.genotype.str.contains('h'))].copy(deep=True)
     if len(temp.index) >= 1:
         genotypes = temp.genotype.unique().tolist()
-        warnings.warn(f'Config found non-humanized mouse w/ genotypes {genotypes}, is this expected?')
+        warnings.warn(f'Config found non-pseudochrom mouse w/ genotypes {genotypes}, is this expected?')
 
-    if not include_humanized:
-        df = df.loc[df.humanized==False].copy(deep=True)
+    if not include_pseudochrom:
+        df = df.loc[df.pseudochromosome==False].copy(deep=True)
 
     # assign a cerberus run to each "sample" (study+genotype+sex+age+tissue)
     # but first sort on study and sample such that they will always be ordered in the same way
