@@ -37,7 +37,7 @@ strands = ['fwd', 'rev']
 # TODO - get rid of this at some point
 temp_study_pass_list = ['ad008']
 df = df.loc[df.study.isin(temp_study_pass_list)]
-pseudochrom = 'hMAPT'
+pseudochrom = 'hchr17'
 
 wildcard_constraints:
     genotype='|'.join([re.escape(x) for x in df.genotype.unique().tolist()]),

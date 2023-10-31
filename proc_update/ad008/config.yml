@@ -1,3 +1,6 @@
+params:
+  pseudochrom: 'hchr17'
+  
 human_ref:
   gtf_ver: 'v29'
   gtf_link: https://www.encodeproject.org/files/gencode.v29.primary_assembly.annotation_UCSC_names/@@download/gencode.v29.primary_assembly.annotation_UCSC_names.gtf.gz

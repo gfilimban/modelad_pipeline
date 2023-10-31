@@ -29,7 +29,9 @@ def get_gene_gtf_entry(gtf_file, gene):
 def get_gene_seq(fa_file,
                 gtf_file, 
                 gene,
+                whole_chr=False,
                 ofile=None,
+                chr_name=None,
                 slack=0):
         
     gtf_df = pr.read_gtf(gtf_file, as_df=True)
@@ -47,14 +49,23 @@ def get_gene_seq(fa_file,
     strand = gtf_df['Strand'].values[0]
 
     fa = pyfaidx.Fasta(fa_file)
-    if strand == '+':
-        gene_seq = fa[ch][start:end]
-    else: 
-        gene_seq = fa[ch][start:end].complement
+    
+    # just get the sequence of the gene
+    if not whole_chr:
+        if strand == '+':
+            gene_seq = fa[ch][start:end]
+        else: 
+            gene_seq = fa[ch][start:end].complement
+    # get the sequence of the whole chromosome
+    else:
+        gene_seq = fa[ch][:]
+    print(f'Length of pseudochrom: {len(gene_seq.seq)}')
 
     if ofile:
+        if not chr_name:
+            chr_name = gene
         write_chr(gene_seq.seq, ofile, gene)
-    
+        
     return gene_seq.seq
 
 def replace_seq(mod_fa,
