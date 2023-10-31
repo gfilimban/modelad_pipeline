@@ -64,7 +64,7 @@ def get_gene_seq(fa_file,
     if ofile:
         if not chr_name:
             chr_name = gene
-        write_chr(gene_seq.seq, ofile, gene)
+        write_chr(gene_seq.seq, ofile, chr_name)
         
     return gene_seq.seq
 
