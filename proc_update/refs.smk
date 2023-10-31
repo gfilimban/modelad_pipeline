@@ -1,6 +1,6 @@
 configfile: 'config.yml'
 
-pseudochrom = config['params']['pseudochrom']
+# pseudochrom = config['params']['pseudochrom']
 
 ################################################################################
 ######################## Ref. download / proc ##################################
@@ -131,15 +131,15 @@ use rule gunzip as gz_human_annot with:
         out = config['human_ref']['gtf']
 
 
-################################################################################
-########################### Pseudochromosome ###################################
-################################################################################
-
-use rule mkref_cat_fas as mkref_pseudochrom with:
-    input:
-        fa1 = config['ref']['fa'],
-        fa2 = expand(config['ref']['pseudochrom']['fa'],
-                    pseudochrom=pseudochrom)[0]
-    output:
-        fa = expand(config['ref']['pseudochrom']['fa_merge'],
-                   pseudochrom=pseudochrom)[0]
+# ################################################################################
+# ########################### Pseudochromosome ###################################
+# ################################################################################
+#
+# use rule mkref_cat_fas as mkref_pseudochrom with:
+#     input:
+#         fa1 = config['ref']['fa'],
+#         fa2 = expand(config['ref']['pseudochrom']['fa'],
+#                     pseudochrom=pseudochrom)[0]
+#     output:
+#         fa = expand(config['ref']['pseudochrom']['fa_merge'],
+#                    pseudochrom=pseudochrom)[0]
