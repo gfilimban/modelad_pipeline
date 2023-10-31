@@ -4,11 +4,11 @@ human_ref:
   fa_ver: 'hg38'
   fa_link: https://www.encodeproject.org/files/GRCh38_no_alt_analysis_set_GCA_000001405.15/@@download/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta.gz
 
-  gtf_gz: human_../ref/annot.gtf.gz
-  gtf: human_../ref/annot.gtf
+  gtf_gz: human_ref/annot.gtf.gz
+  gtf: human_ref/annot.gtf
 
-  fa_gz: human_../ref/ref.fa.gz
-  fa: human_../ref/ref.fa
+  fa_gz: human_ref/ref.fa.gz
+  fa: human_ref/ref.fa
 
 ref:
   gtf_ver: 'vM21'
@@ -26,8 +26,8 @@ ref:
   chrom_sizes: ../ref/chrom_sizes.txt
 
   pseudochrom:
-    fa: ../ref/pseudochrom/{pseudochrom}_ref.fa
-    fa_merge: ../ref/pseudochrom/{pseudochrom}_merged_ref.fa
+    fa: ../ref/pseudochrom/{pseudochrom}/{pseudochrom}_ref.fa
+    fa_merge: ../ref/pseudochrom/{pseudochrom}/{pseudochrom}_merged_ref.fa
 
   # talon reference -- db from the input gtf
   talon:
