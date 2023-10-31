@@ -127,6 +127,14 @@ def parse_config_file(fname,
 
     if not include_pseudochrom:
         df = df.loc[df.pseudochromosome==False].copy(deep=True)
+        
+    # format the pseudocrhom names
+    else:
+        inds = df.loc[(df.pseudochromosome_names.isnull())].index
+        df.loc[inds, 'pseudochromosome_names'] = 'dummy'
+        df.pseudochromosome_names = df.pseudochromosome_names.str.split(',')
+        
+        
 
     # assign a cerberus run to each "sample" (study+genotype+sex+age+tissue)
     # but first sort on study and sample such that they will always be ordered in the same way

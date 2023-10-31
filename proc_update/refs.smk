@@ -127,3 +127,17 @@ use rule gunzip as gz_human_annot with:
         gz = config['human_ref']['gtf_gz']
     output:
         out = config['human_ref']['gtf']
+
+
+################################################################################
+########################### Pseudochromosome ###################################
+################################################################################
+
+use rule mkref_cat_fas as mkref_pseudochrom with:
+    input:
+        fa1 = config['ref']['fa'],
+        fa2 = expand(config['ref']['pseudochrom']['fa'],
+                    pseudochrom=pseudochrom)[0]
+    output:
+        fa = expand(config['ref']['pseudochrom']['fa_merge'],
+                   pseudochrom=pseudochrom)[0]

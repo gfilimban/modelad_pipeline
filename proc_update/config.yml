@@ -25,6 +25,11 @@ ref:
   fa: ref/ref.fa
   chrom_sizes: ref/chrom_sizes.txt
 
+  pseudochrom:
+    fa: ../ref/pseudochrom/{pseudochrom}/{pseudochrom}_ref.fa
+    fa_merge: ../ref/pseudochrom/{pseudochrom}/{pseudochrom}_merged_ref.fa
+
+
   # talon reference -- db from the input gtf
   talon:
     db: ref/talon/ref.db

@@ -90,3 +90,4 @@ mouse_id	genotype	sex	age	tissue	pseudochromosome	pseudochromosome_names
 20362	hABKI_Swe/IB_WT	M	8 weeks	HC	TRUE	
 20363	hABKI_Swe/IB_WT	M	8 weeks	HC	TRUE	
 21021	hABKI_Swe/IB_WT	M	8 weeks	HC	TRUE	
+666	hgenotype1_genotype2	M	8 weeks	HC	TRUE	"hgenotype2,hgenotype2"
