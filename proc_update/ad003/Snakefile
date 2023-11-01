@@ -142,6 +142,19 @@ use rule index_bam as bam_ind_hgene with:
     output:
         ind = config['human_ref']['gene']['ind_bam']
 
+rule mkref_mouse_gene_fq:
+   input:
+       fa = config['ref']['t_fa']
+   resources:
+       mem_gb = 16,
+       threads = 4
+   output:
+       fastq = config['ref']['gene']['fq']
+   run:
+       get_gene_t_fastq(input.fa,
+                        wildcards.gene,
+                        output.fastq)
+
 use rule map as map_reads_mgene with:
   input:
       fastq = expand(config['ref']['gene']['fq'],
