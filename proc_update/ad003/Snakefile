@@ -60,19 +60,19 @@ ruleorder:
 
 rule all:
     input:
-    expand(config['human_ref']['gene']['ind_bam'],
-               gene=hgene),
-    expand(config['ref']['gene']['ind_bam'],
-              gene=mgene),
-    expand(config['tc']['ind_bam'],
-           zip,
-           study=df.study.tolist(),
-           genotype=df.genotype.tolist(),
-           sex=df.sex.tolist(),
-           age=df.age.tolist(),
-           tissue=df.tissue.tolist(),
-           biorep_num=df.biorep_num.tolist(),
-           flowcell=df.flowcell.tolist())
+        expand(config['human_ref']['gene']['ind_bam'],
+                   gene=hgene),
+        expand(config['ref']['gene']['ind_bam'],
+                  gene=mgene),
+        expand(config['tc']['ind_bam'],
+               zip,
+               study=df.study.tolist(),
+               genotype=df.genotype.tolist(),
+               sex=df.sex.tolist(),
+               age=df.age.tolist(),
+               tissue=df.tissue.tolist(),
+               biorep_num=df.biorep_num.tolist(),
+               flowcell=df.flowcell.tolist())
         # expand(config['ref']['gene']['fq'],
         #        gene='Clu')
 
