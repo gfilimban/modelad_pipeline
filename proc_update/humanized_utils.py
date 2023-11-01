@@ -1,3 +1,4 @@
+import pandas as pd
 import pyranges as pr
 import pyfaidx
 import re
