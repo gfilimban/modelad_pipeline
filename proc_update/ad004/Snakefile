@@ -112,12 +112,12 @@ use rule tc as tc_sam_hgene with:
     params:
         path = config['tc']['path'],
         min_intron_size = config['tc']['min_intron_size'],
-        opref = config['tc']['sam'].rsplit('_clean.sam', maxsplit=1)[0]
+        opref = config['human_ref']['gene'].rsplit('_clean.sam', maxsplit=1)[0]
     output:
-        sam = temporary(config['human_ref']['tc_sam']),
-        fa = temporary(config['human_ref']['tc_fa']),
-        sam_clean_log = temporary(config['human_ref']['tc_log']),
-        sam_clean_te_log = temporary(config['human_ref']['te_log'])
+        sam = temporary(config['human_ref']['gene']['tc_sam']),
+        fa = temporary(config['human_ref']['gene']['tc_fa']),
+        sam_clean_log = temporary(config['human_ref']['gene']['tc_log']),
+        sam_clean_te_log = temporary(config['human_ref']['gene']['te_log'])
 
 use rule sam_to_bam as bam_from_sam_hgene with:
     input:
