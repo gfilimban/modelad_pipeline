@@ -112,7 +112,7 @@ use rule tc as tc_sam_hgene with:
     params:
         path = config['tc']['path'],
         min_intron_size = config['tc']['min_intron_size'],
-        opref = config['human_ref']['gene'].rsplit('_clean.sam', maxsplit=1)[0]
+        opref = config['human_ref']['gene']['tc_sam'].rsplit('_clean.sam', maxsplit=1)[0]
     output:
         sam = temporary(config['human_ref']['gene']['tc_sam']),
         fa = temporary(config['human_ref']['gene']['tc_fa']),
