@@ -5,6 +5,31 @@ configfile: 'config.yml'
 ################################################################################
 ######################## Ref. download / proc ##################################
 ################################################################################
+
+use rule dl as dl_human_t_fa with:
+    params:
+        link = lambda wc:config['human_ref']['t_fa_link']
+    output:
+        out = temporary(config['human_ref']['t_fa_gz'])
+
+use rule gunzip as gz_human_t_fa with:
+    input:
+        gz = config['human_ref']['t_fa_gz']
+    output:
+        out = config['human_ref']['t_fa']
+
+use rule dl as dl_t_fa with:
+    params:
+        link = lambda wc:config['ref']['t_fa_link']
+    output:
+        out = temporary(config['ref']['t_fa_gz'])
+
+use rule gunzip as gz_t_fa with:
+    input:
+        gz = config['ref']['t_fa_gz']
+    output:
+        out = config['ref']['t_fa']
+
 use rule dl as dl_fa with:
     params:
         link = lambda wc:config['ref']['fa_link']

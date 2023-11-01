@@ -3,8 +3,31 @@ import pyfaidx
 import re
 import textwrap
 
+
+def get_gene_t_fastq(fa, 
+                     gene,
+                     ofile):
+    """
+    Get the fastq for the reference transcript associated with 
+    "gene"
+    """
+    fa = pyfaidx.Fasta(fa)
+    t_keys = list(fa.keys())
+    t_df = pd.DataFrame()
+    t_df['t_key'] = t_keys
+    t_keys = t_df.loc[t_df.t_key.str.contains(gene)].t_key.tolist()
+    
+    with open(ofile, 'w') as o:
+        for t in t_keys:
+            read_name = f'@{t}'
+            read = fa[t][:].seq
+            phred = ''.join(['5' for i in range(len(read))])
+            o.write(read_name+'\n')
+            o.write(read+'\n')
+            o.write('+\n')
+            o.write(phred+'\n')
+
 def write_chr(seq, ofile, chr_name, line_lim=None):
-    import pdb; pdb.set_trace()
     with open(ofile, 'w') as ofile:
         ofile.write(f'>{chr_name}\n')
         if line_lim:

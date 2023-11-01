@@ -78,6 +78,14 @@ use rule mkref_cat_fas as mkref_pseudochrom with:
         fa = expand(config['ref']['pseudochrom']['fa_merge'],
                    pseudochrom=pseudochrom)[0]
 
+# get all the transcript seqs from a given gene
+# rule get_mouse_t_seqs:
+#     input:
+#         fa = config['ref']['t_fa']
+#     params:
+#
+
+
 ################################################################################
 #################################### Mapping ###################################
 ################################################################################
