@@ -27,6 +27,9 @@ human_ref:
     tc_fa: ../human_ref/{gene}/{gene}_clean.fa
     tc_log: ../human_ref/{gene}/{gene}_clean.log
     te_log: ../human_ref/{gene}/{gene}_clean.TE.log
+    bam: ../human_ref/{gene}/{gene}_mapped.bam
+    sort_bam: ../human_ref/{gene}/{gene}_mapped_sorted.bam
+    ind_bam: ../human_ref/{gene}/{gene}_mapped_sorted.bam.bai
 
 ref:
   gtf_ver: 'vM21'
