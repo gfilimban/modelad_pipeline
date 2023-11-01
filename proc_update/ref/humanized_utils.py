@@ -4,6 +4,7 @@ import re
 import textwrap
 
 def write_chr(seq, ofile, chr_name, line_lim=None):
+    import pdb; pdb.set_trace()
     with open(ofile, 'w') as ofile:
         ofile.write(f'>{chr_name}\n')
         if line_lim:
@@ -64,6 +65,7 @@ def get_gene_seq(fa_file,
     if ofile:
         if not chr_name:
             chr_name = gene
+        
         write_chr(gene_seq.seq, ofile, chr_name)
         
     return gene_seq.seq
