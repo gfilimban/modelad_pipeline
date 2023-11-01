@@ -58,6 +58,8 @@ ruleorder:
 
 rule all:
     input:
+        expand(config['human_ref']['gene']['ind_bam'],
+                   gene=hgene),
         expand(config['tc']['ind_bam'],
                zip,
                study=df.study.tolist(),
