@@ -5,33 +5,32 @@ human_ref:
   fa_ver: 'hg38'
   fa_link: https://www.encodeproject.org/files/GRCh38_no_alt_analysis_set_GCA_000001405.15/@@download/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta.gz
 
-  gtf_gz: human_ref/annot.gtf.gz
-  gtf: human_ref/annot.gtf
+  gtf_gz: ../human_ref/annot.gtf.gz
+  gtf: ../human_ref/annot.gtf
 
   t_fa_link: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/gencode.v29.transcripts.fa.gz
-  t_fa_gz: human_ref/annot.fa.gz
-  t_fa: human_ref/annot.fa
+  t_fa_gz: ../human_ref/annot.fa.gz
+  t_fa: ../human_ref/annot.fa
 
   all_gtf_link: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/gencode.v29.chr_patch_hapl_scaff.annotation.gtf.gz
-  all_gtf_gz: human_ref/all_annot.gtf.gz
-  all_gtf: human_ref/all_annot.gtf
+  all_gtf_gz: ../human_ref/all_annot.gtf.gz
+  all_gtf: ../human_ref/all_annot.gtf
 
-  fa_gz: human_ref/ref.fa.gz
-  fa: human_ref/ref.fa
+  fa_gz: ../human_ref/ref.fa.gz
+  fa: ../human_ref/ref.fa
 
   gene:
-    fq: human_ref/{gene}/{gene}_t.fastq
-    sam: human_ref/{gene}/{gene}_mapped.sam
-    log: human_ref/{gene}/{gene}_minimap.log
-    tc_sam: human_ref/{gene}/{gene}_mapped_clean.sam
-    tc_fa: human_ref/{gene}/{gene}_mapped_clean.fa
-    tc_log: human_ref/{gene}/{gene}_clean.log
-    te_log: human_ref/{gene}/{gene}_clean.TE.log
+    fq: ../human_ref/{gene}/{gene}_t.fastq
+    sam: ../human_ref/{gene}/{gene}_mapped.sam
+    log: ../human_ref/{gene}/{gene}_minimap.log
+    tc_sam: ../human_ref/{gene}/{gene}_clean.sam
+    tc_fa: ../human_ref/{gene}/{gene}_clean.fa
+    tc_log: ../human_ref/{gene}/{gene}_clean.log
+    te_log: ../human_ref/{gene}/{gene}_clean.TE.log
 
-    bam: human_ref/{gene}/{gene}_mapped.bam
-    sort_bam: human_ref/{gene}/{gene}_mapped_sorted.bam
-    ind_bam: human_ref/{gene}/{gene}_mapped_sorted.bam.bai
-
+    bam: ../human_ref/{gene}/{gene}_mapped.bam
+    sort_bam: ../human_ref/{gene}/{gene}_mapped_sorted.bam
+    ind_bam: ../human_ref/{gene}/{gene}_mapped_sorted.bam.bai
 
 ref:
   gtf_ver: 'vM21'
