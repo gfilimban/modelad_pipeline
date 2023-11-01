@@ -84,6 +84,9 @@ use rule mkref_cat_fas as mkref_pseudochrom with:
 rule mkref_human_gene_fq:
     input:
         fa = config['human_ref']['t_fa']
+    resources:
+        mem_gb = 16,
+        threads = 4
     output:
         fastq = config['human_ref']['gene']['fq']
     run:
