@@ -27,6 +27,7 @@ human_ref:
     tc_fa: ../human_ref/{gene}/{gene}_clean.fa
     tc_log: ../human_ref/{gene}/{gene}_clean.log
     te_log: ../human_ref/{gene}/{gene}_clean.TE.log
+
     bam: ../human_ref/{gene}/{gene}_mapped.bam
     sort_bam: ../human_ref/{gene}/{gene}_mapped_sorted.bam
     ind_bam: ../human_ref/{gene}/{gene}_mapped_sorted.bam.bai
@@ -54,13 +55,15 @@ ref:
     fq: ../ref/{gene}/{gene}_t.fastq
     sam: ../ref/{gene}/{gene}_mapped.sam
     log: ../ref/{gene}/{gene}_minimap.log
-    tc_sam: ../ref/{gene}/{gene}_mapped_clean.sam
-    tc_fa: ../ref/{gene}/{gene}_mapped_clean.fa
+    tc_sam: ../ref/{gene}/{gene}_clean.sam
+    tc_fa: ../ref/{gene}/{gene}_clean.fa
     tc_log: ../ref/{gene}/{gene}_clean.log
     te_log: ../ref/{gene}/{gene}_clean.TE.log
+
     bam: ../ref/{gene}/{gene}_mapped.bam
     sort_bam: ../ref/{gene}/{gene}_mapped_sorted.bam
     ind_bam: ../ref/{gene}/{gene}_mapped_sorted.bam.bai
+
 
   pseudochrom:
     fa: ../ref/pseudochrom/{pseudochrom}/{pseudochrom}_ref.fa
