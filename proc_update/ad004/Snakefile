@@ -96,8 +96,7 @@ rule mkref_human_gene_fq:
 
 use rule map as map_reads_hgene with:
     input:
-        fastq = expand(config['human_ref']['gene']['fq'],
-                    gene=hgene),
+        fastq = config['human_ref']['gene']['fq'],
         ref_fa = expand(config['ref']['pseudochrom']['fa'],
                 pseudochrom=pseudochrom)[0],
         sjs = config['ref']['sjs']
@@ -105,9 +104,24 @@ use rule map as map_reads_hgene with:
         sam = temporary(config['human_ref']['gene']['sam']),
         log = config['human_ref']['gene']['log']
 
+use rule tc as tc_sam_hgene with:
+    input:
+        sam = rules.map_reads_hgene.output.sam,
+        fa = expand(config['ref']['pseudochrom']['fa'],
+                pseudochrom=pseudochrom)[0]
+    params:
+        path = config['tc']['path'],
+        min_intron_size = config['tc']['min_intron_size'],
+        opref = config['tc']['sam'].rsplit('_clean.sam', maxsplit=1)[0]
+    output:
+        sam = temporary(config['human_ref']['tc_sam']),
+        fa = temporary(config['human_ref']['tc_fa']),
+        sam_clean_log = temporary(config['human_ref']['tc_log']),
+        sam_clean_te_log = temporary(config['human_ref']['te_log'])
+
 use rule sam_to_bam as bam_from_sam_hgene with:
     input:
-        sam = rules.map_reads_hgene.output.sam
+        sam = rules.tc_sam_hgene.output.sam
     output:
         bam = temporary(config['human_ref']['gene']['bam'])
 

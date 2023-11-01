@@ -23,6 +23,11 @@ human_ref:
     fq: human_ref/{gene}/{gene}_t.fastq
     sam: human_ref/{gene}/{gene}_mapped.sam
     log: human_ref/{gene}/{gene}_minimap.log
+    tc_sam: human_ref/{gene}/{gene}_mapped_clean.sam
+    tc_fa: human_ref/{gene}/{gene}_mapped_clean.fa
+    tc_log: human_ref/{gene}/{gene}_clean.log
+    te_log: human_ref/{gene}/{gene}_clean.TE.log
+
     bam: human_ref/{gene}/{gene}_mapped.bam
     sort_bam: human_ref/{gene}/{gene}_mapped_sorted.bam
     ind_bam: human_ref/{gene}/{gene}_mapped_sorted.bam.bai
