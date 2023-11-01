@@ -57,7 +57,7 @@ ruleorder:
 
 rule all:
     input:
-        expand(rules.bam_ind_hgene.output.ind,
+        expand(config['human_ref']['gene']['ind_bam'],
                gene=hgene),
         expand(config['tc']['ind_bam'],
                zip,
