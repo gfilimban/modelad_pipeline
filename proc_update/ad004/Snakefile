@@ -94,7 +94,7 @@ rule mkref_human_gene_fq:
 use rule map as map_reads_hgene with:
     input:
         fastq = expand(config['human_ref']['gene']['fq'],
-                    gene=hgene)
+                    gene=hgene),
         ref_fa = expand(config['ref']['pseudochrom']['fa'],
                 pseudochrom=pseudochrom)[0],
         sjs = config['ref']['sjs']
