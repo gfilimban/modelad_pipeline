@@ -19,6 +19,14 @@ human_ref:
   fa_gz: human_ref/ref.fa.gz
   fa: human_ref/ref.fa
 
+  gene:
+    fq: human_ref/{gene}/{gene}_t.fastq
+    sam: human_ref/{gene}/{gene}_mapped.sam
+    log: human_ref/{gene}/{gene}_minimap.log
+    bam: human_ref/{gene}/{gene}_mapped.bam
+    sort_bam: human_ref/{gene}/{gene}_mapped_sorted.bam
+    ind_bam: human_ref/{gene}/{gene}_mapped_sorted.bam.bai
+
 ref:
   gtf_ver: 'vM21'
   gtf_link: https://www.encodeproject.org/files/gencode.vM21.primary_assembly.annotation_UCSC_names/@@download/gencode.vM21.primary_assembly.annotation_UCSC_names.gtf.gz

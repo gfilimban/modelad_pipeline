@@ -39,6 +39,7 @@ temp_study_pass_list = ['ad003']
 df = df.loc[df.study.isin(temp_study_pass_list)]
 df = df.loc[df.pseudochromosome==True]
 pseudochrom = 'hCLU'
+hgene = 'CLU'
 
 wildcard_constraints:
     genotype='|'.join([re.escape(x) for x in df.genotype.unique().tolist()]),
@@ -78,6 +79,49 @@ use rule mkref_cat_fas as mkref_pseudochrom with:
     output:
         fa = expand(config['ref']['pseudochrom']['fa_merge'],
                    pseudochrom=pseudochrom)[0]
+
+rule mkref_human_gene_fq:
+   input:
+       fa = config['human_ref']['t_fa']
+   resources:
+       mem_gb = 16,
+       threads = 4
+   output:
+       fastq = config['human_ref']['gene']['fq']
+   run:
+       get_gene_t_fastq(input.fa,
+                        wildcards.gene,
+                        output.fastq)
+
+use rule map as map_reads_hgene with:
+   input:
+       fastq = expand(config['human_ref']['gene']['fq'],
+                   gene=hgene),
+       ref_fa = expand(config['ref']['pseudochrom']['fa'],
+               pseudochrom=pseudochrom)[0],
+       sjs = config['ref']['sjs']
+   output:
+       sam = temporary(config['human_ref']['gene']['sam']),
+       log = config['human_ref']['gene']['log']
+
+use rule sam_to_bam as bam_from_sam_hgene with:
+   input:
+       sam = rules.map_reads_hgene.output.sam
+   output:
+       bam = temporary(config['human_ref']['gene']['bam'])
+
+use rule sort_bam as bam_sort_hgene with:
+   input:
+       bam = rules.bam_from_sam_hgene.output.bam
+   output:
+       bam = config['human_ref']['gene']['sort_bam']
+
+use rule index_bam as bam_ind_hgene with:
+   input:
+       bam = rules.bam_sort_hgene.output.bam
+   output:
+       ind = config['human_ref']['gene']['ind_bam']
+
 
 ################################################################################
 #################################### Mapping ###################################
