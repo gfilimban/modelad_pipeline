@@ -160,8 +160,7 @@ rule mkref_mouse_gene_fq:
 
 use rule map as map_reads_mgene with:
   input:
-      fastq = expand(config['ref']['gene']['fq'],
-                  gene=hgene),
+      fastq = config['ref']['gene']['fq'],
       ref_fa = expand(config['ref']['pseudochrom']['fa'],
               pseudochrom=pseudochrom)[0],
       sjs = config['ref']['sjs']
