@@ -19,7 +19,18 @@ human_ref:
   fa_gz: human_ref/ref.fa.gz
   fa: human_ref/ref.fa
 
-  gene_t_fq: human_ref/{gene}/{gene}_t.fastq
+  gene:
+    fq: human_ref/{gene}/{gene}_t.fastq
+    sam: human_ref/{gene}/{gene}_mapped.sam
+    log: human_ref/{gene}/{gene}_minimap.log
+    tc_sam: human_ref/{gene}/{gene}_clean.sam
+    tc_fa: human_ref/{gene}/{gene}_clean.fa
+    tc_log: human_ref/{gene}/{gene}_clean.log
+    te_log: human_ref/{gene}/{gene}_clean.TE.log
+
+    bam: human_ref/{gene}/{gene}_mapped.bam
+    sort_bam: human_ref/{gene}/{gene}_mapped_sorted.bam
+    ind_bam: human_ref/{gene}/{gene}_mapped_sorted.bam.bai
 
 ref:
   gtf_ver: 'vM21'
@@ -31,19 +42,31 @@ ref:
   t_fa_gz: ref/annot.fa.gz
   t_fa: ref/annot.fa
 
-  gtf_gz: ../ref/annot.gtf.gz
-  gtf: ../ref/annot.gtf
-  gtf_utr: ../ref/annot_utr.gtf
-  sjs: ../ref/annot_junc.bed
+  gtf_gz: ref/annot.gtf.gz
+  gtf: ref/annot.gtf
+  gtf_utr: ref/annot_utr.gtf
+  sjs: ref/annot_junc.bed
 
-  fa_gz: ../ref/ref.fa.gz
-  fa: ../ref/ref.fa
-  chrom_sizes: ../ref/chrom_sizes.txt
+  fa_gz: ref/ref.fa.gz
+  fa: ref/ref.fa
+  chrom_sizes: ref/chrom_sizes.txt
+
+  gene:
+    fq: ref/{gene}/{gene}_t.fastq
+    sam: ref/{gene}/{gene}_mapped.sam
+    log: ref/{gene}/{gene}_minimap.log
+    tc_sam: ref/{gene}/{gene}_clean.sam
+    tc_fa: ref/{gene}/{gene}_clean.fa
+    tc_log: ref/{gene}/{gene}_clean.log
+    te_log: ref/{gene}/{gene}_clean.TE.log
+
+    bam: ref/{gene}/{gene}_mapped.bam
+    sort_bam: ref/{gene}/{gene}_mapped_sorted.bam
+    ind_bam: ref/{gene}/{gene}_mapped_sorted.bam.bai
 
   pseudochrom:
-    fa: ../ref/pseudochrom/{pseudochrom}/{pseudochrom}_ref.fa
-    fa_merge: ../ref/pseudochrom/{pseudochrom}/{pseudochrom}_merged_ref.fa
-
+    fa: ref/pseudochrom/{pseudochrom}/{pseudochrom}_ref.fa
+    fa_merge: ref/pseudochrom/{pseudochrom}/{pseudochrom}_merged_ref.fa
 
   # talon reference -- db from the input gtf
   talon:

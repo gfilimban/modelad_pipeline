@@ -1,31 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<Session genome="../../../../ref/pseudochrom/hTREM2/hTREM2_merged_ref.fa" locus="hTREM2-R47HKI:0-12586" version="8">
+<Session genome="../../../../ref/pseudochrom/hTREM2/hTREM2_merged_ref.fa" locus="hTREM2-R47HKI:10-9471" version="8">
     <Resources>
         <Resource path="hTREM2-R47HKI_HET_F_8_weeks_HC_1_1_sorted.bam" type="bam"/>
-        <Resource path="../../../human_ref/TREM2/TREM2_mapped_sorted.bam" type="bam"/>
+        <Resource path="../../../../human_ref/TREM2/TREM2_mapped_sorted.bam" type="bam"/>
+        <Resource path="hTREM2_KI_HET_F_8_weeks_HC_1_1_sorted.bam" type="bam"/>
+        <Resource path="hTREM2_KI_WT_F_8_weeks_HC_1_1_sorted.bam" type="bam"/>
     </Resources>
-    <Panel height="563" name="Panel1698863496117" width="1478">
-        <Track attributeKey="hTREM2-R47HKI_HET_F_8_weeks_HC_1_1_sorted.bam Coverage" autoScale="true" clazz="org.broad.igv.sam.CoverageTrack" fontSize="10" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad004/data/tc/ad004/hTREM2-R47HKI_HET_F_8_weeks_HC_1_1_sorted.bam_coverage" name="hTREM2-R47HKI_HET_F_8_weeks_HC_1_1_sorted.bam Coverage" snpThreshold="0.2" visible="true">
-            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="21.0" minimum="0.0" type="LINEAR"/>
+    <Panel height="1026" name="Panel1698873708218" width="2276">
+        <Track attributeKey="hTREM2_KI_HET_F_8_weeks_HC_1_1_sorted.bam Junctions" autoScale="false" clazz="org.broad.igv.sam.SpliceJunctionTrack" fontSize="10" groupByStrand="false" height="60" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad004/data/tc/ad004/hTREM2_KI_HET_F_8_weeks_HC_1_1_sorted.bam_junctions" maxdepth="50" name="hTREM2_KI_HET_F_8_weeks_HC_1_1_sorted.bam Junctions" visible="false"/>
+        <Track attributeKey="hTREM2_KI_HET_F_8_weeks_HC_1_1_sorted.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="THIRD_GEN" fontSize="10" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad004/data/tc/ad004/hTREM2_KI_HET_F_8_weeks_HC_1_1_sorted.bam" name="hTREM2_KI_HET_F_8_weeks_HC_1_1_sorted.bam" visible="true">
+            <RenderOptions/>
         </Track>
+    </Panel>
+    <Panel height="208" name="Panel1698873726059" width="2276">
+        <Track attributeKey="hTREM2_KI_WT_F_8_weeks_HC_1_1_sorted.bam Junctions" autoScale="false" clazz="org.broad.igv.sam.SpliceJunctionTrack" fontSize="10" groupByStrand="false" height="60" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad004/data/tc/ad004/hTREM2_KI_WT_F_8_weeks_HC_1_1_sorted.bam_junctions" maxdepth="50" name="hTREM2_KI_WT_F_8_weeks_HC_1_1_sorted.bam Junctions" visible="false"/>
+        <Track attributeKey="hTREM2_KI_WT_F_8_weeks_HC_1_1_sorted.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="THIRD_GEN" fontSize="10" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad004/data/tc/ad004/hTREM2_KI_WT_F_8_weeks_HC_1_1_sorted.bam" name="hTREM2_KI_WT_F_8_weeks_HC_1_1_sorted.bam" visible="true">
+            <RenderOptions/>
+        </Track>
+    </Panel>
+    <Panel height="445" name="Panel1698873753690" width="2276">
         <Track attributeKey="hTREM2-R47HKI_HET_F_8_weeks_HC_1_1_sorted.bam Junctions" autoScale="false" clazz="org.broad.igv.sam.SpliceJunctionTrack" fontSize="10" groupByStrand="false" height="60" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad004/data/tc/ad004/hTREM2-R47HKI_HET_F_8_weeks_HC_1_1_sorted.bam_junctions" maxdepth="50" name="hTREM2-R47HKI_HET_F_8_weeks_HC_1_1_sorted.bam Junctions" visible="false"/>
         <Track attributeKey="hTREM2-R47HKI_HET_F_8_weeks_HC_1_1_sorted.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="THIRD_GEN" fontSize="10" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad004/data/tc/ad004/hTREM2-R47HKI_HET_F_8_weeks_HC_1_1_sorted.bam" name="hTREM2-R47HKI_HET_F_8_weeks_HC_1_1_sorted.bam" visible="true">
             <RenderOptions/>
         </Track>
     </Panel>
-    <Panel height="188" name="Panel1698868557758" width="1478">
-        <Track attributeKey="TREM2_mapped_sorted.bam Coverage" autoScale="true" clazz="org.broad.igv.sam.CoverageTrack" fontSize="10" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad004/human_ref/TREM2/TREM2_mapped_sorted.bam_coverage" name="TREM2_mapped_sorted.bam Coverage" snpThreshold="0.2" visible="true">
-            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="10.0" minimum="0.0" type="LINEAR"/>
-        </Track>
-        <Track attributeKey="TREM2_mapped_sorted.bam Junctions" autoScale="false" clazz="org.broad.igv.sam.SpliceJunctionTrack" fontSize="10" groupByStrand="false" height="60" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad004/human_ref/TREM2/TREM2_mapped_sorted.bam_junctions" maxdepth="50" name="TREM2_mapped_sorted.bam Junctions" visible="false"/>
-        <Track attributeKey="TREM2_mapped_sorted.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="UNKOWN" fontSize="10" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad004/human_ref/TREM2/TREM2_mapped_sorted.bam" name="TREM2_mapped_sorted.bam" visible="true">
+    <Panel height="192" name="FeaturePanel" width="2276">
+        <Track attributeKey="Reference sequence" clazz="org.broad.igv.track.SequenceTrack" fontSize="10" id="Reference sequence" name="Reference sequence" sequenceTranslationStrandValue="POSITIVE" shouldShowTranslation="true" visible="true"/>
+        <Track attributeKey="TREM2_mapped_sorted.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="UNKOWN" fontSize="10" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/human_ref/TREM2/TREM2_mapped_sorted.bam" name="TREM2_mapped_sorted.bam" visible="true">
             <RenderOptions/>
         </Track>
     </Panel>
-    <Panel height="34" name="FeaturePanel" width="1478">
-        <Track attributeKey="Reference sequence" clazz="org.broad.igv.track.SequenceTrack" fontSize="10" id="Reference sequence" name="Reference sequence" sequenceTranslationStrandValue="POSITIVE" shouldShowTranslation="false" visible="true"/>
-    </Panel>
-    <PanelLayout dividerFractions="0.007444168734491315,0.7121588089330024,0.9516129032258065"/>
+    <PanelLayout dividerFractions="0.004909983633387889,0.29623567921440264,0.4705400981996727,0.8387888707037643"/>
     <HiddenAttributes>
         <Attribute name="DATA FILE"/>
         <Attribute name="DATA TYPE"/>

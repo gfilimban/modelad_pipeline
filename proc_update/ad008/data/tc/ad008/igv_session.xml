@@ -1,27 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Session genome="../../../../ref/pseudochrom/hchr17/hchr17_merged_ref.fa" locus="hchr17:0-133953" version="8">
     <Resources>
-        <Resource path="../../../../ref/pseudochrom/hchr17/hchr17_annot.gtf" type="gtf"/>
+        <Resource path="../../../../human_ref/MAPT/MAPT_mapped_sorted.bam" type="bam"/>
         <Resource path="hABKI_Swe_IB_HET_F_8_weeks_HC_1_1_sorted.bam" type="bam"/>
         <Resource path="hABKI_Swe_IB_WT_F_8_weeks_HC_1_1_sorted.bam" type="bam"/>
     </Resources>
-    <Panel height="7928" name="Panel1698940224340" width="1775">
+    <Panel height="7928" name="Panel1698940224340" width="1962">
         <Track attributeKey="hABKI_Swe_IB_HET_F_8_weeks_HC_1_1_sorted.bam Junctions" autoScale="false" clazz="org.broad.igv.sam.SpliceJunctionTrack" fontSize="10" groupByStrand="false" height="60" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad008/data/tc/ad008/hABKI_Swe_IB_HET_F_8_weeks_HC_1_1_sorted.bam_junctions" maxdepth="50" name="hABKI_Swe_IB_HET_F_8_weeks_HC_1_1_sorted.bam Junctions" visible="false"/>
         <Track attributeKey="hABKI_Swe_IB_HET_F_8_weeks_HC_1_1_sorted.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="THIRD_GEN" fontSize="10" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad008/data/tc/ad008/hABKI_Swe_IB_HET_F_8_weeks_HC_1_1_sorted.bam" name="hABKI_Swe_IB_HET_F_8_weeks_HC_1_1_sorted.bam" visible="true">
             <RenderOptions sortOption="FIRST_OF_PAIR_STRAND"/>
         </Track>
     </Panel>
-    <Panel height="5492" name="Panel1698940308291" width="1775">
+    <Panel height="5492" name="Panel1698940308291" width="1962">
         <Track attributeKey="hABKI_Swe_IB_WT_F_8_weeks_HC_1_1_sorted.bam Junctions" autoScale="false" clazz="org.broad.igv.sam.SpliceJunctionTrack" fontSize="10" groupByStrand="false" height="60" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad008/data/tc/ad008/hABKI_Swe_IB_WT_F_8_weeks_HC_1_1_sorted.bam_junctions" maxdepth="50" name="hABKI_Swe_IB_WT_F_8_weeks_HC_1_1_sorted.bam Junctions" visible="false"/>
         <Track attributeKey="hABKI_Swe_IB_WT_F_8_weeks_HC_1_1_sorted.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="THIRD_GEN" fontSize="10" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ad008/data/tc/ad008/hABKI_Swe_IB_WT_F_8_weeks_HC_1_1_sorted.bam" name="hABKI_Swe_IB_WT_F_8_weeks_HC_1_1_sorted.bam" visible="true">
             <RenderOptions/>
         </Track>
     </Panel>
-    <Panel height="78" name="FeaturePanel" width="1775">
-        <Track attributeKey="Reference sequence" clazz="org.broad.igv.track.SequenceTrack" fontSize="10" id="Reference sequence" name="Reference sequence" sequenceTranslationStrandValue="POSITIVE" shouldShowTranslation="true" visible="true"/>
-        <Track attributeKey="hchr17_annot.gtf" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;0.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/ref/pseudochrom/hchr17/hchr17_annot.gtf" name="hchr17_annot.gtf" visible="true"/>
+    <Panel height="270" name="Panel1698942342445" width="1962">
+        <Track attributeKey="MAPT_mapped_sorted.bam Junctions" autoScale="false" clazz="org.broad.igv.sam.SpliceJunctionTrack" fontSize="10" groupByStrand="false" height="60" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/human_ref/MAPT/MAPT_mapped_sorted.bam_junctions" maxdepth="50" name="MAPT_mapped_sorted.bam Junctions" visible="false"/>
+        <Track attributeKey="MAPT_mapped_sorted.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="THIRD_GEN" fontSize="10" id="/Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/human_ref/MAPT/MAPT_mapped_sorted.bam" name="MAPT_mapped_sorted.bam" visible="true">
+            <RenderOptions/>
+        </Track>
     </Panel>
-    <PanelLayout dividerFractions="0.0066518847006651885,0.4745011086474501,0.9079822616407982"/>
+    <Panel height="27" name="FeaturePanel" width="1962">
+        <Track attributeKey="Reference sequence" clazz="org.broad.igv.track.SequenceTrack" fontSize="10" id="Reference sequence" name="Reference sequence" sequenceTranslationStrandValue="POSITIVE" shouldShowTranslation="true" visible="true"/>
+    </Panel>
+    <PanelLayout dividerFractions="0.005529953917050691,0.41566820276497696,0.8313364055299539,0.9705069124423963"/>
     <HiddenAttributes>
         <Attribute name="DATA FILE"/>
         <Attribute name="DATA TYPE"/>

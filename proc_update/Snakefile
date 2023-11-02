@@ -7,6 +7,7 @@ import cerberus
 
 from utils import *
 from sm_utils import *
+from humanized_utils import *
 
 include: 'download.smk'
 include: 'samtools.smk'
@@ -34,7 +35,7 @@ end_modes = ['tss', 'tes']
 strands = ['fwd', 'rev']
 
 # TODO - get rid of this at some point
-temp_study_pass_list = ['ad003', 'ad005', 'ad006']
+temp_study_pass_list = ['ad003', 'ad005', 'ad006', 'ad007']
 df = df.loc[df.study.isin(temp_study_pass_list)]
 
 wildcard_constraints:
