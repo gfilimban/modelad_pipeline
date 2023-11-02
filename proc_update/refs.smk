@@ -92,11 +92,17 @@ rule mkref_cat_fas:
     resources:
         threads = 1,
         mem_gb = 4
-    shell:
-        """
-        cat {input.fa1} >> {output.fa}
-        cat {input.fa2} >> {output.fa}
-        """
+    run:
+        with open(output.fa, 'w') as outfile:
+            for fname in input.files:
+                with open(fname) as infile:
+                    for line in infile:
+                        outfile.write(line)
+
+        # """
+        # cat {input.fa1} >> {output.fa}
+        # cat {input.fa2} >> {output.fa}
+        # """
 
 rule mkref_chrom_sizes:
     input:

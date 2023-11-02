@@ -119,20 +119,44 @@ def parse_config_file(fname,
     # df['dataset'] = df['talon_dataset']+'_'+df['flowcell'].astype(str)
 
     # get and verify humanized status
-    assert len(df.loc[(df.pseudochromosome==True)&~(df.genotype.str.contains('h'))]) == 0
-    temp = df.loc[(df.pseudochromosome==False)&(df.genotype.str.contains('h'))].copy(deep=True)
+    assert len(df.loc[(df.pseudochrom_needed==True)&~(df.genotype.str.contains('h'))]) == 0
+    temp = df.loc[(df.pseudochrom_needed==False)&(df.genotype.str.contains('h'))].copy(deep=True)
     if len(temp.index) >= 1:
         genotypes = temp.genotype.unique().tolist()
         warnings.warn(f'Config found non-pseudochrom mouse w/ genotypes {genotypes}, is this expected?')
 
     if not include_pseudochrom:
-        df = df.loc[df.pseudochromosome==False].copy(deep=True)
+        df = df.loc[df.pseudochrom_needed==False].copy(deep=True)
         
-    # format the pseudocrhom names
+    # format the pseudochrom names
     else:
-        inds = df.loc[(df.pseudochromosome_names.isnull())].index
-        df.loc[inds, 'pseudochromosome_names'] = 'dummy'
-        df.pseudochromosome_names = df.pseudochromosome_names.str.split(',')
+        
+        def format_pseudochrom_cols(df, col):
+            """
+            Format hgene, mgene, and pseudochromosome names columns
+            to either replace NaNs with "dummy" and and to string
+            split entries with more than one
+            """
+            inds = df.loc[(df[col].isnull())].index
+            df.loc[inds, col] = 'dummy'
+            df[col] = df[col].str.split(',')
+            df[col] = df.apply(lambda x: tuple(sorted(x[col])), axis=1)            
+            return df
+            
+        for c in ['pseudochrom', 'human_gene', 'mouse_gene']:
+            df = format_pseudochrom_cols(df, c)
+            
+        # make sure the correspondance between 
+        # genotype:pseudochromosomes is 1:1
+        temp = df.loc[df.pseudochrom_needed==True].copy(deep=True)
+        temp = temp[['pseudochrom', 'genotype']].drop_duplicates()
+        dupe_genotypes = temp.loc[temp.genotype.duplicated()].genotype.unique().tolist()
+        if len(dupe_genotypes) > 1:
+            raise ValueError(f'Found genotype(s) {dupe_genotypes} w/ multiple pseudochromosome settings')
+            
+        # inds = df.loc[(df.pseudochromosome_names.isnull())].index
+        # df.loc[inds, 'pseudochromosome_names'] = 'dummy'
+        # df.pseudochromosome_names = df.pseudochromosome_names.str.split(',')
         
         
 
@@ -216,6 +240,12 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
     biorep_num = temp.biorep_num.tolist()
     flowcell = temp.flowcell.tolist()
     cerberus_run = temp.cerberus_run.tolist()
+    
+    # pseudochrom stuff needs to be treated differently
+    pseudochrom = temp.pseudochrom.tolist()
+    # todo need to figure out if this is a correct assertion
+    assert len(pseudochrom) == 1
+    pseudochrom = list(pseudochrom[0])
 
     files = expand(cfg_entry,
                    zip,
@@ -227,19 +257,29 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
                    biorep_num=biorep_num,
                    flowcell=flowcell,
                    cerberus_run=cerberus_run,
+                   pseudochrom=pseudochrom,
                    allow_missing=True)
+        
+    # if we're working with multiple files for one
+    # entry (ie pseudochroms), turn that into a tuple
+    if len(files) > 1 and len(temp.index) == 1:
+        files = [tuple(files)]
+        untuple = True
+    else: 
+        untuple = False
 
     temp['file'] = files
 
     # make sure we only take unique ones
-    # cols.append('file')
-    # temp = temp[cols]
     temp = temp.drop_duplicates(subset='file', keep='first')
     files = temp['file'].tolist()
 
     if return_df:
         return temp
     else:
+        if untuple:
+            assert len(files) == 1
+            files = list(files[0])
         return files
 
 def get_lapa_settings(wc, df, cfg_entry, kind):

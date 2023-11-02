@@ -65,8 +65,8 @@ ref:
     ind_bam: ref/{gene}/{gene}_mapped_sorted.bam.bai
 
   pseudochrom:
-    fa: ref/pseudochrom/{pseudochrom}/{pseudochrom}_ref.fa
-    fa_merge: ref/pseudochrom/{pseudochrom}/{pseudochrom}_merged_ref.fa
+    fa: ref/pseudochrom/{pseudochrom}/ref.fa
+    fa_merge: ref/genome/{genotype}/merged.fa
 
   # talon reference -- db from the input gtf
   talon:
