@@ -5,32 +5,32 @@ human_ref:
   fa_ver: 'hg38'
   fa_link: https://www.encodeproject.org/files/GRCh38_no_alt_analysis_set_GCA_000001405.15/@@download/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta.gz
 
-  gtf_gz: human_ref/annot.gtf.gz
-  gtf: human_ref/annot.gtf
+  gtf_gz: human_../ref/annot.gtf.gz
+  gtf: human_../ref/annot.gtf
 
   t_fa_link: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/gencode.v29.transcripts.fa.gz
-  t_fa_gz: human_ref/annot.fa.gz
-  t_fa: human_ref/annot.fa
+  t_fa_gz: human_../ref/annot.fa.gz
+  t_fa: human_../ref/annot.fa
 
   all_gtf_link: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/gencode.v29.chr_patch_hapl_scaff.annotation.gtf.gz
-  all_gtf_gz: human_ref/all_annot.gtf.gz
-  all_gtf: human_ref/all_annot.gtf
+  all_gtf_gz: human_../ref/all_annot.gtf.gz
+  all_gtf: human_../ref/all_annot.gtf
 
-  fa_gz: human_ref/ref.fa.gz
-  fa: human_ref/ref.fa
+  fa_gz: human_../ref/ref.fa.gz
+  fa: human_../ref/ref.fa
 
   gene:
-    fq: human_ref/{gene}/{gene}_t.fastq
-    sam: human_ref/{gene}/{gene}_mapped.sam
-    log: human_ref/{gene}/{gene}_minimap.log
-    tc_sam: human_ref/{gene}/{gene}_clean.sam
-    tc_fa: human_ref/{gene}/{gene}_clean.fa
-    tc_log: human_ref/{gene}/{gene}_clean.log
-    te_log: human_ref/{gene}/{gene}_clean.TE.log
+    fq: human_../ref/{gene}/{gene}_t.fastq
+    sam: human_../ref/{gene}/{gene}_mapped.sam
+    log: human_../ref/{gene}/{gene}_minimap.log
+    tc_sam: human_../ref/{gene}/{gene}_clean.sam
+    tc_fa: human_../ref/{gene}/{gene}_clean.fa
+    tc_log: human_../ref/{gene}/{gene}_clean.log
+    te_log: human_../ref/{gene}/{gene}_clean.TE.log
 
-    bam: human_ref/{gene}/{gene}_mapped.bam
-    sort_bam: human_ref/{gene}/{gene}_mapped_sorted.bam
-    ind_bam: human_ref/{gene}/{gene}_mapped_sorted.bam.bai
+    bam: human_../ref/{gene}/{gene}_mapped.bam
+    sort_bam: human_../ref/{gene}/{gene}_mapped_sorted.bam
+    ind_bam: human_../ref/{gene}/{gene}_mapped_sorted.bam.bai
 
 ref:
   gtf_ver: 'vM21'
@@ -39,52 +39,52 @@ ref:
   fa_link: https://www.encodeproject.org/files/mm10_no_alt_analysis_set_ENCODE/@@download/mm10_no_alt_analysis_set_ENCODE.fasta.gz
 
   t_fa_link: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M21/gencode.vM21.transcripts.fa.gz
-  t_fa_gz: ref/annot.fa.gz
-  t_fa: ref/annot.fa
+  t_fa_gz: ../ref/annot.fa.gz
+  t_fa: ../ref/annot.fa
 
-  gtf_gz: ref/annot.gtf.gz
-  gtf: ref/annot.gtf
-  gtf_utr: ref/annot_utr.gtf
-  sjs: ref/annot_junc.bed
+  gtf_gz: ../ref/annot.gtf.gz
+  gtf: ../ref/annot.gtf
+  gtf_utr: ../ref/annot_utr.gtf
+  sjs: ../ref/annot_junc.bed
 
-  fa_gz: ref/ref.fa.gz
-  fa: ref/ref.fa
-  chrom_sizes: ref/chrom_sizes.txt
+  fa_gz: ../ref/ref.fa.gz
+  fa: ../ref/ref.fa
+  chrom_sizes: ../ref/chrom_sizes.txt
 
   gene:
-    fq: ref/{gene}/{gene}_t.fastq
-    sam: ref/{gene}/{gene}_mapped.sam
-    log: ref/{gene}/{gene}_minimap.log
-    tc_sam: ref/{gene}/{gene}_clean.sam
-    tc_fa: ref/{gene}/{gene}_clean.fa
-    tc_log: ref/{gene}/{gene}_clean.log
-    te_log: ref/{gene}/{gene}_clean.TE.log
+    fq: ../ref/{gene}/{gene}_t.fastq
+    sam: ../ref/{gene}/{gene}_mapped.sam
+    log: ../ref/{gene}/{gene}_minimap.log
+    tc_sam: ../ref/{gene}/{gene}_clean.sam
+    tc_fa: ../ref/{gene}/{gene}_clean.fa
+    tc_log: ../ref/{gene}/{gene}_clean.log
+    te_log: ../ref/{gene}/{gene}_clean.TE.log
 
-    bam: ref/{gene}/{gene}_mapped.bam
-    sort_bam: ref/{gene}/{gene}_mapped_sorted.bam
-    ind_bam: ref/{gene}/{gene}_mapped_sorted.bam.bai
+    bam: ../ref/{gene}/{gene}_mapped.bam
+    sort_bam: ../ref/{gene}/{gene}_mapped_sorted.bam
+    ind_bam: ../ref/{gene}/{gene}_mapped_sorted.bam.bai
 
   pseudochrom:
-    fa: ref/pseudochrom/{pseudochrom}/{pseudochrom}_ref.fa
-    fa_merge: ref/pseudochrom/{pseudochrom}/{pseudochrom}_merged_ref.fa
+    fa: ../ref/pseudochrom/{pseudochrom}/{pseudochrom}_ref.fa
+    fa_merge: ../ref/pseudochrom/{pseudochrom}/{pseudochrom}_merged_ref.fa
 
   # talon reference -- db from the input gtf
   talon:
-    db: ref/talon/ref.db
+    db: ../ref/talon/ref.db
 
   # LAPA reference - ENCODE refs + GENCODE UTRs
   lapa:
-    gtf: ref/lapa/ref.gtf
+    gtf: ../ref/lapa/ref.gtf
 
   # cerberus references - mouse cerberus annotation from
   # the long read ENCODE4 RNA project
   cerberus:
     link: https://www.encodeproject.org/files/ENCFF999KXH/@@download/ENCFF999KXH.h5
-    ca: ref/ca.h5
-    ends: ref/ca_{end_mode}.bed
-    ics: ref/ca_ic.tsv
-    ca_annot: ref/ca_annot.h5
-    gtf: ref/cerberus.gtf
+    ca: ../ref/ca.h5
+    ends: ../ref/ca_{end_mode}.bed
+    ics: ../ref/ca_ic.tsv
+    ca_annot: ../ref/ca_annot.h5
+    gtf: ../ref/cerberus.gtf
 
 
 map:
