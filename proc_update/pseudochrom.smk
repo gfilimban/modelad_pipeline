@@ -414,7 +414,7 @@ rule talon_config_pseudochrom_human:
 
 use rule talon_pseudochrom_human as talon_hgene with:
     input:
-        db = rules.talon_init_db.output.db,
+        db = config['ref']['talon']['db'],
         cfg = rules.talon_config_pseudochrom_human.output.cfg
     params:
         genome_ver = config['ref']['fa_ver'],
@@ -424,7 +424,7 @@ use rule talon_pseudochrom_human as talon_hgene with:
 
 use rule talon_pseudochrom_mouse as talon_mgene with:
     input:
-        db = rules.talon_init_db.output.db,
+        db = config['ref']['talon']['db'],
         cfg = rules.talon_config_pseudochrom_mouse.output.cfg
     params:
         genome_ver = config['ref']['fa_ver'],
