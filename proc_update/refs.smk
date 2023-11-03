@@ -99,7 +99,7 @@ rule mkref_cat_fastas:
     run:
         # dummy chr -- just symlink original
         # fasta in the directory for this genotype
-        pseudochroms =  get_df_col(wc,
+        pseudochroms =  get_df_col(wildcards,
                                    params.p_df,
                                    'pseudochrom',
                                     allow_multiple=True)
