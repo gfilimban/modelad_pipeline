@@ -428,9 +428,9 @@ use rule talon_pseudochrom_mouse as talon_mgene with:
         cfg = rules.talon_config_pseudochrom_mouse.output.cfg
     params:
         genome_ver = config['ref']['fa_ver'],
-        opref = config['ref']['pseudochrom']['mouse_gene']['db'].rsplit('_talon.db', maxsplit=1)[0]
+        opref = config['ref']['pseudochrom']['gene']['db'].rsplit('_talon.db', maxsplit=1)[0]
     output:
-        db = config['ref']['pseudochrom']['mouse_gene']['db']
+        db = config['ref']['pseudochrom']['gene']['db']
 
 
 
