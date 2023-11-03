@@ -256,7 +256,7 @@ use rule rev_alignment as map_rev with:
 use rule tc as tc_sam with:
     input:
         sam = config['map']['sam_rev'],
-        fa = config['ref']['fa']
+        fa = rules.map_reads.input.ref_fa
     params:
         path = config['tc']['path'],
         min_intron_size = config['tc']['min_intron_size'],
@@ -278,7 +278,7 @@ use rule alignment_stats as tc_stats with:
 ################################################################################
 use rule talon_label as talon_label_reads with:
     input:
-        fa = config['ref']['fa'],
+        fa = rules.map_reads.input.ref_fa,
         sam = config['tc']['sam']
     params:
         frac_a_range = config['talon_label']['frac_a_range'],
@@ -437,9 +437,9 @@ rule lapa_config:
 use rule lapa_call_ends as lapa_call_ends_run with:
         input:
             config = config['lapa']['config'],
-            fa = config['ref']['fa'],
+            fa = rules.map_reads.input.ref_fa,
             gtf = config['ref']['gtf_utr'],
-            chrom_sizes = config['ref']['chrom_sizes']
+            chrom_sizes = config['ref']['pseudochrom']['chrom_sizes']
         params:
             opref = config['lapa']['ends'].rsplit('/', maxsplit=1)[0]+'/',
             lapa_cmd = lambda wc:get_lapa_settings(wc,

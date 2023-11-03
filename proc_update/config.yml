@@ -20,17 +20,17 @@ human_ref:
   fa: human_ref/ref.fa
 
   gene:
-    fq: human_ref/{gene}/t.fastq
-    sam: human_ref/{gene}/mapped.sam
-    log: human_ref/{gene}/minimap.log
-    tc_sam: human_ref/{gene}/clean.sam
-    tc_fa: human_ref/{gene}/clean.fa
-    tc_log: human_ref/{gene}/clean.log
-    te_log: human_ref/{gene}/clean.TE.log
+    fq: human_ref/mapped_gene/{gene}/t.fastq
+    sam: human_ref/mapped_gene/{gene}/mapped.sam
+    log: human_ref/mapped_gene/{gene}/minimap.log
+    tc_sam: human_ref/mapped_gene/{gene}/clean.sam
+    tc_fa: human_ref/mapped_gene/{gene}/clean.fa
+    tc_log: human_ref/mapped_gene/{gene}/clean.log
+    te_log: human_ref/mapped_gene/{gene}/clean.TE.log
 
-    bam: human_ref/{gene}/mapped.bam
-    sort_bam: human_ref/{gene}/mapped_sorted.bam
-    ind_bam: human_ref/{gene}/mapped_sorted.bam.bai
+    bam: human_ref/mapped_gene/{gene}/mapped.bam
+    sort_bam: human_ref/mapped_gene/{gene}/mapped_sorted.bam
+    ind_bam: human_ref/mapped_gene/{gene}/mapped_sorted.bam.bai
 
 ref:
   gtf_ver: 'vM21'
@@ -49,24 +49,25 @@ ref:
 
   fa_gz: ref/ref.fa.gz
   fa: ref/ref.fa
-  chrom_sizes: ref/chrom_sizes.txt
 
   gene:
-    fq: ref/{gene}/t.fastq
-    sam: ref/{gene}/mapped.sam
-    log: ref/{gene}/minimap.log
-    tc_sam: ref/{gene}/clean.sam
-    tc_fa: ref/{gene}/clean.fa
-    tc_log: ref/{gene}/clean.log
-    te_log: ref/{gene}/clean.TE.log
+    fq: ref/mapped_gene/{gene}/t.fastq
+    sam: ref/mapped_gene/{gene}/mapped.sam
+    log: ref/mapped_gene/{gene}/minimap.log
+    tc_sam: ref/mapped_gene/{gene}/clean.sam
+    tc_fa: ref/mapped_gene/{gene}/clean.fa
+    tc_log: ref/mapped_gene/{gene}/clean.log
+    te_log: ref/mapped_gene/{gene}/clean.TE.log
 
-    bam: ref/{gene}/mapped.bam
-    sort_bam: ref/{gene}/mapped_sorted.bam
-    ind_bam: ref/{gene}/mapped_sorted.bam.bai
+    bam: ref/mapped_gene/{gene}/mapped.bam
+    sort_bam: ref/mapped_gene/{gene}/mapped_sorted.bam
+    ind_bam: ref/mapped_gene/{gene}/mapped_sorted.bam.bai
 
   pseudochrom:
     fa: ref/pseudochrom/{pseudochrom}/ref.fa
     fa_merge: ref/genome/{genotype}/merged.fa
+    chrom_sizes: ref/chrom_sizes.txt
+
 
   # talon reference -- db from the input gtf
   talon:

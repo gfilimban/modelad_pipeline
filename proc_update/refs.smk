@@ -117,12 +117,12 @@ rule mkref_cat_fastas:
 
 rule mkref_chrom_sizes:
     input:
-        fa = config['ref']['fa']
+        fa = rules.map_reads.input.ref_fa
     resources:
         threads = 1,
         mem_gb = 8
     output:
-        chrom_sizes = config['ref']['chrom_sizes']
+        chrom_sizes = config['ref']['pseudochrom']['chrom_sizes']
     shell:
         """
         faidx {input.fa} -i chromsizes > {output.chrom_sizes}
