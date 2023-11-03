@@ -1,4 +1,7 @@
 rule igv_sort_gtf:
+    resources:
+        mem_gb = 16,
+        threads = 4
     conda:
         "igvtools"
     shell:
@@ -7,6 +10,9 @@ rule igv_sort_gtf:
         """
 
 rule igv_index_gtf:
+    resources:
+        mem_gb = 16,
+        threads = 4
     conda:
         "igvtools"
     shell:
