@@ -299,25 +299,55 @@ use rule index_bam_mouse as bam_ind_mgene with:
 ########################################################
 ############ For pseudochromosome mappings #############
 ########################################################
-rule talon_pseudochrom:
+rule talon_pseudochrom_mouse:
   resources:
-      mem_gb = 256,
-      threads = 30
+      mem_gb = 64,
+      threads = 2
   shell:
       """
-      cp {input.db} {output.db}
-      talon \
-          --f {input.cfg} \
-          --db {output.db} \
-          --build {params.genome_ver} \
-          --tmpDir {params.opref}_temp/ \
-          --threads {resources.threads} \
-          --create_novel_spliced_genes \
-          --o {params.opref} \
-          --identity 0.0 \
-          --cov 0.0 \
-          -v 1
+      if [ {wildcards.mouse_gene} == "dummy" ]
+      then
+          touch {output.db}
+      else
+          cp {input.db} {output.db}
+          talon \
+              --f {input.cfg} \
+              --db {output.db} \
+              --build {params.genome_ver} \
+              --tmpDir {params.opref}_temp/ \
+              --threads {resources.threads} \
+              --create_novel_spliced_genes \
+              --o {params.opref} \
+              --identity 0.0 \
+              --cov 0.0 \
+              -v 1
+      fi
       """
+
+rule talon_pseudochrom_human:
+    resources:
+        mem_gb = 64,
+        threads = 2
+    shell:
+        """
+        if [ {wildcards.mouse_gene} == "dummy" ]
+        then
+            touch {output.db}
+        else
+            cp {input.db} {output.db}
+            talon \
+                --f {input.cfg} \
+                --db {output.db} \
+                --build {params.genome_ver} \
+                --tmpDir {params.opref}_temp/ \
+                --threads {resources.threads} \
+                --create_novel_spliced_genes \
+                --o {params.opref} \
+                --identity 0.0 \
+                --cov 0.0 \
+                -v 1
+        fi
+        """
 
 def mk_pseudochrom_mapped_gene_talon_config(wc,
                                           species,
@@ -382,6 +412,28 @@ rule talon_config_pseudochrom_human:
                                             p_df,
                                             output.cfg)
 
+use rule talon_pseudochrom_human as talon_hgene:
+    input:
+        db = rules.talon_init_db.output.db,
+        cfg = rules.talon_config_pseudochrom_human.output.cfg
+    params:
+        genome_ver = config['ref']['fa_ver'],
+        opref = rules.talon_pseudochrom_human.output.db.rsplit('_talon.db', maxsplit=1)[0]
+    output:
+        db = config['ref']['pseudochrom']['human_gene']['db']
+
+use rule talon_pseudochrom_mouse as talon_mgene:
+    input:
+        db = rules.talon_init_db.output.db,
+        cfg = rules.talon_config_pseudochrom_mouse.output.cfg
+    params:
+        genome_ver = config['ref']['fa_ver'],
+        opref = rules.talon_pseudochrom_mouse.output.db.rsplit('_talon.db', maxsplit=1)[0]
+    output:
+        db = config['ref']['pseudochrom']['mouse_gene']['db']
+
+
+
 
 rule talon_gtf_pseudochrom:
   resources:
@@ -407,11 +459,11 @@ rule talon_gtf_pseudochrom:
 
 rule all_pseudochrom:
     input:
-        list(set(expand(config['ref']['pseudochrom']['gene']['config'],
+        list(set(expand(config['ref']['pseudochrom']['gene']['db'],
                zip,
                pseudochrom=p_df.pseudochrom.tolist(),
                mouse_gene=p_df.mouse_gene.tolist()))),
-        list(set(expand(config['ref']['pseudochrom']['human_gene']['config'],
+        list(set(expand(config['ref']['pseudochrom']['human_gene']['db'],
                zip,
                pseudochrom=p_df.pseudochrom.tolist(),
                human_gene=p_df.human_gene.tolist())))

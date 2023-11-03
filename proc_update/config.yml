@@ -54,7 +54,7 @@ ref:
       ind_bam: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_mapped_sorted.bam.bai
 
       config: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_config.csv
-      db: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_ref.db
+      db: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_ref_talon.db
       gtf: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_annot.gtf
 
     human_gene:
@@ -71,7 +71,7 @@ ref:
       ind_bam: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_mapped_sorted.bam.bai
 
       config: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_config.csv
-      db: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_ref.db
+      db: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_ref_talon.db
       gtf: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_annot.gtf
 
 
