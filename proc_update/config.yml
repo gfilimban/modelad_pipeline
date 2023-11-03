@@ -41,38 +41,38 @@ ref:
     fa: ref/pseudochrom/{pseudochrom}/ref.fa
 
     gene:
-      fq: ref/pseudochrom/{pseudochrom}/{mouse_gene}/t.fastq
-      sam: ref/pseudochrom/{pseudochrom}/{mouse_gene}/mapped.sam
-      log: ref/pseudochrom/{pseudochrom}/{mouse_gene}/minimap.log
-      tc_sam: ref/pseudochrom/{pseudochrom}/{mouse_gene}/clean.sam
-      tc_fa: ref/pseudochrom/{pseudochrom}/{mouse_gene}/clean.fa
-      tc_log: ref/pseudochrom/{pseudochrom}/{mouse_gene}/clean.log
-      te_log: ref/pseudochrom/{pseudochrom}/{mouse_gene}/clean.TE.log
+      fq: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_t.fastq
+      sam: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_mapped.sam
+      log: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_minimap.log
+      tc_sam: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_clean.sam
+      tc_fa: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_clean.fa
+      tc_log: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_clean.log
+      te_log: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_clean.TE.log
 
-      bam: ref/pseudochrom/{pseudochrom}/{mouse_gene}/mapped.bam
-      sort_bam: ref/pseudochrom/{pseudochrom}/{mouse_gene}/mapped_sorted.bam
-      ind_bam: ref/pseudochrom/{pseudochrom}/{mouse_gene}/mapped_sorted.bam.bai
+      bam: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_mapped.bam
+      sort_bam: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_mapped_sorted.bam
+      ind_bam: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_mapped_sorted.bam.bai
 
-      config: ref/pseudochrom/{pseudochrom}/{mouse_gene}/config.csv
-      db: ref/pseudochrom/{pseudochrom}/{mouse_gene}/ref.db
-      gtf: ref/pseudochrom/{pseudochrom}/{mouse_gene}/annot.gtf
+      config: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_config.csv
+      db: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_ref.db
+      gtf: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_annot.gtf
 
     human_gene:
-      fq: human_ref/pseudochrom/{pseudochrom}/{human_gene}/t.fastq
-      sam: human_ref/pseudochrom/{pseudochrom}/{human_gene}/mapped.sam
-      log: human_ref/pseudochrom/{pseudochrom}/{human_gene}/minimap.log
-      tc_sam: human_ref/pseudochrom/{pseudochrom}/{human_gene}/clean.sam
-      tc_fa: human_ref/pseudochrom/{pseudochrom}/{human_gene}/clean.fa
-      tc_log: human_ref/pseudochrom/{pseudochrom}/{human_gene}/clean.log
-      te_log: human_ref/pseudochrom/{pseudochrom}/{human_gene}/clean.TE.log
+      fq: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_t.fastq
+      sam: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_mapped.sam
+      log: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_minimap.log
+      tc_sam: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_clean.sam
+      tc_fa: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_clean.fa
+      tc_log: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_clean.log
+      te_log: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_clean.TE.log
 
-      bam: human_ref/pseudochrom/{pseudochrom}/{human_gene}/mapped.bam
-      sort_bam: human_ref/pseudochrom/{pseudochrom}/{human_gene}/mapped_sorted.bam
-      ind_bam: human_ref/pseudochrom/{pseudochrom}/{human_gene}/mapped_sorted.bam.bai
+      bam: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_mapped.bam
+      sort_bam: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_mapped_sorted.bam
+      ind_bam: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_mapped_sorted.bam.bai
 
-      config: human_ref/pseudochrom/{pseudochrom}/{human_gene}/config.csv
-      db: human_ref/pseudochrom/{pseudochrom}/{human_gene}/ref.db
-      gtf: human_ref/pseudochrom/{pseudochrom}/{human_gene}/annot.gtf
+      config: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_config.csv
+      db: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_ref.db
+      gtf: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_annot.gtf
 
 
 

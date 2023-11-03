@@ -23,6 +23,62 @@ rule mkref_cat:
                         for line in infile:
                             outfile.write(line)
 
+rule tc_human:
+    resources:
+        mem_gb = 256,
+        threads = 16
+    shell:
+        """
+        if [ {wc.human_gene} == "dummy" ]
+        then
+            touch {output.sam}
+            touch {output.fa}
+            touch {output.sam_clean_log}
+            touch {output.sam_clean_te_log}
+        else
+            python {params.path}TranscriptClean.py \
+                -t {resources.threads} \
+                --sam {input.sam} \
+                --genome {input.fa} \
+                --canonOnly \
+                --primaryOnly \
+                --deleteTmp \
+                --correctMismatches False \
+                --correctIndels True \
+                --tmpDir {params.opref}_temp/ \
+                --outprefix {params.opref}
+        fi
+        """
+
+rule tc_mouse:
+    resources:
+        mem_gb = 256,
+        threads = 16
+    shell:
+        """
+        if [ {wc.mouse_gene} == "dummy" ]
+        then
+            touch {output.sam}
+            touch {output.fa}
+            touch {output.sam_clean_log}
+            touch {output.sam_clean_te_log}
+        else
+            python {params.path}TranscriptClean.py \
+                -t {resources.threads} \
+                --sam {input.sam} \
+                --genome {input.fa} \
+                --canonOnly \
+                --primaryOnly \
+                --deleteTmp \
+                --correctMismatches False \
+                --correctIndels True \
+                --tmpDir {params.opref}_temp/ \
+                --outprefix {params.opref}
+        fi
+        """
+
+
+
 use rule mkref_cat as mkref_genome with:
     input:
         ref = config['ref']['fa'],
@@ -56,7 +112,7 @@ use rule map as map_reads_hgene with:
         sam = temporary(config['ref']['pseudochrom']['human_gene']['sam']),
         log = config['ref']['pseudochrom']['human_gene']['log']
 
-use rule tc as tc_sam_hgene with:
+use rule tc_human as tc_sam_hgene with:
     input:
         sam = rules.map_reads_hgene.output.sam,
         fa = config['ref']['pseudochrom']['fa']
@@ -110,7 +166,7 @@ use rule map as map_reads_mgene with:
       sam = config['ref']['pseudochrom']['gene']['sam'],
       log = config['ref']['pseudochrom']['gene']['log']
 
-use rule tc as tc_sam_mgene with:
+use rule tc_mouse as tc_sam_mgene with:
   input:
       sam = rules.map_reads_mgene.output.sam,
       fa = config['ref']['pseudochrom']['fa']
