@@ -23,7 +23,7 @@ def get_gene_t_fastq(fa_file,
         raise ValueError('Try again; probably frozen .fai file')
 
     with open(ofile, 'w') as o:
-        for t in t_keys:
+        for t in keys:
             read_name = f'@{t}'
             read = fa[t][:].seq
             phred = ''.join(['5' for i in range(len(read))])
