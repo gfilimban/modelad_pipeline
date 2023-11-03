@@ -107,6 +107,72 @@ rule sam_to_bam_human:
         fi
         """
 
+rule sort_bam_mouse:
+    resources:
+        threads = 16,
+        mem_gb = 16
+    shell:
+        """
+        if [ {wildcards.mouse_gene} == "dummy" ]
+        then
+            touch {output.bam}
+        else
+            module load samtools
+            samtools sort \
+                --threads {resources.threads} \
+                -O bam {input.bam} > {output.bam}
+        fi
+        """
+
+rule sort_bam_human:
+    resources:
+        threads = 16,
+        mem_gb = 16
+    shell:
+        """
+        if [ {wildcards.human_gene} == "dummy" ]
+        then
+            touch {output.bam}
+        else
+            module load samtools
+            samtools sort \
+                --threads {resources.threads} \
+                -O bam {input.bam} > {output.bam}
+        fi
+        """
+
+rule index_bam_mouse:
+    resources:
+        threads = 16,
+        mem_gb = 16
+    shell:
+        """
+        if [ {wildcards.mouse_gene} == "dummy" ]
+        then
+            touch {output.ind}
+        else
+            module load samtools
+            samtools index -@ {resources.threads} {input.bam}
+        fi
+        """
+
+rule index_bam_human:
+    resources:
+        threads = 16,
+        mem_gb = 16
+    shell:
+        """
+        if [ {wildcards.human_gene} == "dummy" ]
+        then
+            touch {output.ind}
+        else
+            module load samtools
+            samtools index -@ {resources.threads} {input.bam}
+        fi
+        """
+
+
+
 
 
 use rule mkref_cat as mkref_genome with:
@@ -162,13 +228,13 @@ use rule sam_to_bam_human as bam_from_sam_hgene with:
     output:
         bam = temporary(config['ref']['pseudochrom']['human_gene']['bam'])
 
-use rule sort_bam as bam_sort_hgene with:
+use rule sort_bam_human as bam_sort_hgene with:
     input:
         bam = rules.bam_from_sam_hgene.output.bam
     output:
         bam = config['ref']['pseudochrom']['human_gene']['sort_bam']
 
-use rule index_bam as bam_ind_hgene with:
+use rule index_bam_human as bam_ind_hgene with:
     input:
         bam = rules.bam_sort_hgene.output.bam
     output:
@@ -216,13 +282,13 @@ use rule sam_to_bam_mouse as bam_from_sam_mgene with:
   output:
       bam = temporary(config['ref']['pseudochrom']['gene']['bam'])
 
-use rule sort_bam as bam_sort_mgene with:
+use rule sort_bam_mouse as bam_sort_mgene with:
   input:
       bam = rules.bam_from_sam_mgene.output.bam
   output:
       bam = config['ref']['pseudochrom']['gene']['sort_bam']
 
-use rule index_bam as bam_ind_mgene with:
+use rule index_bam_mouse as bam_ind_mgene with:
   input:
       bam = rules.bam_sort_mgene.output.bam
   output:
