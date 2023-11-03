@@ -1,4 +1,5 @@
-configfile: 'config.yml'
+import os
+# configfile: 'config.yml'
 
 # pseudochrom = config['params']['pseudochrom']
 
@@ -88,16 +89,26 @@ use rule gunzip as gz_annot with:
 #         cat {input.ercc} >> {output.cat_fa}
 #         """
 
+# make a fasta file concatenating the original reference and the
+# pseudochromosomes. also, just symlink the original reference
+# if we have a dummy pseudochrom
 rule mkref_cat_fastas:
     resources:
         threads = 1,
         mem_gb = 4
     run:
-        with open(output.fa, 'w') as outfile:
-            for fname in input.files:
-                with open(fname) as infile:
-                    for line in infile:
-                        outfile.write(line)
+        # dummy chr -- just symlink original
+        # fasta in the directory for this genotype
+        if wildcards.pseudochrom == 'dummy':
+            os.symlink(input.fa, output.fa)
+        # otherwise cat everything together
+        else:
+            infiles = [input.fa]+input.files
+            with open(output.fa, 'w') as outfile:
+                for fname in infiles:
+                    with open(fname) as infile:
+                        for line in infile:
+                            outfile.write(line)
 
         # """
         # cat {input.fa1} >> {output.fa}
