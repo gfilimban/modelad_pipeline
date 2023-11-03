@@ -359,7 +359,7 @@ rule talon_config_pseudochrom_mouse:
     output:
         cfg = config['ref']['pseudochrom']['gene']['config']
     run:
-        mk_pseudochrom_mapped_gene_talon_config(wc,
+        mk_pseudochrom_mapped_gene_talon_config(wildcards,
                                               params.species,
                                               p_df,
                                               output.cfg)
@@ -375,7 +375,7 @@ rule talon_config_pseudochrom_human:
   output:
       cfg = config['ref']['pseudochrom']['human_gene']['config']
   run:
-      mk_pseudochrom_mapped_gene_talon_config(wc,
+      mk_pseudochrom_mapped_gene_talon_config(wildcards,
                                             params.species,
                                             p_df,
                                             output.cfg)
