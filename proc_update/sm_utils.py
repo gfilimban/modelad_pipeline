@@ -24,13 +24,15 @@ def process_meta(meta_fname):
 
 def parse_config_file(fname,
                       meta_fname,
-                      auto_dedupe=True,
-                      include_pseudochrom=True):
+                      p_meta_fname,
+                      auto_dedupe=True):
+                      # include_pseudochrom=True):
 
     """
     Parameters:
         fname (str): Path to config file fname. One line per input fastq.
         meta_fname (str): Path to file with metadata information.
+        p_meta_fname (str): Path to pseudochromosome metadata information
         datasets_per_run (int): Number of datasets to process in each TALON run
         auto_dedupe (bool): Automatically deduplicate duplicate fastqs that result from
             successive Porechop rounds
@@ -125,41 +127,35 @@ def parse_config_file(fname,
         genotypes = temp.genotype.unique().tolist()
         warnings.warn(f'Config found non-pseudochrom mouse w/ genotypes {genotypes}, is this expected?')
 
-    if not include_pseudochrom:
-        df = df.loc[df.pseudochrom_needed==False].copy(deep=True)
-        
-    # format the pseudochrom names
-    else:
-        
-        def format_pseudochrom_cols(df, col):
-            """
-            Format hgene, mgene, and pseudochromosome names columns
-            to either replace NaNs with "dummy" and and to string
-            split entries with more than one
-            """
-            inds = df.loc[(df[col].isnull())].index
-            df.loc[inds, col] = 'dummy'
-            df[col] = df[col].str.split(',')
-            df[col] = df.apply(lambda x: tuple(sorted(x[col])), axis=1)            
-            return df
-            
-        for c in ['pseudochrom', 'human_gene', 'mouse_gene']:
-            df = format_pseudochrom_cols(df, c)
-            
-        # make sure the correspondance between 
-        # genotype:pseudochromosomes is 1:1
-        temp = df.loc[df.pseudochrom_needed==True].copy(deep=True)
-        temp = temp[['pseudochrom', 'genotype']].drop_duplicates()
-        dupe_genotypes = temp.loc[temp.genotype.duplicated()].genotype.unique().tolist()
-        if len(dupe_genotypes) > 1:
-            raise ValueError(f'Found genotype(s) {dupe_genotypes} w/ multiple pseudochromosome settings')
-            
-        # inds = df.loc[(df.pseudochromosome_names.isnull())].index
-        # df.loc[inds, 'pseudochromosome_names'] = 'dummy'
-        # df.pseudochromosome_names = df.pseudochromosome_names.str.split(',')
-        
-        
+    # if not include_pseudochrom:
+    #     df = df.loc[df.pseudochrom_needed==False].copy(deep=True)
 
+    # get pseudochromosome / reference : genotype df
+    # else:
+    def format_pseudochrom_cols(df, col):
+        """
+        Format hgene, mgene, and pseudochromosome names columns
+        to either replace NaNs with "dummy" and and to string
+        split entries with more than one
+        """
+        inds = df.loc[(df[col].isnull())].index
+        df.loc[inds, col] = 'dummy'
+        df[col] = df[col].str.split(',')
+        df[col] = df.apply(lambda x: tuple(sorted(x[col])), axis=1)
+        return df
+
+    # for c in ['pseudochrom', 'human_gene', 'mouse_gene']:
+    for c in ['pseudochrom']:
+        df = format_pseudochrom_cols(df, c)
+
+    # make sure the correspondance between
+    # genotype:pseudochromosomes is 1:1
+    temp = df.loc[df.pseudochrom_needed==True].copy(deep=True)
+    temp = temp[['pseudochrom', 'genotype']].drop_duplicates()
+    dupe_genotypes = temp.loc[temp.genotype.duplicated()].genotype.unique().tolist()
+    if len(dupe_genotypes) > 1:
+        raise ValueError(f'Found genotype(s) {dupe_genotypes} w/ multiple pseudochromosome settings')
+                
     # assign a cerberus run to each "sample" (study+genotype+sex+age+tissue)
     # but first sort on study and sample such that they will always be ordered in the same way
     # this should freeze our results
@@ -173,8 +169,14 @@ def parse_config_file(fname,
     df['flowcell'] = df.flowcell.astype(str)
     df['biorep_num'] = df.biorep_num.astype(str)
     df['cerberus_run'] = df.cerberus_run.astype(str)
+    
+    # get a table that matches genotype + pseudochrom + human gene + mouse gene
+    temp = df.explode('pseudochrom')
+    p_meta = pd.read_csv(p_meta_fname, sep='\t')
+    p_meta.fillna('dummy', inplace=True)
+    p_df = temp.merge(p_meta, on='pseudochrom')
 
-    return df
+    return df, p_df
 
 
 def subset_df_on_wcs(wc, df):
@@ -193,6 +195,8 @@ def subset_df_on_wcs(wc, df):
             temp = temp.loc[temp[key].isin(item)]
         else:
             temp = temp.loc[temp[key] == item]
+        # if len(temp.index) == 0:
+        #     import pdb; pdb.set_trace()
     return temp
 
 def get_df_col(wc, df, col):
@@ -228,24 +232,35 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
     """
     temp = subset_df_on_wcs(wc, df)
 
-    # cols = ['study', 'genotype', 'sex',
-    #         'age', 'tissue', 'biorep_num',
-    #         'flowcell']
-
-    study = temp.study.tolist()
     genotype = temp.genotype.tolist()
+    study = temp.study.tolist()
     sex = temp.sex.tolist()
     age = temp.age.tolist()
     tissue = temp.tissue.tolist()
     biorep_num = temp.biorep_num.tolist()
     flowcell = temp.flowcell.tolist()
     cerberus_run = temp.cerberus_run.tolist()
-    
-    # pseudochrom stuff needs to be treated differently
     pseudochrom = temp.pseudochrom.tolist()
+
+    # # pseudochrom stuff needs to be treated differently
+    # pseudochrom = temp.pseudochrom.tolist()
     # todo need to figure out if this is a correct assertion
-    assert len(pseudochrom) == 1
-    pseudochrom = list(pseudochrom[0])
+    # i'm a lil more confident about it now
+    # assert len(set(pseudochrom)) == 1
+    # pseudochrom = list(pseudochrom[0])
+    #
+    # files = expand(cfg_entry,
+    #                zip,
+    #                study=study,
+    #                genotype=genotype,
+    #                sex=sex,
+    #                age=age,
+    #                tissue=tissue,
+    #                biorep_num=biorep_num,
+    #                flowcell=flowcell,
+    #                cerberus_run=cerberus_run,
+    #                pseudochrom=pseudochrom,
+    #                allow_missing=True)
 
     files = expand(cfg_entry,
                    zip,
@@ -259,16 +274,21 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
                    cerberus_run=cerberus_run,
                    pseudochrom=pseudochrom,
                    allow_missing=True)
-        
-    # if we're working with multiple files for one
-    # entry (ie pseudochroms), turn that into a tuple
-    if len(files) > 1 and len(temp.index) == 1:
-        files = [tuple(files)]
-        untuple = True
-    else: 
-        untuple = False
+    # import pdb; pdb.set_trace()
 
+    # # if we're working with multiple files for one
+    # # entry (ie pseudochroms), turn that into a tuple
+    # if len(files) > 1 and len(temp.index) == 1:
+    #     files = [tuple(files)]
+    #     untuple = True
+    # else:
+    #     untuple = False
+
+    # try:
     temp['file'] = files
+    # except:
+    #     import pdb; pdb.set_trace()
+
 
     # make sure we only take unique ones
     temp = temp.drop_duplicates(subset='file', keep='first')
@@ -277,9 +297,9 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
     if return_df:
         return temp
     else:
-        if untuple:
-            assert len(files) == 1
-            files = list(files[0])
+    #     if untuple:
+    #         assert len(files) == 1
+    #         files = list(files[0])
         return files
 
 def get_lapa_settings(wc, df, cfg_entry, kind):

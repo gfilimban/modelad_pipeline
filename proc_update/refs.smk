@@ -88,7 +88,7 @@ use rule gunzip as gz_annot with:
 #         cat {input.ercc} >> {output.cat_fa}
 #         """
 
-rule mkref_cat_fas:
+rule mkref_cat_fastas:
     resources:
         threads = 1,
         mem_gb = 4

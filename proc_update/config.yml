@@ -20,17 +20,17 @@ human_ref:
   fa: human_ref/ref.fa
 
   gene:
-    fq: human_ref/{gene}/{gene}_t.fastq
-    sam: human_ref/{gene}/{gene}_mapped.sam
-    log: human_ref/{gene}/{gene}_minimap.log
-    tc_sam: human_ref/{gene}/{gene}_clean.sam
-    tc_fa: human_ref/{gene}/{gene}_clean.fa
-    tc_log: human_ref/{gene}/{gene}_clean.log
-    te_log: human_ref/{gene}/{gene}_clean.TE.log
+    fq: human_ref/{gene}/t.fastq
+    sam: human_ref/{gene}/mapped.sam
+    log: human_ref/{gene}/minimap.log
+    tc_sam: human_ref/{gene}/clean.sam
+    tc_fa: human_ref/{gene}/clean.fa
+    tc_log: human_ref/{gene}/clean.log
+    te_log: human_ref/{gene}/clean.TE.log
 
-    bam: human_ref/{gene}/{gene}_mapped.bam
-    sort_bam: human_ref/{gene}/{gene}_mapped_sorted.bam
-    ind_bam: human_ref/{gene}/{gene}_mapped_sorted.bam.bai
+    bam: human_ref/{gene}/mapped.bam
+    sort_bam: human_ref/{gene}/mapped_sorted.bam
+    ind_bam: human_ref/{gene}/mapped_sorted.bam.bai
 
 ref:
   gtf_ver: 'vM21'
@@ -52,17 +52,17 @@ ref:
   chrom_sizes: ref/chrom_sizes.txt
 
   gene:
-    fq: ref/{gene}/{gene}_t.fastq
-    sam: ref/{gene}/{gene}_mapped.sam
-    log: ref/{gene}/{gene}_minimap.log
-    tc_sam: ref/{gene}/{gene}_clean.sam
-    tc_fa: ref/{gene}/{gene}_clean.fa
-    tc_log: ref/{gene}/{gene}_clean.log
-    te_log: ref/{gene}/{gene}_clean.TE.log
+    fq: ref/{gene}/t.fastq
+    sam: ref/{gene}/mapped.sam
+    log: ref/{gene}/minimap.log
+    tc_sam: ref/{gene}/clean.sam
+    tc_fa: ref/{gene}/clean.fa
+    tc_log: ref/{gene}/clean.log
+    te_log: ref/{gene}/clean.TE.log
 
-    bam: ref/{gene}/{gene}_mapped.bam
-    sort_bam: ref/{gene}/{gene}_mapped_sorted.bam
-    ind_bam: ref/{gene}/{gene}_mapped_sorted.bam.bai
+    bam: ref/{gene}/mapped.bam
+    sort_bam: ref/{gene}/mapped_sorted.bam
+    ind_bam: ref/{gene}/mapped_sorted.bam.bai
 
   pseudochrom:
     fa: ref/pseudochrom/{pseudochrom}/ref.fa

@@ -24,13 +24,14 @@ configfile: 'config.yml'
 config_tsv = '231020_config.tsv'
 # config_tsv = '231018_config.tsv'
 # config_tsv = 'test_local_config.tsv'
+p_meta_tsv = 'pseudochromosome_metadata.tsv'
 meta_tsv = 'mouse_metadata.tsv'
 auto_dedupe = True
 
-df = parse_config_file(config_tsv,
+df, p_df = parse_config_file(config_tsv,
                        meta_tsv,
-                       auto_dedupe=auto_dedupe,
-                       include_pseudochrom=True)
+                       p_meta_tsv,
+                       auto_dedupe=auto_dedupe)
 end_modes = ['tss', 'tes']
 strands = ['fwd', 'rev']
 
@@ -51,7 +52,6 @@ wildcard_constraints:
 ruleorder:
     # cerberus_agg_ics_first > cerberus_agg_ics_seq
     # cerb_agg_ics_first > cerb_agg_ics_seq > cerb_agg_ends_first > cerb_agg_ends_seq
-
 
 rule all:
     input:
@@ -81,42 +81,18 @@ rule all:
         # config['ref']['cerberus']['gtf']
 
 ################################################################################
-#################################### Mapping ###################################
-################################################################################
-use rule map as map_reads with:
-    input:
-        fastq = lambda wc: get_df_col(wc, df, 'fname'),
-        ref_fa = rules.mkref_genome.output.fa,
-        # ref_fa = config['ref']['fa'],
-        sjs = config['ref']['sjs']
-    output:
-        sam = temporary(config['map']['sam']),
-        log = config['map']['log']
-
-use rule alignment_stats as map_stats with:
-    input:
-        alignment = config['map']['sam']
-    output:
-        stats = config['map']['stats']
-
-use rule rev_alignment as map_rev with:
-    input:
-        sam = config['map']['sam']
-    output:
-        sam_rev = temporary(config['map']['sam_rev'])
-
-################################################################################
 ###################################### Refs ####################################
 ################################################################################
 use rule mkref_cat_fastas as mkref_genome with:
     input:
-        files = get_cfg_entries(wc,
-                               df,
-                               config['ref']['pseudochrom']['fa'])
+        files = lambda wc: get_cfg_entries(wc,
+                                           p_df,
+                                           config['ref']['pseudochrom']['fa'])
     output:
-        fa = get_cfg_entries(wc,
-                             df,
-                             config['ref']['pseudochrom']['fa_merge'])
+        fa = config['ref']['pseudochrom']['fa_merge']
+        # fa = lambda wc: get_cfg_entries(wc,
+        #                      df,
+        #                      config['ref']['pseudochrom']['fa_merge'])
 
 # use rule mkref_cat_fas as mkref_pseudochrom with:
 #     input:
@@ -140,104 +116,134 @@ rule mkref_human_gene_fq:
                         wildcards.gene,
                         output.fastq)
 
-use rule map as map_reads_hgene with:
+# TODO - request mapped human / mouse genes to the pseudochroms
+# TODO - pair these correctly with the different pseudochroms
+
+# use rule map as map_reads_hgene with:
+#     input:
+#         fastq = config['human_ref']['gene']['fq'],
+#         ref_fa = expand(config['ref']['pseudochrom']['fa'],
+#                 pseudochrom=pseudochrom)[0],
+#         sjs = config['ref']['sjs']
+#     output:
+#         sam = temporary(config['human_ref']['gene']['sam']),
+#         log = config['human_ref']['gene']['log']
+#
+# use rule tc as tc_sam_hgene with:
+#     input:
+#         sam = rules.map_reads_hgene.output.sam,
+#         fa = expand(config['ref']['pseudochrom']['fa'],
+#                 pseudochrom=pseudochrom)[0]
+#     params:
+#         path = config['tc']['path'],
+#         min_intron_size = config['tc']['min_intron_size'],
+#         opref = config['human_ref']['gene']['tc_sam'].rsplit('_clean.sam', maxsplit=1)[0]
+#     output:
+#         sam = temporary(config['human_ref']['gene']['tc_sam']),
+#         fa = temporary(config['human_ref']['gene']['tc_fa']),
+#         sam_clean_log = temporary(config['human_ref']['gene']['tc_log']),
+#         sam_clean_te_log = temporary(config['human_ref']['gene']['te_log'])
+#
+# use rule sam_to_bam as bam_from_sam_hgene with:
+#     input:
+#         sam = rules.tc_sam_hgene.output.sam
+#     output:
+#         bam = temporary(config['human_ref']['gene']['bam'])
+#
+# use rule sort_bam as bam_sort_hgene with:
+#     input:
+#         bam = rules.bam_from_sam_hgene.output.bam
+#     output:
+#         bam = config['human_ref']['gene']['sort_bam']
+#
+# use rule index_bam as bam_ind_hgene with:
+#     input:
+#         bam = rules.bam_sort_hgene.output.bam
+#     output:
+#         ind = config['human_ref']['gene']['ind_bam']
+#
+# rule mkref_mouse_gene_fq:
+#    input:
+#        fa = config['ref']['t_fa']
+#    resources:
+#        mem_gb = 16,
+#        threads = 4
+#    output:
+#        fastq = config['ref']['gene']['fq']
+#    run:
+#        get_gene_t_fastq(input.fa,
+#                         wildcards.gene,
+#                         output.fastq)
+#
+# use rule map as map_reads_mgene with:
+#   input:
+#       fastq = config['ref']['gene']['fq'],
+#       ref_fa = expand(config['ref']['pseudochrom']['fa'],
+#               pseudochrom=pseudochrom)[0],
+#       sjs = config['ref']['sjs']
+#   output:
+#       sam = config['ref']['gene']['sam'],
+#       log = config['ref']['gene']['log']
+#
+# use rule tc as tc_sam_mgene with:
+#   input:
+#       sam = rules.map_reads_mgene.output.sam,
+#       fa = expand(config['ref']['pseudochrom']['fa'],
+#               pseudochrom=pseudochrom)[0]
+#   params:
+#       path = config['tc']['path'],
+#       min_intron_size = config['tc']['min_intron_size'],
+#       opref = config['ref']['gene']['tc_sam'].rsplit('_clean.sam', maxsplit=1)[0]
+#   output:
+#       sam = temporary(config['ref']['gene']['tc_sam']),
+#       fa = temporary(config['ref']['gene']['tc_fa']),
+#       sam_clean_log = temporary(config['ref']['gene']['tc_log']),
+#       sam_clean_te_log = temporary(config['ref']['gene']['te_log'])
+#
+# use rule sam_to_bam as bam_from_sam_mgene with:
+#   input:
+#       sam = rules.tc_sam_mgene.output.sam
+#   output:
+#       bam = temporary(config['ref']['gene']['bam'])
+#
+# use rule sort_bam as bam_sort_mgene with:
+#   input:
+#       bam = rules.bam_from_sam_mgene.output.bam
+#   output:
+#       bam = config['ref']['gene']['sort_bam']
+#
+# use rule index_bam as bam_ind_mgene with:
+#   input:
+#       bam = rules.bam_sort_mgene.output.bam
+#   output:
+#       ind = config['ref']['gene']['ind_bam']
+#
+
+
+################################################################################
+#################################### Mapping ###################################
+################################################################################
+use rule map as map_reads with:
     input:
-        fastq = config['human_ref']['gene']['fq'],
-        ref_fa = expand(config['ref']['pseudochrom']['fa'],
-                pseudochrom=pseudochrom)[0],
+        fastq = lambda wc: get_df_col(wc, df, 'fname'),
+        ref_fa = rules.mkref_genome.output.fa,
+        # ref_fa = config['ref']['fa'],
         sjs = config['ref']['sjs']
     output:
-        sam = temporary(config['human_ref']['gene']['sam']),
-        log = config['human_ref']['gene']['log']
+        sam = temporary(config['map']['sam']),
+        log = config['map']['log']
 
-use rule tc as tc_sam_hgene with:
+use rule alignment_stats as map_stats with:
     input:
-        sam = rules.map_reads_hgene.output.sam,
-        fa = expand(config['ref']['pseudochrom']['fa'],
-                pseudochrom=pseudochrom)[0]
-    params:
-        path = config['tc']['path'],
-        min_intron_size = config['tc']['min_intron_size'],
-        opref = config['human_ref']['gene']['tc_sam'].rsplit('_clean.sam', maxsplit=1)[0]
+        alignment = config['map']['sam']
     output:
-        sam = temporary(config['human_ref']['gene']['tc_sam']),
-        fa = temporary(config['human_ref']['gene']['tc_fa']),
-        sam_clean_log = temporary(config['human_ref']['gene']['tc_log']),
-        sam_clean_te_log = temporary(config['human_ref']['gene']['te_log'])
+        stats = config['map']['stats']
 
-use rule sam_to_bam as bam_from_sam_hgene with:
+use rule rev_alignment as map_rev with:
     input:
-        sam = rules.tc_sam_hgene.output.sam
+        sam = config['map']['sam']
     output:
-        bam = temporary(config['human_ref']['gene']['bam'])
-
-use rule sort_bam as bam_sort_hgene with:
-    input:
-        bam = rules.bam_from_sam_hgene.output.bam
-    output:
-        bam = config['human_ref']['gene']['sort_bam']
-
-use rule index_bam as bam_ind_hgene with:
-    input:
-        bam = rules.bam_sort_hgene.output.bam
-    output:
-        ind = config['human_ref']['gene']['ind_bam']
-
-rule mkref_mouse_gene_fq:
-   input:
-       fa = config['ref']['t_fa']
-   resources:
-       mem_gb = 16,
-       threads = 4
-   output:
-       fastq = config['ref']['gene']['fq']
-   run:
-       get_gene_t_fastq(input.fa,
-                        wildcards.gene,
-                        output.fastq)
-
-use rule map as map_reads_mgene with:
-  input:
-      fastq = config['ref']['gene']['fq'],
-      ref_fa = expand(config['ref']['pseudochrom']['fa'],
-              pseudochrom=pseudochrom)[0],
-      sjs = config['ref']['sjs']
-  output:
-      sam = config['ref']['gene']['sam'],
-      log = config['ref']['gene']['log']
-
-use rule tc as tc_sam_mgene with:
-  input:
-      sam = rules.map_reads_mgene.output.sam,
-      fa = expand(config['ref']['pseudochrom']['fa'],
-              pseudochrom=pseudochrom)[0]
-  params:
-      path = config['tc']['path'],
-      min_intron_size = config['tc']['min_intron_size'],
-      opref = config['ref']['gene']['tc_sam'].rsplit('_clean.sam', maxsplit=1)[0]
-  output:
-      sam = temporary(config['ref']['gene']['tc_sam']),
-      fa = temporary(config['ref']['gene']['tc_fa']),
-      sam_clean_log = temporary(config['ref']['gene']['tc_log']),
-      sam_clean_te_log = temporary(config['ref']['gene']['te_log'])
-
-use rule sam_to_bam as bam_from_sam_mgene with:
-  input:
-      sam = rules.tc_sam_mgene.output.sam
-  output:
-      bam = temporary(config['ref']['gene']['bam'])
-
-use rule sort_bam as bam_sort_mgene with:
-  input:
-      bam = rules.bam_from_sam_mgene.output.bam
-  output:
-      bam = config['ref']['gene']['sort_bam']
-
-use rule index_bam as bam_ind_mgene with:
-  input:
-      bam = rules.bam_sort_mgene.output.bam
-  output:
-      ind = config['ref']['gene']['ind_bam']
+        sam_rev = temporary(config['map']['sam_rev'])
 
 
 ################################################################################
