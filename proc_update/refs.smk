@@ -117,7 +117,7 @@ rule mkref_cat_fastas:
 
 rule mkref_chrom_sizes:
     input:
-        fa = rules.map_reads.input.ref_fa
+        fa = rules.mkref_genome.output.fa
     resources:
         threads = 1,
         mem_gb = 8
