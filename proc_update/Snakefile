@@ -25,7 +25,9 @@ include: 'deeptools.smk'
 # config_tsv = '231020_config.tsv'
 # config_tsv = '231018_config.tsv'
 # config_tsv = 'test_local_config.tsv'
-config_tsv = '231102_config_ad003.tsv'
+# config_tsv = '231102_config_ad003.tsv'
+config_tsv = '231102_config_ad003_local.tsv'
+
 
 p_meta_tsv = 'pseudochromosome_metadata.tsv'
 meta_tsv = 'mouse_metadata.tsv'
