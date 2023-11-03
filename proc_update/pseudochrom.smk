@@ -330,7 +330,7 @@ rule talon_pseudochrom_human:
         threads = 2
     shell:
         """
-        if [ {wildcards.mouse_gene} == "dummy" ]
+        if [ {wildcards.human_gene} == "dummy" ]
         then
             touch {output.db}
         else
