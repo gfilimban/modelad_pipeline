@@ -20,6 +20,7 @@ include: 'mapping.smk'
 include: 'tc.smk'
 include: 'cerberus.smk'
 include: 'deeptools.smk'
+include: 'igvtools.smk'
 
 # settings we can change each time it's run
 # config_tsv = '231020_config.tsv'
