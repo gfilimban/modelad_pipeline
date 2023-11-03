@@ -77,6 +77,36 @@ rule tc_mouse:
         fi
         """
 
+rule sam_to_bam_mouse:
+    resources:
+        threads = 16,
+        mem_gb = 16
+    shell:
+        """
+        if [ {wildcards.mouse_gene} == "dummy" ]
+        then
+            touch {output.bam}
+        else
+            module load samtools
+            samtools view -hSb {input.sam} > {output.bam}
+        fi
+        """
+
+rule sam_to_bam_human:
+    resources:
+        threads = 16,
+        mem_gb = 16
+    shell:
+        """
+        if [ {wildcards.human_gene} == "dummy" ]
+        then
+            touch {output.bam}
+        else
+            module load samtools
+            samtools view -hSb {input.sam} > {output.bam}
+        fi
+        """
+
 
 
 use rule mkref_cat as mkref_genome with:
@@ -126,7 +156,7 @@ use rule tc_human as tc_sam_hgene with:
         sam_clean_log = temporary(config['ref']['pseudochrom']['human_gene']['tc_log']),
         sam_clean_te_log = temporary(config['ref']['pseudochrom']['human_gene']['te_log'])
 
-use rule sam_to_bam as bam_from_sam_hgene with:
+use rule sam_to_bam_human as bam_from_sam_hgene with:
     input:
         sam = rules.tc_sam_hgene.output.sam
     output:
@@ -180,7 +210,7 @@ use rule tc_mouse as tc_sam_mgene with:
       sam_clean_log = temporary(config['ref']['pseudochrom']['gene']['tc_log']),
       sam_clean_te_log = temporary(config['ref']['pseudochrom']['gene']['te_log'])
 
-use rule sam_to_bam as bam_from_sam_mgene with:
+use rule sam_to_bam_mouse as bam_from_sam_mgene with:
   input:
       sam = rules.tc_sam_mgene.output.sam
   output:
