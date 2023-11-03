@@ -412,7 +412,7 @@ rule talon_config_pseudochrom_human:
                                             p_df,
                                             output.cfg)
 
-use rule talon_pseudochrom_human as talon_hgene:
+use rule talon_pseudochrom_human as talon_hgene with:
     input:
         db = rules.talon_init_db.output.db,
         cfg = rules.talon_config_pseudochrom_human.output.cfg
@@ -422,7 +422,7 @@ use rule talon_pseudochrom_human as talon_hgene:
     output:
         db = config['ref']['pseudochrom']['human_gene']['db']
 
-use rule talon_pseudochrom_mouse as talon_mgene:
+use rule talon_pseudochrom_mouse as talon_mgene with:
     input:
         db = rules.talon_init_db.output.db,
         cfg = rules.talon_config_pseudochrom_mouse.output.cfg
