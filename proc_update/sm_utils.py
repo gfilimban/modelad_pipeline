@@ -199,25 +199,32 @@ def subset_df_on_wcs(wc, df):
         #     import pdb; pdb.set_trace()
     return temp
 
-def get_df_col(wc, df, col):
+def get_df_col(wc, df, col, allow_multiple=False):
     """
     From the metadata dataframe df, get the entries that satisfy
     the wildcards requirements and return the corresponding value
     from col. Ensure that this is always a 1:1 relationship, otherwise
     throw an error.
+    
+    Parameters:
+        allow_multiple (bool): Whether to allow multiple rows per 
+            wcs given. Default = False
     """
     cols = [col] + [key for key, item in wc.items() if key in df.columns]
 
     temp = subset_df_on_wcs(wc, df)
     temp = temp[cols].drop_duplicates()
 
-    if len(temp.index) != 1:
-        msg = 'Issues getting data from DF with wildcards'
-        for key, item in wc.items():
-            msg+=f'\n{key}: {item}'
-        raise ValueError(msg)
-
-    val = temp[col].tolist()[0]
+    if not allow_multiple:
+        if len(temp.index) != 1:
+            msg = 'Issues getting data from DF with wildcards'
+            for key, item in wc.items():
+                msg+=f'\n{key}: {item}'
+            raise ValueError(msg)
+        val = temp[col].tolist()[0]
+    else:
+        val = temp[col].tolist()
+        
     return val
 
 

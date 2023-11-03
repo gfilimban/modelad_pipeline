@@ -99,7 +99,11 @@ rule mkref_cat_fastas:
     run:
         # dummy chr -- just symlink original
         # fasta in the directory for this genotype
-        if wildcards.pseudochrom == 'dummy':
+        pseudochroms =  get_df_col(wc,
+                                   params.p_df,
+                                   'pseudochrom',
+                                    allow_multiple=True)
+        if pseudochroms == ['dummy']:
             os.symlink(input.fa, output.fa)
         # otherwise cat everything together
         else:
