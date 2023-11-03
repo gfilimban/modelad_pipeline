@@ -29,7 +29,7 @@ rule tc_human:
         threads = 16
     shell:
         """
-        if [ {wc.human_gene} == "dummy" ]
+        if [ {wildcards.human_gene} == "dummy" ]
         then
             touch {output.sam}
             touch {output.fa}
@@ -56,7 +56,7 @@ rule tc_mouse:
         threads = 16
     shell:
         """
-        if [ {wc.mouse_gene} == "dummy" ]
+        if [ {wildcards.mouse_gene} == "dummy" ]
         then
             touch {output.sam}
             touch {output.fa}
