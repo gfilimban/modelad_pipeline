@@ -117,7 +117,7 @@ rule mkref_cat_fastas:
 
 rule mkref_chrom_sizes:
     input:
-        fa = rules.mkref_genome.output.fa
+        fa = config['ref']['pseudochrom']['fa_merge']
     resources:
         threads = 1,
         mem_gb = 8
