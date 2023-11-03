@@ -104,7 +104,7 @@ rule mkref_cat_fastas:
                                    'pseudochrom',
                                     allow_multiple=True)
         if pseudochroms == ['dummy']:
-            os.symlink(input.fa, output.fa)
+            os.symlink(os.path.abspath(input.fa), output.fa)
         # otherwise cat everything together
         else:
             infiles = [input.fa]+input.files
