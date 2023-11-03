@@ -505,7 +505,7 @@ use rule lapa_filt_gtf as lapa_filt_gtf_run with:
 
 use rule igv_sort_gtf as igv_sort_gtf_lr with:
     input:
-        gtf = rules.lapa_filt_gtf_run.outout.gtf
+        gtf = rules.lapa_filt_gtf_run.output.gtf
     output:
         gtf = config['lapa']['filt']['sort_gtf']
 
