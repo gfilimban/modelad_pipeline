@@ -11,17 +11,6 @@ from humanized_utils import *
 
 configfile: 'config.yml'
 
-include: 'download.smk'
-include: 'samtools.smk'
-include: 'refs.smk'
-include: 'talon.smk'
-include: 'lapa.smk'
-include: 'mapping.smk'
-include: 'tc.smk'
-include: 'cerberus.smk'
-include: 'deeptools.smk'
-include: 'igvtools.smk'
-
 # settings we can change each time it's run
 # config_tsv = '231020_config.tsv'
 # config_tsv = '231018_config.tsv'
@@ -40,6 +29,18 @@ df, p_df = parse_config_file(config_tsv,
                        auto_dedupe=auto_dedupe)
 end_modes = ['tss', 'tes']
 strands = ['fwd', 'rev']
+
+include: 'download.smk'
+include: 'samtools.smk'
+include: 'refs.smk'
+include: 'talon.smk'
+include: 'lapa.smk'
+include: 'mapping.smk'
+include: 'tc.smk'
+include: 'cerberus.smk'
+include: 'deeptools.smk'
+include: 'igvtools.smk'
+include: 'pseudochrom.smk'
 
 # TODO - get rid of this at some point
 # temp_study_pass_list = ['ad002', 'ad003', 'ad005', 'ad006', 'ad007']
@@ -61,23 +62,24 @@ ruleorder:
 
 rule all:
     input:
-        expand(config['lapa']['filt']['ind_gtf'],
-                        zip,
-                        study=df.study.tolist(),
-                        genotype=df.genotype.tolist(),
-                        sex=df.sex.tolist(),
-                        age=df.age.tolist(),
-                        tissue=df.tissue.tolist()),
-        expand(expand(config['merge']['bw'],
-                        zip,
-                        study=df.study.tolist(),
-                        genotype=df.genotype.tolist(),
-                        sex=df.sex.tolist(),
-                        age=df.age.tolist(),
-                        tissue=df.tissue.tolist(),
-                        biorep_num=df.biorep_num.tolist(),
-                        allow_missing=True),
-                        strand=['fwd', 'rev']),
+        rules.all_pseudochrom.input
+        # expand(config['lapa']['filt']['ind_gtf'],
+        #                 study=df.study.tolist(),
+        #                 genotype=df.genotype.tolist(),
+        #                 sex=df.sex.tolist(),
+        #                 age=df.age.tolist(),
+        #                 tissue=df.tissue.tolist()),
+        # expand(expand(config['merge']['bw'],
+        #                 zip,
+        #                 study=df.study.tolist(),
+        #                 genotype=df.genotype.tolist(),
+        #                 sex=df.sex.tolist(),
+        #                 age=df.age.tolist(),
+        #                 tissue=df.tissue.tolist(),
+        #                 biorep_num=df.biorep_num.tolist(),
+        #                 allow_missing=True),
+        #                 strand=['fwd', 'rev']),
+
         # get_cfg_entries({'cerberus_run':df.cerberus_run.unique().tolist()},
         #                 df,
         #                 config['cerberus']['ab']),
@@ -89,153 +91,13 @@ rule all:
 ################################################################################
 ###################################### Refs ####################################
 ################################################################################
-use rule mkref_cat_fastas as mkref_genome with:
-    input:
-        fa = config['ref']['fa'],
-        files = lambda wc: get_cfg_entries(wc,
-                                           p_df,
-                                           config['ref']['pseudochrom']['fa'])
-    params:
-        p_df = p_df
-    output:
-        fa = config['ref']['pseudochrom']['fa_merge']
-        # fa = lambda wc: get_cfg_entries(wc,
-        #                      df,
-        #                      config['ref']['pseudochrom']['fa_merge'])
-
-# use rule mkref_cat_fas as mkref_pseudochrom with:
-#     input:
-#         fa1 = config['ref']['fa'],
-#         fa2 = expand(config['ref']['pseudochrom']['fa'],
-#                     pseudochrom=pseudochrom)[0]
-#     output:
-#         fa = expand(config['ref']['pseudochrom']['fa_merge'],
-#                    pseudochrom=pseudochrom)[0]
-
-rule mkref_human_gene_fq:
-   input:
-       fa = config['human_ref']['t_fa']
-   resources:
-       mem_gb = 16,
-       threads = 4
-   output:
-       fastq = config['human_ref']['gene']['fq']
-   run:
-       get_gene_t_fastq(input.fa,
-                        wildcards.gene,
-                        output.fastq)
-
-# TODO - request mapped human / mouse genes to the pseudochroms
-# TODO - pair these correctly with the different pseudochroms
-
-# use rule map as map_reads_hgene with:
-#     input:
-#         fastq = config['human_ref']['gene']['fq'],
-#         ref_fa = expand(config['ref']['pseudochrom']['fa'],
-#                 pseudochrom=pseudochrom)[0],
-#         sjs = config['ref']['sjs']
-#     output:
-#         sam = temporary(config['human_ref']['gene']['sam']),
-#         log = config['human_ref']['gene']['log']
-#
-# use rule tc as tc_sam_hgene with:
-#     input:
-#         sam = rules.map_reads_hgene.output.sam,
-#         fa = expand(config['ref']['pseudochrom']['fa'],
-#                 pseudochrom=pseudochrom)[0]
-#     params:
-#         path = config['tc']['path'],
-#         min_intron_size = config['tc']['min_intron_size'],
-#         opref = config['human_ref']['gene']['tc_sam'].rsplit('_clean.sam', maxsplit=1)[0]
-#     output:
-#         sam = temporary(config['human_ref']['gene']['tc_sam']),
-#         fa = temporary(config['human_ref']['gene']['tc_fa']),
-#         sam_clean_log = temporary(config['human_ref']['gene']['tc_log']),
-#         sam_clean_te_log = temporary(config['human_ref']['gene']['te_log'])
-#
-# use rule sam_to_bam as bam_from_sam_hgene with:
-#     input:
-#         sam = rules.tc_sam_hgene.output.sam
-#     output:
-#         bam = temporary(config['human_ref']['gene']['bam'])
-#
-# use rule sort_bam as bam_sort_hgene with:
-#     input:
-#         bam = rules.bam_from_sam_hgene.output.bam
-#     output:
-#         bam = config['human_ref']['gene']['sort_bam']
-#
-# use rule index_bam as bam_ind_hgene with:
-#     input:
-#         bam = rules.bam_sort_hgene.output.bam
-#     output:
-#         ind = config['human_ref']['gene']['ind_bam']
-#
-# rule mkref_mouse_gene_fq:
-#    input:
-#        fa = config['ref']['t_fa']
-#    resources:
-#        mem_gb = 16,
-#        threads = 4
-#    output:
-#        fastq = config['ref']['gene']['fq']
-#    run:
-#        get_gene_t_fastq(input.fa,
-#                         wildcards.gene,
-#                         output.fastq)
-#
-# use rule map as map_reads_mgene with:
-#   input:
-#       fastq = config['ref']['gene']['fq'],
-#       ref_fa = expand(config['ref']['pseudochrom']['fa'],
-#               pseudochrom=pseudochrom)[0],
-#       sjs = config['ref']['sjs']
-#   output:
-#       sam = config['ref']['gene']['sam'],
-#       log = config['ref']['gene']['log']
-#
-# use rule tc as tc_sam_mgene with:
-#   input:
-#       sam = rules.map_reads_mgene.output.sam,
-#       fa = expand(config['ref']['pseudochrom']['fa'],
-#               pseudochrom=pseudochrom)[0]
-#   params:
-#       path = config['tc']['path'],
-#       min_intron_size = config['tc']['min_intron_size'],
-#       opref = config['ref']['gene']['tc_sam'].rsplit('_clean.sam', maxsplit=1)[0]
-#   output:
-#       sam = temporary(config['ref']['gene']['tc_sam']),
-#       fa = temporary(config['ref']['gene']['tc_fa']),
-#       sam_clean_log = temporary(config['ref']['gene']['tc_log']),
-#       sam_clean_te_log = temporary(config['ref']['gene']['te_log'])
-#
-# use rule sam_to_bam as bam_from_sam_mgene with:
-#   input:
-#       sam = rules.tc_sam_mgene.output.sam
-#   output:
-#       bam = temporary(config['ref']['gene']['bam'])
-#
-# use rule sort_bam as bam_sort_mgene with:
-#   input:
-#       bam = rules.bam_from_sam_mgene.output.bam
-#   output:
-#       bam = config['ref']['gene']['sort_bam']
-#
-# use rule index_bam as bam_ind_mgene with:
-#   input:
-#       bam = rules.bam_sort_mgene.output.bam
-#   output:
-#       ind = config['ref']['gene']['ind_bam']
-#
-
-
 ################################################################################
 #################################### Mapping ###################################
 ################################################################################
 use rule map as map_reads with:
     input:
         fastq = lambda wc: get_df_col(wc, df, 'fname'),
-        ref_fa = rules.mkref_genome.output.fa,
+        ref_fa = rules.mkref_genome.output.out,
         # ref_fa = config['ref']['fa'],
         sjs = config['ref']['sjs']
     output:

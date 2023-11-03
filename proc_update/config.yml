@@ -19,19 +19,6 @@ human_ref:
   fa_gz: human_ref/ref.fa.gz
   fa: human_ref/ref.fa
 
-  gene:
-    fq: human_ref/mapped_gene/{gene}/t.fastq
-    sam: human_ref/mapped_gene/{gene}/mapped.sam
-    log: human_ref/mapped_gene/{gene}/minimap.log
-    tc_sam: human_ref/mapped_gene/{gene}/clean.sam
-    tc_fa: human_ref/mapped_gene/{gene}/clean.fa
-    tc_log: human_ref/mapped_gene/{gene}/clean.log
-    te_log: human_ref/mapped_gene/{gene}/clean.TE.log
-
-    bam: human_ref/mapped_gene/{gene}/mapped.bam
-    sort_bam: human_ref/mapped_gene/{gene}/mapped_sorted.bam
-    ind_bam: human_ref/mapped_gene/{gene}/mapped_sorted.bam.bai
-
 ref:
   gtf_ver: 'vM21'
   gtf_link: https://www.encodeproject.org/files/gencode.vM21.primary_assembly.annotation_UCSC_names/@@download/gencode.vM21.primary_assembly.annotation_UCSC_names.gtf.gz
@@ -50,23 +37,51 @@ ref:
   fa_gz: ref/ref.fa.gz
   fa: ref/ref.fa
 
-  gene:
-    fq: ref/mapped_gene/{gene}/t.fastq
-    sam: ref/mapped_gene/{gene}/mapped.sam
-    log: ref/mapped_gene/{gene}/minimap.log
-    tc_sam: ref/mapped_gene/{gene}/clean.sam
-    tc_fa: ref/mapped_gene/{gene}/clean.fa
-    tc_log: ref/mapped_gene/{gene}/clean.log
-    te_log: ref/mapped_gene/{gene}/clean.TE.log
-
-    bam: ref/mapped_gene/{gene}/mapped.bam
-    sort_bam: ref/mapped_gene/{gene}/mapped_sorted.bam
-    ind_bam: ref/mapped_gene/{gene}/mapped_sorted.bam.bai
-
   pseudochrom:
     fa: ref/pseudochrom/{pseudochrom}/ref.fa
+
+    gene:
+      fq: ref/pseudochrom/{pseudochrom}/{mouse_gene}/t.fastq
+      sam: ref/pseudochrom/{pseudochrom}/{mouse_gene}/mapped.sam
+      log: ref/pseudochrom/{pseudochrom}/{mouse_gene}/minimap.log
+      tc_sam: ref/pseudochrom/{pseudochrom}/{mouse_gene}/clean.sam
+      tc_fa: ref/pseudochrom/{pseudochrom}/{mouse_gene}/clean.fa
+      tc_log: ref/pseudochrom/{pseudochrom}/{mouse_gene}/clean.log
+      te_log: ref/pseudochrom/{pseudochrom}/{mouse_gene}/clean.TE.log
+
+      bam: ref/pseudochrom/{pseudochrom}/{mouse_gene}/mapped.bam
+      sort_bam: ref/pseudochrom/{pseudochrom}/{mouse_gene}/mapped_sorted.bam
+      ind_bam: ref/pseudochrom/{pseudochrom}/{mouse_gene}/mapped_sorted.bam.bai
+
+      config: ref/pseudochrom/{pseudochrom}/{mouse_gene}/config.csv
+      db: ref/pseudochrom/{pseudochrom}/{mouse_gene}/ref.db
+      gtf: ref/pseudochrom/{pseudochrom}/{mouse_gene}/annot.gtf
+
+    human_gene:
+      fq: human_ref/pseudochrom/{pseudochrom}/{human_gene}/t.fastq
+      sam: human_ref/pseudochrom/{pseudochrom}/{human_gene}/mapped.sam
+      log: human_ref/pseudochrom/{pseudochrom}/{human_gene}/minimap.log
+      tc_sam: human_ref/pseudochrom/{pseudochrom}/{human_gene}/clean.sam
+      tc_fa: human_ref/pseudochrom/{pseudochrom}/{human_gene}/clean.fa
+      tc_log: human_ref/pseudochrom/{pseudochrom}/{human_gene}/clean.log
+      te_log: human_ref/pseudochrom/{pseudochrom}/{human_gene}/clean.TE.log
+
+      bam: human_ref/pseudochrom/{pseudochrom}/{human_gene}/mapped.bam
+      sort_bam: human_ref/pseudochrom/{pseudochrom}/{human_gene}/mapped_sorted.bam
+      ind_bam: human_ref/pseudochrom/{pseudochrom}/{human_gene}/mapped_sorted.bam.bai
+
+      config: human_ref/pseudochrom/{pseudochrom}/{human_gene}/config.csv
+      db: human_ref/pseudochrom/{pseudochrom}/{human_gene}/ref.db
+      gtf: human_ref/pseudochrom/{pseudochrom}/{human_gene}/annot.gtf
+
+
+
     fa_merge: ref/genome/{genotype}/merged.fa
     chrom_sizes: ref/genome/{genotype}/chrom_sizes.txt
+
+    talon:
+      # reference to use for humanized insertions
+      db: ref/talon/{genotype}/ref.db
 
 
   # talon reference -- db from the input gtf

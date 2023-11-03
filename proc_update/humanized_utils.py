@@ -5,19 +5,20 @@ import re
 import textwrap
 
 
-def get_gene_t_fastq(fa, 
+def get_gene_t_fastq(fa,
                      gene,
                      ofile):
     """
-    Get the fastq for the reference transcript associated with 
+    Get the fastq for the reference transcript associated with
     "gene"
     """
     fa = pyfaidx.Fasta(fa)
     t_keys = list(fa.keys())
     t_df = pd.DataFrame()
     t_df['t_key'] = t_keys
-    t_keys = t_df.loc[t_df.t_key.str.contains(gene)].t_key.tolist()
-    
+    gene_str = f'|{gene}|'
+    t_keys = t_df.loc[t_df.t_key.str.contains(gene_str)].t_key.tolist()
+
     with open(ofile, 'w') as o:
         for t in t_keys:
             read_name = f'@{t}'
@@ -37,28 +38,28 @@ def write_chr(seq, ofile, chr_name, line_lim=None):
                 ofile.write(seq+'\n')
         else:
             ofile.write(str(seq))
-     
-    
+
+
 def get_gene_gtf_entry(gtf_file, gene):
     """
     Get the GTF entries from the gene
     """
-        
+
     gtf_df = pr.read_gtf(gtf_file, as_df=True)
 
     gtf_df = gtf_df.loc[(gtf_df.gene_name==gene)]
-    
+
     return gtf_df
-    
-    
+
+
 def get_gene_seq(fa_file,
-                gtf_file, 
+                gtf_file,
                 gene,
                 whole_chr=False,
                 ofile=None,
                 chr_name=None,
                 slack=0):
-        
+
     gtf_df = pr.read_gtf(gtf_file, as_df=True)
 
     gtf_df = gtf_df.loc[(gtf_df.gene_name==gene)&(gtf_df.Feature=='gene')]
@@ -74,12 +75,12 @@ def get_gene_seq(fa_file,
     strand = gtf_df['Strand'].values[0]
 
     fa = pyfaidx.Fasta(fa_file)
-    
+
     # just get the sequence of the gene
     if not whole_chr:
         if strand == '+':
             gene_seq = fa[ch][start:end]
-        else: 
+        else:
             gene_seq = fa[ch][start:end].complement
     # get the sequence of the whole chromosome
     else:
@@ -89,9 +90,9 @@ def get_gene_seq(fa_file,
     if ofile:
         if not chr_name:
             chr_name = gene
-        
+
         write_chr(gene_seq.seq, ofile, chr_name)
-        
+
     return gene_seq.seq
 
 def replace_seq(mod_fa,
@@ -99,19 +100,19 @@ def replace_seq(mod_fa,
     """
     Replace sequence in seq with sequence in mod_fa. Mod_fa must contain some overlap
     with the sequence in seq to find the insertion sites.
-    
+
     Parameters:
         mod_fa (str): Path to fasta file with sequence to insert
         seq (str): Sequence to add mod_fa into
     """
-    
+
     # get anchors at 5' and 3' ends of sequence
     fa = pyfaidx.Fasta(modified_fa)
     mod_seq = fa[list(fa.keys())[0]][0:-1].seq
-    
+
     anchor_5 = mod_seq[:20]
     anchor_3 = mod_seq[-20:]
-    
+
     start_inds = [(m.start(), m.end()) for m in re.finditer(anchor_5, seq, re.IGNORECASE)]
     assert len(start_inds) == 1
 
@@ -125,16 +126,16 @@ def replace_seq(mod_fa,
     replace_seq = seq[start_inds[0][0]:end_inds[0][1]] # this will replace inluding anchors
     with open('ref/replace_seq.fa', 'w') as ofile:
         ofile.write(replace_seq)
-        
+
     assert replace_seq[:20].lower() == anchor_5.lower()
     assert replace_seq[-20:].lower() == anchor_3.lower()
-    
+
     # print(replace_seq[0])
     # print(replace_seq[-1])
 
     inds = [(m.start(), m.end()) for m in re.finditer(replace_seq, seq)]
-    assert len(inds) == 1  
-    
+    assert len(inds) == 1
+
     new_len = len(seq)-len(replace_seq)+len(mod_seq)
     new_seq = seq.replace(replace_seq, mod_seq)
     assert len(new_seq) == new_len

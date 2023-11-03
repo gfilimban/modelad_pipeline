@@ -89,36 +89,6 @@ use rule gunzip as gz_annot with:
 #         cat {input.ercc} >> {output.cat_fa}
 #         """
 
-# make a fasta file concatenating the original reference and the
-# pseudochromosomes. also, just symlink the original reference
-# if we have a dummy pseudochrom
-rule mkref_cat_fastas:
-    resources:
-        threads = 1,
-        mem_gb = 4
-    run:
-        # dummy chr -- just symlink original
-        # fasta in the directory for this genotype
-        pseudochroms =  get_df_col(wildcards,
-                                   params.p_df,
-                                   'pseudochrom',
-                                    allow_multiple=True)
-        if pseudochroms == ['dummy']:
-            os.symlink(os.path.abspath(input.fa), output.fa)
-        # otherwise cat everything together
-        else:
-            infiles = [input.fa]+input.files
-            with open(output.fa, 'w') as outfile:
-                for fname in infiles:
-                    with open(fname) as infile:
-                        for line in infile:
-                            outfile.write(line)
-
-        # """
-        # cat {input.fa1} >> {output.fa}
-        # cat {input.fa2} >> {output.fa}
-        # """
-
 rule mkref_chrom_sizes:
     input:
         fa = config['ref']['pseudochrom']['fa_merge']

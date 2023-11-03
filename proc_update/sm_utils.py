@@ -211,6 +211,7 @@ def get_df_col(wc, df, col, allow_multiple=False):
             wcs given. Default = False
     """
     cols = [col] + [key for key, item in wc.items() if key in df.columns]
+    cols = list(set(cols))
 
     temp = subset_df_on_wcs(wc, df)
     temp = temp[cols].drop_duplicates()
@@ -248,6 +249,8 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
     flowcell = temp.flowcell.tolist()
     cerberus_run = temp.cerberus_run.tolist()
     pseudochrom = temp.pseudochrom.tolist()
+    mouse_gene = temp.mouse_gene.tolist()
+    human_gene = temp.human_gene.tolist()
 
     # # pseudochrom stuff needs to be treated differently
     # pseudochrom = temp.pseudochrom.tolist()
@@ -280,6 +283,8 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
                    flowcell=flowcell,
                    cerberus_run=cerberus_run,
                    pseudochrom=pseudochrom,
+                   human_gene=human_gene,
+                   mouse_gene=mouse_gene,
                    allow_missing=True)
     # import pdb; pdb.set_trace()
 
