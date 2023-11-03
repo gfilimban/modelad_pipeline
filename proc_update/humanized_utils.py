@@ -5,19 +5,22 @@ import re
 import textwrap
 
 
-def get_gene_t_fastq(fa,
+def get_gene_t_fastq(fa_file,
                      gene,
                      ofile):
     """
     Get the fastq for the reference transcript associated with
     "gene"
     """
-    fa = pyfaidx.Fasta(fa)
+    indexname = f'{ofile}.fai'
+    fa = pyfaidx.Fasta(fa_file, indexname=indexname)
     t_keys = list(fa.keys())
     t_df = pd.DataFrame()
-    t_df['t_key'] = t_keys
     gene_str = f'|{gene}|'
-    t_keys = t_df.loc[t_df.t_key.str.contains(gene_str)].t_key.tolist()
+    keys = [t for t in t_keys if gene_str in t]
+
+    if len(keys) == 0:
+        raise ValueError('Try again; probably frozen .fai file')
 
     with open(ofile, 'w') as o:
         for t in t_keys:

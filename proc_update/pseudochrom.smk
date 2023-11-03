@@ -435,18 +435,23 @@ use rule talon_pseudochrom_mouse as talon_mgene with:
 
 
 
-rule talon_gtf_pseudochrom:
+rule talon_gtf_pseudochrom_human:
   resources:
       mem_gb = 16,
       threads = 1
   shell:
       """
-      talon_create_GTF \
-          --db {input.db} \
-          -a {params.annot_ver} \
-          -b {params.genome_ver} \
-          --observed \
-          --o {params.opref}
+      if [ {wildcards.human_gene} == "dummy" ]
+      then
+          touch {output.db}
+      else
+          talon_create_GTF \
+              --db {input.db} \
+              -a {params.annot_ver} \
+              -b {params.genome_ver} \
+              --observed \
+              --o {params.opref}
+      fi
       """
 
 
