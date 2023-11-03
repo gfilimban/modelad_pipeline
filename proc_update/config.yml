@@ -154,6 +154,9 @@ lapa:
     filt_ab: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/filtered_abundance.tsv
     gtf: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/filtered.gtf
 
+    sort_gtf: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/filtered.sorted.gtf
+    ind_gtf: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/filtered.sorted.gtf.idx
+
 # TODO - how to run cerberus?
 cerberus:
   tss:

@@ -60,7 +60,7 @@ ruleorder:
 
 rule all:
     input:
-        expand(config['lapa']['filt']['gtf'],
+        expand(config['lapa']['filt']['ind_gtf'],
                         zip,
                         study=df.study.tolist(),
                         genotype=df.genotype.tolist(),
@@ -501,7 +501,19 @@ use rule lapa_filt_gtf as lapa_filt_gtf_run with:
         gtf = config['lapa']['corrected']['gtf'],
         filt_list = config['lapa']['filt']['pass_list']
     output:
-        gtf = config['lapa']['filt']['gtf']
+        gtf = temporary(config['lapa']['filt']['gtf'])
+
+use rule igv_sort_gtf as igv_sort_gtf_lr with:
+    input:
+        gtf = rules.lapa_filt_gtf_run.outout.gtf
+    output:
+        gtf = config['lapa']['filt']['sort_gtf']
+
+use rule igv_index_gtf as igv_index_gtf_lr with:
+    input:
+        gtf = rules.igv_sort_gtf_lr.output.gtf
+    output:
+        ind = config['lapa']['filt']['ind_gtf']
 
 ################################################################################
 ################################# Cerberus #####################################
