@@ -44,7 +44,7 @@ rule mkref_human_gene_fq:
        fastq = config['ref']['pseudochrom']['human_gene']['fq']
    run:
        get_gene_t_fastq(input.fa,
-                        wildcards.gene,
+                        wildcards.human_gene,
                         output.fastq)
 
 use rule map as map_reads_hgene with:
@@ -98,7 +98,7 @@ rule mkref_mouse_gene_fq:
        fastq = config['ref']['pseudochrom']['gene']['fq']
    run:
        get_gene_t_fastq(input.fa,
-                        wildcards.gene,
+                        wildcards.mouse_gene,
                         output.fastq)
 
 use rule map as map_reads_mgene with:
