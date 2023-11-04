@@ -432,9 +432,6 @@ use rule talon_pseudochrom_mouse as talon_mgene with:
     output:
         db = config['ref']['pseudochrom']['gene']['db']
 
-
-
-
 rule talon_gtf_pseudochrom_human:
   resources:
       mem_gb = 16,
@@ -454,21 +451,52 @@ rule talon_gtf_pseudochrom_human:
       fi
       """
 
+rule talon_gtf_pseudochrom_mouse:
+    resources:
+        mem_gb = 16,
+        threads = 1
+    shell:
+        """
+        if [ {wildcards.mouse_gene} == "dummy" ]
+        then
+            touch {output.db}
+        else
+            talon_create_GTF \
+                --db {input.db} \
+                -a {params.annot_ver} \
+                -b {params.genome_ver} \
+                --observed \
+                --o {params.opref}
+        fi
+        """
 
-# use rule talon_pseudochrom as talon_pseudochrom_mouse with:
-#     input:
-#         db = config['ref']['talon']['db'],
-#         config
-#     output:
-#         db = config['ref']['pseudochrom']['gene']['db']
+use rule talon_gtf_pseudochrom_human as talon_hgene_gtf with:
+    input:
+        db = rules.talon_hgene.output.db
+    params:
+        opref = config['ref']['pseudochrom']['human_gene']['gtf'].rsplit('_talon', maxsplit=1)[0],
+        genome_ver = config['ref']['fa_ver'],
+        annot_ver = config['ref']['gtf_ver']
+    output:
+        gtf = config['ref']['pseudochrom']['human_gene']['gtf']
+
+use rule talon_gtf_pseudochrom_mouse as talon_mgene_gtf with:
+    input:
+        db = rules.talon_mgene.output.db
+    params:
+        opref = config['ref']['pseudochrom']['gene']['gtf'].rsplit('_talon', maxsplit=1)[0],
+        genome_ver = config['ref']['fa_ver'],
+        annot_ver = config['ref']['gtf_ver']
+    output:
+        gtf = config['ref']['pseudochrom']['gene']['gtf']
 
 rule all_pseudochrom:
     input:
-        list(set(expand(config['ref']['pseudochrom']['gene']['db'],
+        list(set(expand(config['ref']['pseudochrom']['gene']['gtf'],
                zip,
                pseudochrom=p_df.pseudochrom.tolist(),
                mouse_gene=p_df.mouse_gene.tolist()))),
-        list(set(expand(config['ref']['pseudochrom']['human_gene']['db'],
+        list(set(expand(config['ref']['pseudochrom']['human_gene']['gtf'],
                zip,
                pseudochrom=p_df.pseudochrom.tolist(),
                human_gene=p_df.human_gene.tolist())))
