@@ -440,7 +440,7 @@ rule talon_gtf_pseudochrom_human:
       """
       if [ {wildcards.human_gene} == "dummy" ]
       then
-          touch {output.db}
+          touch {output.gtf}
       else
           talon_create_GTF \
               --db {input.db} \
@@ -459,7 +459,7 @@ rule talon_gtf_pseudochrom_mouse:
         """
         if [ {wildcards.mouse_gene} == "dummy" ]
         then
-            touch {output.db}
+            touch {output.gtf}
         else
             talon_create_GTF \
                 --db {input.db} \
