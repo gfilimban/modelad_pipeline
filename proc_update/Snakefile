@@ -62,24 +62,24 @@ ruleorder:
 
 rule all:
     input:
-        rules.all_pseudochrom.input
-        # expand(config['lapa']['filt']['ind_gtf'],
-        #                 study=df.study.tolist(),
-        #                 genotype=df.genotype.tolist(),
-        #                 sex=df.sex.tolist(),
-        #                 age=df.age.tolist(),
-        #                 tissue=df.tissue.tolist()),
-        # expand(expand(config['merge']['bw'],
-        #                 zip,
-        #                 study=df.study.tolist(),
-        #                 genotype=df.genotype.tolist(),
-        #                 sex=df.sex.tolist(),
-        #                 age=df.age.tolist(),
-        #                 tissue=df.tissue.tolist(),
-        #                 biorep_num=df.biorep_num.tolist(),
-        #                 allow_missing=True),
-        #                 strand=['fwd', 'rev']),
+        expand(config['lapa']['filt']['ind_gtf'],
+                        study=df.study.tolist(),
+                        genotype=df.genotype.tolist(),
+                        sex=df.sex.tolist(),
+                        age=df.age.tolist(),
+                        tissue=df.tissue.tolist()),
+        expand(expand(config['merge']['bw'],
+                        zip,
+                        study=df.study.tolist(),
+                        genotype=df.genotype.tolist(),
+                        sex=df.sex.tolist(),
+                        age=df.age.tolist(),
+                        tissue=df.tissue.tolist(),
+                        biorep_num=df.biorep_num.tolist(),
+                        allow_missing=True),
+                        strand=['fwd', 'rev'])
 
+        # rules.all_pseudochrom.input
         # get_cfg_entries({'cerberus_run':df.cerberus_run.unique().tolist()},
         #                 df,
         #                 config['cerberus']['ab']),
@@ -232,7 +232,7 @@ rule talon_config:
 
 use rule talon as talon_run with:
     input:
-        db = config['ref']['talon']['db'],
+        db = rules.talon_init_db.output.db,
         cfg = config['talon']['config']
     params:
         genome_ver = config['ref']['fa_ver'],
