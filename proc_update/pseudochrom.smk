@@ -517,8 +517,8 @@ def refmt_mapped_transcript_gtf(wc, ifile, ofile):
 
         df.loc[df.Feature == 'transcript', 'transcript_status'] = 'KNOWN'
         df.gene_status = 'KNOWN'
-        df.gene_id = gname
-        df.gene_name = gname
+        df.gene_id = gene
+        df.gene_name = gene
 
         pr.PyRanges(df).to_gtf(ofile)
 
