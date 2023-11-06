@@ -155,7 +155,7 @@ def parse_config_file(fname,
     dupe_genotypes = temp.loc[temp.genotype.duplicated()].genotype.unique().tolist()
     if len(dupe_genotypes) > 1:
         raise ValueError(f'Found genotype(s) {dupe_genotypes} w/ multiple pseudochromosome settings')
-                
+
     # assign a cerberus run to each "sample" (study+genotype+sex+age+tissue)
     # but first sort on study and sample such that they will always be ordered in the same way
     # this should freeze our results
@@ -169,7 +169,7 @@ def parse_config_file(fname,
     df['flowcell'] = df.flowcell.astype(str)
     df['biorep_num'] = df.biorep_num.astype(str)
     df['cerberus_run'] = df.cerberus_run.astype(str)
-    
+
     # get a table that matches genotype + pseudochrom + human gene + mouse gene
     temp = df.explode('pseudochrom')
     p_meta = pd.read_csv(p_meta_fname, sep='\t')
@@ -205,9 +205,9 @@ def get_df_col(wc, df, col, allow_multiple=False):
     the wildcards requirements and return the corresponding value
     from col. Ensure that this is always a 1:1 relationship, otherwise
     throw an error.
-    
+
     Parameters:
-        allow_multiple (bool): Whether to allow multiple rows per 
+        allow_multiple (bool): Whether to allow multiple rows per
             wcs given. Default = False
     """
     cols = [col] + [key for key, item in wc.items() if key in df.columns]
@@ -225,7 +225,7 @@ def get_df_col(wc, df, col, allow_multiple=False):
         val = temp[col].tolist()[0]
     else:
         val = temp[col].tolist()
-        
+
     return val
 
 
@@ -249,8 +249,11 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
     flowcell = temp.flowcell.tolist()
     cerberus_run = temp.cerberus_run.tolist()
     pseudochrom = temp.pseudochrom.tolist()
-    mouse_gene = temp.mouse_gene.tolist()
-    human_gene = temp.human_gene.tolist()
+    try:
+        mouse_gene = temp.mouse_gene.tolist()
+        human_gene = temp.human_gene.tolist()
+    except:
+        import pdb; pdb.set_trace()
 
     # # pseudochrom stuff needs to be treated differently
     # pseudochrom = temp.pseudochrom.tolist()
