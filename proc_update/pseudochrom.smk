@@ -516,6 +516,7 @@ def refmt_mapped_transcript_gtf(wc, ifile, ofile):
         df = df[keep_cols]
 
         df.loc[df.Feature.isin(['transcript','exon']), 'transcript_status'] = 'KNOWN'
+        df.loc[df.Feature=='exon', 'exon_status'] = 'KNOWN'
         df.gene_status = 'KNOWN'
         df.gene_id = gene
         df.gene_name = gene
@@ -541,6 +542,16 @@ use rule talon_gtf_pseudochrom_refmt as talon_gtf_pseudochrom_refmt_mouse with:
     output:
         gtf = config['ref']['pseudochrom']['gene']['fmt_gtf']
 
+# use rule mkref_cat as mkref_annot with:
+#     input:
+#         ref = config['ref']['fa'],
+#         files = lambda wc: get_cfg_entries(wc,
+#                                            p_df,
+#                                            config['ref']['pseudochrom']['fa'])
+#     params:
+#         p_df = p_df
+#     output:
+#         out = config['ref']['pseudochrom']['fa_merge']
 
 rule all_pseudochrom:
     input:
