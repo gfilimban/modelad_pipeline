@@ -548,7 +548,8 @@ use rule mkref_cat as mkref_annot with:
         ref = config['ref']['gtf'],
         files = lambda wc: get_cfg_entries(wc,
                     p_df,
-                    config['ref']['pseudochrom']['human_gene']['fmt_gtf'])+lambda wc: get_cfg_entries(wc,
+                    config['ref']['pseudochrom']['human_gene']['fmt_gtf'])+\
+                get_cfg_entries(wc,
                     p_df,
                     config['ref']['pseudochrom']['gene']['fmt_gtf'])
     params:
