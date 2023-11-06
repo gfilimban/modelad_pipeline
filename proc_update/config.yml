@@ -56,6 +56,7 @@ ref:
       config: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_config.csv
       db: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_ref_talon.db
       gtf: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_talon_observedOnly.gtf
+      fmt_gtf: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_fmt.gtf
 
     human_gene:
       fq: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_t.fastq
@@ -73,6 +74,7 @@ ref:
       config: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_config.csv
       db: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_ref_talon.db
       gtf: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_talon_observedOnly.gtf
+      fmt_gtf: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_fmt.gtf
 
 
 

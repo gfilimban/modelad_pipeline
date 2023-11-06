@@ -490,13 +490,61 @@ use rule talon_gtf_pseudochrom_mouse as talon_mgene_gtf with:
     output:
         gtf = config['ref']['pseudochrom']['gene']['gtf']
 
+def refmt_mapped_transcript_gtf(wc, ifile, ofile):
+    """
+    Format a TALON gtf output from annotated transcripts mapped
+    onto pseudochromosomes in order to make them appear as known.
+
+    # TODO - support whole chrom
+    """
+    if 'mouse_gene' in list(wc.keys()):
+        species = 'mouse'
+        gene = wc['mouse_gene']
+    elif 'human_gene' in list(wc.keys()):
+        species = 'human'
+        gene = wc['human_gene']
+    df = pr.read_gtf(ifile, rename_attr=True).df
+
+    keep_cols = ['Chromosome', 'Source', 'Feature', 'Start', 'End', 'Score', 'Strand',
+       'Frame', 'gene_id', 'gene_name', 'gene_status', 'source_attr',
+       'transcript_id', 'transcript_status', 'transcript_name', 'exon_number', 'exon_id',
+       'exon_status']
+    df = df[keep_cols]
+
+    df.loc[df.Feature == 'transcript', 'transcript_status'] = 'KNOWN'
+    df.gene_status = 'KNOWN'
+    df.gene_id = gname
+    df.gene_name = gname
+
+    pr.PyRanges(df).to_gtf(ofile)
+
+rule talon_gtf_pseudochrom_refmt:
+    resources:
+        threads = 1,
+        mem_gb = 4
+    run:
+        refmt_mapped_transcript_gtf(wildcards, input.gtf, output.gtf)
+
+use rule talon_gtf_pseudochrom_refmt as talon_gtf_pseudochrom_refmt_human with:
+    input:
+        gtf = rules.talon_hgene_gtf.output.gtf
+    output:
+        gtf = config['ref']['pseudochrom']['human_gene']['fmt']
+
+use rule talon_gtf_pseudochrom_refmt as talon_gtf_pseudochrom_refmt_mouse with:
+    input:
+        gtf = rules.talon_mgene_gtf.output.gtf
+    output:
+        gtf = config['ref']['pseudochrom']['gene']['fmt']
+
+
 rule all_pseudochrom:
     input:
-        list(set(expand(config['ref']['pseudochrom']['gene']['gtf'],
+        list(set(expand(config['ref']['pseudochrom']['gene']['fmt_gtf'],
                zip,
                pseudochrom=p_df.pseudochrom.tolist(),
                mouse_gene=p_df.mouse_gene.tolist()))),
-        list(set(expand(config['ref']['pseudochrom']['human_gene']['gtf'],
+        list(set(expand(config['ref']['pseudochrom']['human_gene']['fmt_gtf'],
                zip,
                pseudochrom=p_df.pseudochrom.tolist(),
                human_gene=p_df.human_gene.tolist())))
