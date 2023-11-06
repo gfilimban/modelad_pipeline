@@ -76,11 +76,10 @@ ref:
       gtf: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_talon_observedOnly.gtf
       fmt_gtf: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_fmt.gtf
 
-
-
     fa_merge: ref/genome/{genotype}/merged.fa
-    gtf_merge: ref/pseudochrom/{genotype}/annot.gtf
+    gtf_merge: ref/genome/{genotype}/annot.gtf
     chrom_sizes: ref/genome/{genotype}/chrom_sizes.txt
+    db: ref/genome/{genotype}/ref.db
 
     talon:
       # reference to use for humanized insertions

@@ -557,9 +557,23 @@ use rule mkref_cat as mkref_annot with:
     output:
         out = config['ref']['pseudochrom']['gtf_merge']
 
+use rule talon_init as talon_init_db with:
+    input:
+        gtf = rules.mkref_annot.output.out
+    output:
+        db = config['ref']['pseudochrom']['db']
+    params:
+        opref = config['ref']['pseudochrom']['db'].rsplit('.db', maxsplit=1)[0],
+        genome_ver = config['ref']['fa_ver'],
+        annot_ver = config['ref']['gtf_ver'],
+        min_transcript_len = config['talon']['min_transcript_len'],
+        max_5_dist = config['talon']['max_5_dist'],
+        max_3_dist = config['talon']['max_3_dist']
+
+
 rule all_pseudochrom:
     input:
-        expand(config['ref']['pseudochrom']['gtf_merge'],
+        expand(rules.talon_init_db.output.db,
                zip,
                genotype=p_df.genotype.unique().tolist())
         # list(set(expand(config['ref']['pseudochrom']['gene']['fmt_gtf'],
