@@ -79,6 +79,7 @@ ref:
 
 
     fa_merge: ref/genome/{genotype}/merged.fa
+    gtf_merge: ref/pseudochrom/{genotype}/annot.gtf
     chrom_sizes: ref/genome/{genotype}/chrom_sizes.txt
 
     talon:

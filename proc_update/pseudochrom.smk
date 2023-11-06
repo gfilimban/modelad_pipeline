@@ -542,24 +542,30 @@ use rule talon_gtf_pseudochrom_refmt as talon_gtf_pseudochrom_refmt_mouse with:
     output:
         gtf = config['ref']['pseudochrom']['gene']['fmt_gtf']
 
-# use rule mkref_cat as mkref_annot with:
-#     input:
-#         ref = config['ref']['fa'],
-#         files = lambda wc: get_cfg_entries(wc,
-#                                            p_df,
-#                                            config['ref']['pseudochrom']['fa'])
-#     params:
-#         p_df = p_df
-#     output:
-#         out = config['ref']['pseudochrom']['fa_merge']
+use rule mkref_cat as mkref_annot with:
+    input:
+        ref = config['ref']['gtf'],
+        files = lambda wc: get_cfg_entries(wc,
+                    p_df,
+                    config['ref']['pseudochrom']['human_gene']['fmt_gtf'])+\
+                lambda wc: get_cfg_entries(wc,
+                    p_df,
+                    config['ref']['pseudochrom']['gene']['fmt_gtf'])
+    params:
+        p_df = p_df
+    output:
+        out = config['ref']['pseudochrom']['gtf_merge']
 
 rule all_pseudochrom:
     input:
-        list(set(expand(config['ref']['pseudochrom']['gene']['fmt_gtf'],
+        expand(config['ref']['pseudochrom']['gtf_merge'],
                zip,
-               pseudochrom=p_df.pseudochrom.tolist(),
-               mouse_gene=p_df.mouse_gene.tolist()))),
-        list(set(expand(config['ref']['pseudochrom']['human_gene']['fmt_gtf'],
-               zip,
-               pseudochrom=p_df.pseudochrom.tolist(),
-               human_gene=p_df.human_gene.tolist())))
+               pseudochrom=p_df.pseudochrom.tolist())
+        # list(set(expand(config['ref']['pseudochrom']['gene']['fmt_gtf'],
+        #        zip,
+        #        pseudochrom=p_df.pseudochrom.tolist(),
+        #        mouse_gene=p_df.mouse_gene.tolist()))),
+        # list(set(expand(config['ref']['pseudochrom']['human_gene']['fmt_gtf'],
+        #        zip,
+        #        pseudochrom=p_df.pseudochrom.tolist(),
+        #        human_gene=p_df.human_gene.tolist())))
