@@ -63,6 +63,7 @@ ruleorder:
 rule all:
     input:
         expand(config['lapa']['filt']['ind_gtf'],
+                        zip,
                         study=df.study.tolist(),
                         genotype=df.genotype.tolist(),
                         sex=df.sex.tolist(),
