@@ -557,6 +557,8 @@ use rule mkref_cat as mkref_annot with:
     output:
         out = config['ref']['pseudochrom']['gtf_merge']
 
+import pdb; pdb.set_trace()
+
 rule all_pseudochrom:
     input:
         expand(config['ref']['pseudochrom']['gtf_merge'],
