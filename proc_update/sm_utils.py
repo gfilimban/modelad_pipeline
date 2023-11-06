@@ -249,11 +249,11 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
     flowcell = temp.flowcell.tolist()
     cerberus_run = temp.cerberus_run.tolist()
     pseudochrom = temp.pseudochrom.tolist()
-    try:
-        mouse_gene = temp.mouse_gene.tolist()
-        human_gene = temp.human_gene.tolist()
-    except:
-        import pdb; pdb.set_trace()
+    # try:
+    mouse_gene = temp.mouse_gene.tolist()
+    human_gene = temp.human_gene.tolist()
+    # except:
+    #     import pdb; pdb.set_trace()
 
     # # pseudochrom stuff needs to be treated differently
     # pseudochrom = temp.pseudochrom.tolist()
