@@ -518,6 +518,7 @@ def refmt_mapped_transcript_gtf(wc, ifile, ofile):
         df.loc[df.Feature.isin(['transcript','exon']), 'transcript_status'] = 'KNOWN'
         df.loc[df.Feature=='exon', 'exon_status'] = 'KNOWN'
         df.gene_status = 'KNOWN'
+        gene = f'{species}_{gene}'
         df.gene_id = gene
         df.gene_name = gene
 
