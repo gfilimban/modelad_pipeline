@@ -175,6 +175,7 @@ def parse_config_file(fname,
     p_meta = pd.read_csv(p_meta_fname, sep='\t')
     p_meta.fillna('dummy', inplace=True)
     p_df = temp.merge(p_meta, on='pseudochrom')
+    import pdb; pdb.set_trace()
 
     return df, p_df
 
