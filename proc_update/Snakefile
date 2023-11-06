@@ -62,6 +62,13 @@ ruleorder:
 
 rule all:
     input:
+        expand(config['talon']['config'],
+                        zip,
+                        study=df.study.tolist(),
+                        genotype=df.genotype.tolist(),
+                        sex=df.sex.tolist(),
+                        age=df.age.tolist(),
+                        tissue=df.tissue.tolist()),
         expand(config['lapa']['filt']['ind_gtf'],
                         zip,
                         study=df.study.tolist(),
