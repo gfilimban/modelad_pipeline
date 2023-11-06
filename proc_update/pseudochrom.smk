@@ -503,20 +503,24 @@ def refmt_mapped_transcript_gtf(wc, ifile, ofile):
     elif 'human_gene' in list(wc.keys()):
         species = 'human'
         gene = wc['human_gene']
-    df = pr.read_gtf(ifile, rename_attr=True).df
 
-    keep_cols = ['Chromosome', 'Source', 'Feature', 'Start', 'End', 'Score', 'Strand',
-       'Frame', 'gene_id', 'gene_name', 'gene_status', 'source_attr',
-       'transcript_id', 'transcript_status', 'transcript_name', 'exon_number', 'exon_id',
-       'exon_status']
-    df = df[keep_cols]
+    if gene == 'dummy':
+        pathlib.Path(ofile).touch()
+    else:
+        df = pr.read_gtf(ifile, rename_attr=True).df
 
-    df.loc[df.Feature == 'transcript', 'transcript_status'] = 'KNOWN'
-    df.gene_status = 'KNOWN'
-    df.gene_id = gname
-    df.gene_name = gname
+        keep_cols = ['Chromosome', 'Source', 'Feature', 'Start', 'End', 'Score', 'Strand',
+           'Frame', 'gene_id', 'gene_name', 'gene_status', 'source_attr',
+           'transcript_id', 'transcript_status', 'transcript_name', 'exon_number', 'exon_id',
+           'exon_status']
+        df = df[keep_cols]
 
-    pr.PyRanges(df).to_gtf(ofile)
+        df.loc[df.Feature == 'transcript', 'transcript_status'] = 'KNOWN'
+        df.gene_status = 'KNOWN'
+        df.gene_id = gname
+        df.gene_name = gname
+
+        pr.PyRanges(df).to_gtf(ofile)
 
 rule talon_gtf_pseudochrom_refmt:
     resources:
