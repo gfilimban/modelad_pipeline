@@ -529,13 +529,13 @@ use rule talon_gtf_pseudochrom_refmt as talon_gtf_pseudochrom_refmt_human with:
     input:
         gtf = rules.talon_hgene_gtf.output.gtf
     output:
-        gtf = config['ref']['pseudochrom']['human_gene']['fmt']
+        gtf = config['ref']['pseudochrom']['human_gene']['fmt_gtf']
 
 use rule talon_gtf_pseudochrom_refmt as talon_gtf_pseudochrom_refmt_mouse with:
     input:
         gtf = rules.talon_mgene_gtf.output.gtf
     output:
-        gtf = config['ref']['pseudochrom']['gene']['fmt']
+        gtf = config['ref']['pseudochrom']['gene']['fmt_gtf']
 
 
 rule all_pseudochrom:
