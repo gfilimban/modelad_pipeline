@@ -557,13 +557,11 @@ use rule mkref_cat as mkref_annot with:
     output:
         out = config['ref']['pseudochrom']['gtf_merge']
 
-import pdb; pdb.set_trace()
-
 rule all_pseudochrom:
     input:
         expand(config['ref']['pseudochrom']['gtf_merge'],
                zip,
-               pseudochrom=p_df.pseudochrom.tolist())
+               genotype=p_df.genotype.unique().tolist())
         # list(set(expand(config['ref']['pseudochrom']['gene']['fmt_gtf'],
         #        zip,
         #        pseudochrom=p_df.pseudochrom.tolist(),
