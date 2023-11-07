@@ -599,6 +599,7 @@ use rule talon_init as talon_init_db with:
         max_5_dist = config['talon']['max_5_dist'],
         max_3_dist = config['talon']['max_3_dist']
 
+import pdb; pdb.set_trace()
 
 rule all_pseudochrom:
     input:
