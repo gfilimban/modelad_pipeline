@@ -5,8 +5,8 @@ import re
 import textwrap
 
 
-def get_gene_t_fastq(fa_file,
-                     gene,
+def get_gene_t_fastq(wc,
+                     fa_file,
                      ofile):
     """
     Get the fastq for the reference transcript associated with

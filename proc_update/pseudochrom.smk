@@ -223,7 +223,8 @@ rule mkref_human_gene_fq:
    output:
        fastq = config['ref']['pseudochrom']['human_gene']['fq']
    run:
-       get_gene_t_fastq(input.fa,
+       get_gene_t_fastq(wildcards,
+                        input.fa,
                         wildcards.human_gene,
                         output.fastq)
 
