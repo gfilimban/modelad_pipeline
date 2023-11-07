@@ -321,11 +321,11 @@ use rule lapa_call_ends as lapa_call_ends_run with:
         params:
             opref = config['lapa']['ends'].rsplit('/', maxsplit=1)[0]+'/',
             lapa_cmd = lambda wc:get_lapa_settings(wc,
-                                    df,
+                                    p_df,
                                     config['lapa']['ends'],
                                     'lapa_cmd'),
             lapa_end_temp = lambda wc:get_lapa_settings(wc,
-                                df,
+                                p_df,
                                 config['lapa']['ends'],
                                 'temp_file')
         output:
