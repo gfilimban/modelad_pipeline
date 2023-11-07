@@ -12,6 +12,18 @@ def get_gene_t_fastq(fa_file,
     Get the fastq for the reference transcript associated with
     "gene"
     """
+
+    if 'mouse_gene' in list(wc.keys()):
+        species = 'mouse'
+        gene = wc['mouse_gene']
+    elif 'human_gene' in list(wc.keys()):
+        species = 'human'
+        gene = wc['human_gene']
+
+    if gene == 'dummy':
+        pathlib.Path(ofile).touch()
+        return
+
     indexname = f'{ofile}.fai'
     fa = pyfaidx.Fasta(fa_file, indexname=indexname)
     t_keys = list(fa.keys())
@@ -143,3 +155,50 @@ def replace_seq(mod_fa,
     new_seq = seq.replace(replace_seq, mod_seq)
     assert len(new_seq) == new_len
     return new_seq
+
+def refmt_mapped_transcript_gtf(wc, locus_type, ifile, ofile):
+    """
+    Format a TALON gtf output from annotated transcripts mapped
+    onto pseudochromosomes in order to make them appear as known.
+    """
+    if 'mouse_gene' in list(wc.keys()):
+        species = 'mouse'
+        gene = wc['mouse_gene']
+    elif 'human_gene' in list(wc.keys()):
+        species = 'human'
+        gene = wc['human_gene']
+
+    new_gene = f'{species}_{gene}'
+
+    if gene == 'dummy':
+        pathlib.Path(ofile).touch()
+        return
+
+    # for whole chrom, extract all GTF entries from the corresponding gene
+    elif locus_type == 'human':
+        if species == 'human':
+            gtf_file = human_annot
+        elif species == 'mouse':
+            gtf_file = annot
+        df = pr.read_gtf(gtf_file).df
+        df = df.loc[df.gene_name == gene]
+
+    # for other cases, use the mapped transcript TALON output
+    else:
+        df = pr.read_gtf(ifile, rename_attr=True).df
+
+        keep_cols = ['Chromosome', 'Source', 'Feature', 'Start', 'End', 'Score', 'Strand',
+           'Frame', 'gene_id', 'gene_name', 'gene_status', 'source_attr',
+           'transcript_id', 'transcript_status', 'transcript_name', 'exon_number', 'exon_id',
+           'exon_status']
+        df = df[keep_cols]
+
+        df.loc[df.Feature.isin(['transcript','exon']), 'transcript_status'] = 'KNOWN'
+        df.loc[df.Feature=='exon', 'exon_status'] = 'KNOWN'
+        df.gene_status = 'KNOWN'
+
+    # assign these models new gene names and write to output
+    df.gene_id = new_gene
+    df.gene_name = new_gene
+
+    pr.PyRanges(df).to_gtf(ofile)
