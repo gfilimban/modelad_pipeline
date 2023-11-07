@@ -601,14 +601,24 @@ use rule talon_init as talon_init_db with:
 
 rule all_pseudochrom:
     input:
-        expand(rules.talon_gtf_pseudochrom_refmt_human.output.gtf,
+        expand(config['ref']['pseudochrom']['human_gene']['fq'],
                 zip,
                 pseudochrom=p_df.pseudochrom.tolist(),
                 human_gene=p_df.human_gene.tolist()),
-        expand(rules.talon_gtf_pseudochrom_refmt_mouse.output.gtf,
+        expand(config['ref']['pseudochrom']['gene']['fq'],
                 zip,
                 pseudochrom=p_df.pseudochrom.tolist(),
                 mouse_gene=p_df.mouse_gene.tolist()),
+
+
+        # expand(rules.talon_gtf_pseudochrom_refmt_human.output.gtf,
+        #         zip,
+        #         pseudochrom=p_df.pseudochrom.tolist(),
+        #         human_gene=p_df.human_gene.tolist()),
+        # expand(rules.talon_gtf_pseudochrom_refmt_mouse.output.gtf,
+        #         zip,
+        #         pseudochrom=p_df.pseudochrom.tolist(),
+        #         mouse_gene=p_df.mouse_gene.tolist()),
 
         # expand(rules.talon_init_db.output.db,
         #        zip,
