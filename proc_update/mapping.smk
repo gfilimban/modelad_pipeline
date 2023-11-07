@@ -18,7 +18,7 @@ rule map:
 # https://github.com/lh3/minimap2/issues/521
 rule map_pseudochrom:
   resources:
-    threads: 32,
+    threads = 32,
     mem_gb = 64
   shell:
     """
