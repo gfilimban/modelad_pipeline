@@ -548,7 +548,7 @@ use rule talon_gtf_pseudochrom_mouse as talon_mgene_gtf with:
 rule talon_gtf_pseudochrom_refmt:
     resources:
         threads = 1,
-        mem_gb = 4
+        mem_gb = 28
     run:
         refmt_mapped_transcript_gtf(wildcards,
                                     params.locus_type,
