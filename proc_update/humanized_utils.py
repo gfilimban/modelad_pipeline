@@ -205,5 +205,6 @@ def refmt_mapped_transcript_gtf(wc,
     # assign these models new gene names and write to output
     df.gene_id = new_gene
     df.gene_name = new_gene
+    df.Chromosome = wc['pseudochrom']
 
     pr.PyRanges(df).to_gtf(ofile)
