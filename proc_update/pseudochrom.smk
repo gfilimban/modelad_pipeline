@@ -283,8 +283,8 @@ rule mkref_mouse_gene_fq:
    output:
        fastq = config['ref']['pseudochrom']['gene']['fq']
    run:
-       get_gene_t_fastq(input.fa,
-                        wildcards.mouse_gene,
+       get_gene_t_fastq(wildcards,
+                        input.fa,
                         output.fastq)
 
 use rule map as map_reads_mgene with:
