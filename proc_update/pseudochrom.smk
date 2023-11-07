@@ -1,4 +1,3 @@
-import pathlib
 
 # make a fasta file concatenating the original reference and the
 # pseudochromosomes. also, just symlink the original reference
