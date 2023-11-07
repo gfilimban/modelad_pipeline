@@ -225,7 +225,6 @@ rule mkref_human_gene_fq:
    run:
        get_gene_t_fastq(wildcards,
                         input.fa,
-                        wildcards.human_gene,
                         output.fastq)
 
 use rule map as map_reads_hgene with:
