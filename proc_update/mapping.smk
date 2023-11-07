@@ -31,7 +31,7 @@ rule map_pseudochrom:
         -O4,24 \
         -E2,1 \
         -k10 \
-        -w8
+        -w8 \
     {input.ref_fa} {input.fastq} > {output.sam} 2> {output.log}
     """
 
