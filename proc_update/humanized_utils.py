@@ -12,7 +12,6 @@ def get_gene_t_fastq(wc,
     Get the fastq for the reference transcript associated with
     "gene"
     """
-    import pdb; pdb.set_trace()
     if 'mouse_gene' in list(wc.keys()):
         species = 'mouse'
         gene = wc['mouse_gene']
