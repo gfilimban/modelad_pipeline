@@ -302,13 +302,13 @@ use rule tc_mouse as tc_sam_mgene with:
       sam = rules.map_reads_mgene.output.sam,
       fa = config['ref']['pseudochrom']['fa']
   params:
+      locus_type = lambda wc: get_df_col(wc, p_df, 'locus_type'),
       path = config['tc']['path'],
       min_intron_size = config['tc']['min_intron_size'],
       opref = config['ref']['pseudochrom']['gene']['tc_sam'].rsplit('_clean.sam', maxsplit=1)[0]
   output:
       sam = temporary(config['ref']['pseudochrom']['gene']['tc_sam']),
       fa = temporary(config['ref']['pseudochrom']['gene']['tc_fa']),
-      locus_type = lambda wc: get_df_col(wc, p_df, 'locus_type'),
       sam_clean_log = temporary(config['ref']['pseudochrom']['gene']['tc_log']),
       sam_clean_te_log = temporary(config['ref']['pseudochrom']['gene']['te_log'])
 
