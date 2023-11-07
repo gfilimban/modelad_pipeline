@@ -64,7 +64,7 @@ ruleorder:
 
 rule all:
     input:
-        expand(rules.talon_gtf_run.output.gtf,
+        expand(config['talon']['gtf'],
                         zip,
                         study=df.study.tolist(),
                         genotype=df.genotype.tolist(),
