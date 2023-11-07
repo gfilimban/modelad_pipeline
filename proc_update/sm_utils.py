@@ -370,15 +370,25 @@ def get_first_cerb_entry(wc, df, cfg_entry):
 
     return file
 
-def get_prev_cerb_entry(wc, df, cfg_entry):
+def get_prev_cerb_entry(wc, df, cfg_entry, config):
     """
     Get the previous config entry run for Cerberus. Ensure that
     only one file meets these criteria.
     """
-    prev_wc = {'cerberus_run': str(int(wc['cerberus_run'])-1)}
-    file = get_cfg_entries(prev_wc, df, cfg_entry)
-    assert len(file) == 1
-    file = file[0]
+    prev_run = str(int(wc['cerberus_run'])-1)
+
+    # for first entry, we should be using the reference
+    # set of ends / ics
+    if prev_run == '0':
+        if 'end_mode' in wc.keys():
+            file = config['ref']['cerberus']['ends']
+        else:
+            file = config['ref']['cerberus']['ics']
+    else:
+        prev_wc = {'cerberus_run': prev_run}
+        file = get_cfg_entries(prev_wc, df, cfg_entry)
+        assert len(file) == 1
+        file = file[0]
 
     # add in the end mode if we have it
     if 'end_mode' in wc.keys():

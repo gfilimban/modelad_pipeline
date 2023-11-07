@@ -1,0 +1,256 @@
+Building DAG of jobs...
+Job stats:
+job                 count
+----------------  -------
+all                     1
+cerb_agg_ends_lr       25
+total                  26
+
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: ref/ca_tss.bed, data/cerberus/ad002/5xFADHEMI_M_18_months_CTX_1_tss.bed
+    output: data/cerberus/agg/ad002_5xFADHEMI_M_18_months_CTX_1_tss.bed
+    jobid: 25
+    reason: Missing output files: data/cerberus/agg/ad002_5xFADHEMI_M_18_months_CTX_1_tss.bed
+    wildcards: study=ad002, genotype=5xFADHEMI, sex=M, age=18_months, tissue=CTX, cerberus_run=1, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad002_5xFADHEMI_M_18_months_CTX_1_tss.bed, data/cerberus/ad002/5xFADWT_M_18_months_CTX_2_tss.bed
+    output: data/cerberus/agg/ad002_5xFADWT_M_18_months_CTX_2_tss.bed
+    jobid: 24
+    reason: Missing output files: data/cerberus/agg/ad002_5xFADWT_M_18_months_CTX_2_tss.bed; Input files updated by another job: data/cerberus/agg/ad002_5xFADHEMI_M_18_months_CTX_1_tss.bed
+    wildcards: study=ad002, genotype=5xFADWT, sex=M, age=18_months, tissue=CTX, cerberus_run=2, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad002_5xFADWT_M_18_months_CTX_2_tss.bed, data/cerberus/ad003/5xCLU-h2kbKI_HO_F_4_months_HC_3_tss.bed
+    output: data/cerberus/agg/ad003_5xCLU-h2kbKI_HO_F_4_months_HC_3_tss.bed
+    jobid: 23
+    reason: Missing output files: data/cerberus/agg/ad003_5xCLU-h2kbKI_HO_F_4_months_HC_3_tss.bed; Input files updated by another job: data/cerberus/agg/ad002_5xFADWT_M_18_months_CTX_2_tss.bed
+    wildcards: study=ad003, genotype=5xCLU-h2kbKI_HO, sex=F, age=4_months, tissue=HC, cerberus_run=3, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad003_5xCLU-h2kbKI_HO_F_4_months_HC_3_tss.bed, data/cerberus/ad003/5xFADHEMI_F_4_months_HC_4_tss.bed
+    output: data/cerberus/agg/ad003_5xFADHEMI_F_4_months_HC_4_tss.bed
+    jobid: 22
+    reason: Missing output files: data/cerberus/agg/ad003_5xFADHEMI_F_4_months_HC_4_tss.bed; Input files updated by another job: data/cerberus/agg/ad003_5xCLU-h2kbKI_HO_F_4_months_HC_3_tss.bed
+    wildcards: study=ad003, genotype=5xFADHEMI, sex=F, age=4_months, tissue=HC, cerberus_run=4, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad003_5xFADHEMI_F_4_months_HC_4_tss.bed, data/cerberus/ad003/5xFADWT_F_4_months_HC_5_tss.bed
+    output: data/cerberus/agg/ad003_5xFADWT_F_4_months_HC_5_tss.bed
+    jobid: 21
+    reason: Missing output files: data/cerberus/agg/ad003_5xFADWT_F_4_months_HC_5_tss.bed; Input files updated by another job: data/cerberus/agg/ad003_5xFADHEMI_F_4_months_HC_4_tss.bed
+    wildcards: study=ad003, genotype=5xFADWT, sex=F, age=4_months, tissue=HC, cerberus_run=5, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad003_5xFADWT_F_4_months_HC_5_tss.bed, data/cerberus/ad003/CLU-h2kbKI_HO_F_4_months_HC_6_tss.bed
+    output: data/cerberus/agg/ad003_CLU-h2kbKI_HO_F_4_months_HC_6_tss.bed
+    jobid: 20
+    reason: Missing output files: data/cerberus/agg/ad003_CLU-h2kbKI_HO_F_4_months_HC_6_tss.bed; Input files updated by another job: data/cerberus/agg/ad003_5xFADWT_F_4_months_HC_5_tss.bed
+    wildcards: study=ad003, genotype=CLU-h2kbKI_HO, sex=F, age=4_months, tissue=HC, cerberus_run=6, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad003_CLU-h2kbKI_HO_F_4_months_HC_6_tss.bed, data/cerberus/ad004/hTREM2-R47HKI_HET_F_10_weeks_HC_7_tss.bed
+    output: data/cerberus/agg/ad004_hTREM2-R47HKI_HET_F_10_weeks_HC_7_tss.bed
+    jobid: 19
+    reason: Missing output files: data/cerberus/agg/ad004_hTREM2-R47HKI_HET_F_10_weeks_HC_7_tss.bed; Input files updated by another job: data/cerberus/agg/ad003_CLU-h2kbKI_HO_F_4_months_HC_6_tss.bed
+    wildcards: study=ad004, genotype=hTREM2-R47HKI_HET, sex=F, age=10_weeks, tissue=HC, cerberus_run=7, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad004_hTREM2-R47HKI_HET_F_10_weeks_HC_7_tss.bed, data/cerberus/ad004/hTREM2-R47HKI_HET_F_8_weeks_HC_8_tss.bed
+    output: data/cerberus/agg/ad004_hTREM2-R47HKI_HET_F_8_weeks_HC_8_tss.bed
+    jobid: 18
+    reason: Missing output files: data/cerberus/agg/ad004_hTREM2-R47HKI_HET_F_8_weeks_HC_8_tss.bed; Input files updated by another job: data/cerberus/agg/ad004_hTREM2-R47HKI_HET_F_10_weeks_HC_7_tss.bed
+    wildcards: study=ad004, genotype=hTREM2-R47HKI_HET, sex=F, age=8_weeks, tissue=HC, cerberus_run=8, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad004_hTREM2-R47HKI_HET_F_8_weeks_HC_8_tss.bed, data/cerberus/ad004/hTREM2-R47HKI_HET_M_10_weeks_HC_9_tss.bed
+    output: data/cerberus/agg/ad004_hTREM2-R47HKI_HET_M_10_weeks_HC_9_tss.bed
+    jobid: 17
+    reason: Missing output files: data/cerberus/agg/ad004_hTREM2-R47HKI_HET_M_10_weeks_HC_9_tss.bed; Input files updated by another job: data/cerberus/agg/ad004_hTREM2-R47HKI_HET_F_8_weeks_HC_8_tss.bed
+    wildcards: study=ad004, genotype=hTREM2-R47HKI_HET, sex=M, age=10_weeks, tissue=HC, cerberus_run=9, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad004_hTREM2-R47HKI_HET_M_10_weeks_HC_9_tss.bed, data/cerberus/ad004/hTREM2-R47HKI_HET_M_8_weeks_HC_10_tss.bed
+    output: data/cerberus/agg/ad004_hTREM2-R47HKI_HET_M_8_weeks_HC_10_tss.bed
+    jobid: 16
+    reason: Missing output files: data/cerberus/agg/ad004_hTREM2-R47HKI_HET_M_8_weeks_HC_10_tss.bed; Input files updated by another job: data/cerberus/agg/ad004_hTREM2-R47HKI_HET_M_10_weeks_HC_9_tss.bed
+    wildcards: study=ad004, genotype=hTREM2-R47HKI_HET, sex=M, age=8_weeks, tissue=HC, cerberus_run=10, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad004_hTREM2-R47HKI_HET_M_8_weeks_HC_10_tss.bed, data/cerberus/ad004/hTREM2_KI_HET_F_8_weeks_HC_11_tss.bed
+    output: data/cerberus/agg/ad004_hTREM2_KI_HET_F_8_weeks_HC_11_tss.bed
+    jobid: 15
+    reason: Missing output files: data/cerberus/agg/ad004_hTREM2_KI_HET_F_8_weeks_HC_11_tss.bed; Input files updated by another job: data/cerberus/agg/ad004_hTREM2-R47HKI_HET_M_8_weeks_HC_10_tss.bed
+    wildcards: study=ad004, genotype=hTREM2_KI_HET, sex=F, age=8_weeks, tissue=HC, cerberus_run=11, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad004_hTREM2_KI_HET_F_8_weeks_HC_11_tss.bed, data/cerberus/ad004/hTREM2_KI_HET_M_8_weeks_HC_12_tss.bed
+    output: data/cerberus/agg/ad004_hTREM2_KI_HET_M_8_weeks_HC_12_tss.bed
+    jobid: 14
+    reason: Missing output files: data/cerberus/agg/ad004_hTREM2_KI_HET_M_8_weeks_HC_12_tss.bed; Input files updated by another job: data/cerberus/agg/ad004_hTREM2_KI_HET_F_8_weeks_HC_11_tss.bed
+    wildcards: study=ad004, genotype=hTREM2_KI_HET, sex=M, age=8_weeks, tissue=HC, cerberus_run=12, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad004_hTREM2_KI_HET_M_8_weeks_HC_12_tss.bed, data/cerberus/ad004/hTREM2_KI_WT_F_8_weeks_HC_13_tss.bed
+    output: data/cerberus/agg/ad004_hTREM2_KI_WT_F_8_weeks_HC_13_tss.bed
+    jobid: 13
+    reason: Missing output files: data/cerberus/agg/ad004_hTREM2_KI_WT_F_8_weeks_HC_13_tss.bed; Input files updated by another job: data/cerberus/agg/ad004_hTREM2_KI_HET_M_8_weeks_HC_12_tss.bed
+    wildcards: study=ad004, genotype=hTREM2_KI_WT, sex=F, age=8_weeks, tissue=HC, cerberus_run=13, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad004_hTREM2_KI_WT_F_8_weeks_HC_13_tss.bed, data/cerberus/ad004/hTREM2_KI_WT_M_8_weeks_HC_14_tss.bed
+    output: data/cerberus/agg/ad004_hTREM2_KI_WT_M_8_weeks_HC_14_tss.bed
+    jobid: 12
+    reason: Missing output files: data/cerberus/agg/ad004_hTREM2_KI_WT_M_8_weeks_HC_14_tss.bed; Input files updated by another job: data/cerberus/agg/ad004_hTREM2_KI_WT_F_8_weeks_HC_13_tss.bed
+    wildcards: study=ad004, genotype=hTREM2_KI_WT, sex=M, age=8_weeks, tissue=HC, cerberus_run=14, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad004_hTREM2_KI_WT_M_8_weeks_HC_14_tss.bed, data/cerberus/ad005/5xBIN1_HO_F_4_months_HC_15_tss.bed
+    output: data/cerberus/agg/ad005_5xBIN1_HO_F_4_months_HC_15_tss.bed
+    jobid: 11
+    reason: Missing output files: data/cerberus/agg/ad005_5xBIN1_HO_F_4_months_HC_15_tss.bed; Input files updated by another job: data/cerberus/agg/ad004_hTREM2_KI_WT_M_8_weeks_HC_14_tss.bed
+    wildcards: study=ad005, genotype=5xBIN1_HO, sex=F, age=4_months, tissue=HC, cerberus_run=15, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad005_5xBIN1_HO_F_4_months_HC_15_tss.bed, data/cerberus/ad005/BIN1_HO_F_4_months_HC_16_tss.bed
+    output: data/cerberus/agg/ad005_BIN1_HO_F_4_months_HC_16_tss.bed
+    jobid: 10
+    reason: Missing output files: data/cerberus/agg/ad005_BIN1_HO_F_4_months_HC_16_tss.bed; Input files updated by another job: data/cerberus/agg/ad005_5xBIN1_HO_F_4_months_HC_15_tss.bed
+    wildcards: study=ad005, genotype=BIN1_HO, sex=F, age=4_months, tissue=HC, cerberus_run=16, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad005_BIN1_HO_F_4_months_HC_16_tss.bed, data/cerberus/ad006/C57B6J_F_8_weeks_HC_17_tss.bed
+    output: data/cerberus/agg/ad006_C57B6J_F_8_weeks_HC_17_tss.bed
+    jobid: 9
+    reason: Missing output files: data/cerberus/agg/ad006_C57B6J_F_8_weeks_HC_17_tss.bed; Input files updated by another job: data/cerberus/agg/ad005_BIN1_HO_F_4_months_HC_16_tss.bed
+    wildcards: study=ad006, genotype=C57B6J, sex=F, age=8_weeks, tissue=HC, cerberus_run=17, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad006_C57B6J_F_8_weeks_HC_17_tss.bed, data/cerberus/ad006/C57B6J_M_8_weeks_HC_18_tss.bed
+    output: data/cerberus/agg/ad006_C57B6J_M_8_weeks_HC_18_tss.bed
+    jobid: 8
+    reason: Missing output files: data/cerberus/agg/ad006_C57B6J_M_8_weeks_HC_18_tss.bed; Input files updated by another job: data/cerberus/agg/ad006_C57B6J_F_8_weeks_HC_17_tss.bed
+    wildcards: study=ad006, genotype=C57B6J, sex=M, age=8_weeks, tissue=HC, cerberus_run=18, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad006_C57B6J_M_8_weeks_HC_18_tss.bed, data/cerberus/ad006/hABKI_SWE_F_8_weeks_HC_19_tss.bed
+    output: data/cerberus/agg/ad006_hABKI_SWE_F_8_weeks_HC_19_tss.bed
+    jobid: 7
+    reason: Missing output files: data/cerberus/agg/ad006_hABKI_SWE_F_8_weeks_HC_19_tss.bed; Input files updated by another job: data/cerberus/agg/ad006_C57B6J_M_8_weeks_HC_18_tss.bed
+    wildcards: study=ad006, genotype=hABKI_SWE, sex=F, age=8_weeks, tissue=HC, cerberus_run=19, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad006_hABKI_SWE_F_8_weeks_HC_19_tss.bed, data/cerberus/ad006/hABKI_SWE_M_8_weeks_HC_20_tss.bed
+    output: data/cerberus/agg/ad006_hABKI_SWE_M_8_weeks_HC_20_tss.bed
+    jobid: 6
+    reason: Missing output files: data/cerberus/agg/ad006_hABKI_SWE_M_8_weeks_HC_20_tss.bed; Input files updated by another job: data/cerberus/agg/ad006_hABKI_SWE_F_8_weeks_HC_19_tss.bed
+    wildcards: study=ad006, genotype=hABKI_SWE, sex=M, age=8_weeks, tissue=HC, cerberus_run=20, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad006_hABKI_SWE_M_8_weeks_HC_20_tss.bed, data/cerberus/ad007/ABCA7_HO_F_4_months_HC_21_tss.bed
+    output: data/cerberus/agg/ad007_ABCA7_HO_F_4_months_HC_21_tss.bed
+    jobid: 5
+    reason: Missing output files: data/cerberus/agg/ad007_ABCA7_HO_F_4_months_HC_21_tss.bed; Input files updated by another job: data/cerberus/agg/ad006_hABKI_SWE_M_8_weeks_HC_20_tss.bed
+    wildcards: study=ad007, genotype=ABCA7_HO, sex=F, age=4_months, tissue=HC, cerberus_run=21, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad007_ABCA7_HO_F_4_months_HC_21_tss.bed, data/cerberus/ad008/hABKI_Swe_IB_HET_F_8_weeks_HC_22_tss.bed
+    output: data/cerberus/agg/ad008_hABKI_Swe_IB_HET_F_8_weeks_HC_22_tss.bed
+    jobid: 4
+    reason: Missing output files: data/cerberus/agg/ad008_hABKI_Swe_IB_HET_F_8_weeks_HC_22_tss.bed; Input files updated by another job: data/cerberus/agg/ad007_ABCA7_HO_F_4_months_HC_21_tss.bed
+    wildcards: study=ad008, genotype=hABKI_Swe_IB_HET, sex=F, age=8_weeks, tissue=HC, cerberus_run=22, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad008_hABKI_Swe_IB_HET_F_8_weeks_HC_22_tss.bed, data/cerberus/ad008/hABKI_Swe_IB_HET_M_8_weeks_HC_23_tss.bed
+    output: data/cerberus/agg/ad008_hABKI_Swe_IB_HET_M_8_weeks_HC_23_tss.bed
+    jobid: 3
+    reason: Missing output files: data/cerberus/agg/ad008_hABKI_Swe_IB_HET_M_8_weeks_HC_23_tss.bed; Input files updated by another job: data/cerberus/agg/ad008_hABKI_Swe_IB_HET_F_8_weeks_HC_22_tss.bed
+    wildcards: study=ad008, genotype=hABKI_Swe_IB_HET, sex=M, age=8_weeks, tissue=HC, cerberus_run=23, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad008_hABKI_Swe_IB_HET_M_8_weeks_HC_23_tss.bed, data/cerberus/ad008/hABKI_Swe_IB_WT_F_8_weeks_HC_24_tss.bed
+    output: data/cerberus/agg/ad008_hABKI_Swe_IB_WT_F_8_weeks_HC_24_tss.bed
+    jobid: 2
+    reason: Missing output files: data/cerberus/agg/ad008_hABKI_Swe_IB_WT_F_8_weeks_HC_24_tss.bed; Input files updated by another job: data/cerberus/agg/ad008_hABKI_Swe_IB_HET_M_8_weeks_HC_23_tss.bed
+    wildcards: study=ad008, genotype=hABKI_Swe_IB_WT, sex=F, age=8_weeks, tissue=HC, cerberus_run=24, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+rule cerb_agg_ends_lr:
+    input: data/cerberus/agg/ad008_hABKI_Swe_IB_WT_F_8_weeks_HC_24_tss.bed, data/cerberus/ad008/hABKI_Swe_IB_WT_M_8_weeks_HC_25_tss.bed
+    output: data/cerberus/agg/ad008_hABKI_Swe_IB_WT_M_8_weeks_HC_25_tss.bed
+    jobid: 1
+    reason: Missing output files: data/cerberus/agg/ad008_hABKI_Swe_IB_WT_M_8_weeks_HC_25_tss.bed; Input files updated by another job: data/cerberus/agg/ad008_hABKI_Swe_IB_WT_F_8_weeks_HC_24_tss.bed
+    wildcards: study=ad008, genotype=hABKI_Swe_IB_WT, sex=M, age=8_weeks, tissue=HC, cerberus_run=25, end_mode=tss
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T, threads=4, mem_gb=64
+
+[Tue Nov  7 14:48:39 2023]
+localrule all:
+    input: data/cerberus/agg/ad008_hABKI_Swe_IB_WT_M_8_weeks_HC_25_tss.bed, data/cerberus/agg/ad008_hABKI_Swe_IB_WT_M_8_weeks_HC_25_tss.bed, data/cerberus/agg/ad008_hABKI_Swe_IB_WT_M_8_weeks_HC_25_tss.bed
+    jobid: 0
+    reason: Input files updated by another job: data/cerberus/agg/ad008_hABKI_Swe_IB_WT_M_8_weeks_HC_25_tss.bed
+    resources: tmpdir=/var/folders/ch/bc1lrgbd1fn_3gxz886mxjz00000gn/T
+
+Job stats:
+job                 count
+----------------  -------
+all                     1
+cerb_agg_ends_lr       25
+total                  26
+
+Reasons:
+    (check individual jobs above for details)
+    input files updated by another job:
+        all, cerb_agg_ends_lr
+    missing output files:
+        cerb_agg_ends_lr
+
+This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.
