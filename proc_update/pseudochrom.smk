@@ -226,14 +226,22 @@ rule mkref_human_gene_fq:
                         input.fa,
                         output.fastq)
 
-use rule map as map_reads_hgene with:
+use rule map_pseudochrom as map_reads_hgene with:
     input:
         fastq = config['ref']['pseudochrom']['human_gene']['fq'],
-        ref_fa = config['ref']['pseudochrom']['fa'],
-        sjs = config['ref']['sjs']
+        ref_fa = config['ref']['pseudochrom']['fa']
     output:
         sam = temporary(config['ref']['pseudochrom']['human_gene']['sam']),
         log = config['ref']['pseudochrom']['human_gene']['log']
+
+# use rule map as map_reads_hgene with:
+#     input:
+#         fastq = config['ref']['pseudochrom']['human_gene']['fq'],
+#         ref_fa = config['ref']['pseudochrom']['fa'],
+#         sjs = config['ref']['sjs']
+#     output:
+#         sam = temporary(config['ref']['pseudochrom']['human_gene']['sam']),
+#         log = config['ref']['pseudochrom']['human_gene']['log']
 
 use rule tc_human as tc_sam_hgene with:
     input:
@@ -287,14 +295,22 @@ rule mkref_mouse_gene_fq:
                         input.fa,
                         output.fastq)
 
-use rule map as map_reads_mgene with:
+use rule map_pseudochrom as map_reads_mgene with:
   input:
       fastq = config['ref']['pseudochrom']['gene']['fq'],
-      ref_fa = config['ref']['pseudochrom']['fa'],
-      sjs = config['ref']['sjs']
+      ref_fa = config['ref']['pseudochrom']['fa']
   output:
       sam = config['ref']['pseudochrom']['gene']['sam'],
       log = config['ref']['pseudochrom']['gene']['log']
+
+# use rule map as map_reads_mgene with:
+#   input:
+#       fastq = config['ref']['pseudochrom']['gene']['fq'],
+#       ref_fa = config['ref']['pseudochrom']['fa'],
+#       sjs = config['ref']['sjs']
+#   output:
+#       sam = config['ref']['pseudochrom']['gene']['sam'],
+#       log = config['ref']['pseudochrom']['gene']['log']
 
 use rule tc_mouse as tc_sam_mgene with:
   input:
