@@ -156,7 +156,12 @@ def replace_seq(mod_fa,
     assert len(new_seq) == new_len
     return new_seq
 
-def refmt_mapped_transcript_gtf(wc, locus_type, ifile, ofile):
+def refmt_mapped_transcript_gtf(wc,
+                                locus_type,
+                                annot,
+                                human_annot,
+                                ifile,
+                                ofile):
     """
     Format a TALON gtf output from annotated transcripts mapped
     onto pseudochromosomes in order to make them appear as known.

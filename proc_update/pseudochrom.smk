@@ -552,12 +552,16 @@ rule talon_gtf_pseudochrom_refmt:
     run:
         refmt_mapped_transcript_gtf(wildcards,
                                     params.locus_type,
+                                    input.mouse_annot,
+                                    input.human_annot,
                                     input.gtf,
                                     output.gtf)
 
 use rule talon_gtf_pseudochrom_refmt as talon_gtf_pseudochrom_refmt_human with:
     input:
-        gtf = rules.talon_hgene_gtf.output.gtf
+        gtf = rules.talon_hgene_gtf.output.gtf,
+        mouse_annot = config['ref']['gtf'],
+        human_annot = config['human_ref']['gtf']
     params:
         locus_type = lambda wc: get_df_col(wc, p_df, 'locus_type'),
     output:
@@ -565,7 +569,9 @@ use rule talon_gtf_pseudochrom_refmt as talon_gtf_pseudochrom_refmt_human with:
 
 use rule talon_gtf_pseudochrom_refmt as talon_gtf_pseudochrom_refmt_mouse with:
     input:
-        gtf = rules.talon_mgene_gtf.output.gtf
+        gtf = rules.talon_mgene_gtf.output.gtf,
+        mouse_annot = config['ref']['gtf'],
+        human_annot = config['human_ref']['gtf']
     params:
         locus_type = lambda wc: get_df_col(wc, p_df, 'locus_type'),
     output:
