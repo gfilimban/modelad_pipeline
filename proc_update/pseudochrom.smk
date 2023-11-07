@@ -603,12 +603,12 @@ rule all_pseudochrom:
     input:
         expand(config['ref']['pseudochrom']['human_gene']['fq'],
                 zip,
-                pseudochrom=p_df.pseudochrom.tolist(),
-                human_gene=p_df.human_gene.tolist()),
-        expand(config['ref']['pseudochrom']['gene']['fq'],
-                zip,
-                pseudochrom=p_df.pseudochrom.tolist(),
-                mouse_gene=p_df.mouse_gene.tolist()),
+                pseudochrom=p_df.pseudochrom.tolist()[0],
+                human_gene=p_df.human_gene.tolist()[0]),
+        # expand(config['ref']['pseudochrom']['gene']['fq'],
+        #         zip,
+        #         pseudochrom=p_df.pseudochrom.tolist(),
+        #         mouse_gene=p_df.mouse_gene.tolist()),
 
 
         # expand(rules.talon_gtf_pseudochrom_refmt_human.output.gtf,
