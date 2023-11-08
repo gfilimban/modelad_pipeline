@@ -601,6 +601,13 @@ rule mkref_pseudochrom_annot:
         mouse_gtf = lambda wc: get_cfg_entries(wc,
                     p_df,
                     config['ref']['pseudochrom']['gene']['fmt_gtf'])[0]
+    params:
+        mouse_gene = get_df_col(wc,
+                                p_df,
+                                'mouse_gene'),
+        human_gene = get_df_col(wc,
+                                p_df,
+                                'human_gene')
     resources:
         mem_gb = 16,
         threads = 1
@@ -609,7 +616,9 @@ rule mkref_pseudochrom_annot:
     run:
         merge_sort_human_mouse_pseudochrom_gtfs(wildcards,
                                             input.mouse_gtf,
+                                            params.mouse_gene,
                                             input.human_gtf,
+                                            params.human_gene,
                                             output.gtf)
 
 use rule mkref_cat as mkref_annot with:
