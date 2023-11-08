@@ -41,12 +41,12 @@ def merge_sort_human_mouse_pseudochrom_gtfs(wc,
         df.loc[df.Feature=='gene', 'Start'] = gene_start
         df.loc[df.Feature=='gene', 'End'] = gene_end
 
-    # sort gtf with cerberus sort functionality
-    df_sorted = cerberus.sort_gtf(df)
+        # sort gtf with cerberus sort functionality
+        df = cerberus.sort_gtf(df)
 
     # output
-    df_sorted = pr.PyRanges(df_sorted)
-    df_sorted.to_gtf(ofile)
+    df = pr.PyRanges(df)
+    df.to_gtf(ofile)
 
 def get_gene_t_fastq(wc,
                      fa_file,
