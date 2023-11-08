@@ -76,23 +76,26 @@ ruleorder:
 
 rule all:
     input:
-        expand(config['lapa']['filt']['ind_gtf'],
-                        zip,
-                        study=df.study.tolist(),
-                        genotype=df.genotype.tolist(),
-                        sex=df.sex.tolist(),
-                        age=df.age.tolist(),
-                        tissue=df.tissue.tolist()),
-        expand(expand(config['merge']['bw'],
-                        zip,
-                        study=df.study.tolist(),
-                        genotype=df.genotype.tolist(),
-                        sex=df.sex.tolist(),
-                        age=df.age.tolist(),
-                        tissue=df.tissue.tolist(),
-                        biorep_num=df.biorep_num.tolist(),
-                        allow_missing=True),
-                        strand=['fwd', 'rev'])
+        rules.all_pseudochrom.input
+        # expand(config['lapa']['filt']['ind_gtf'],
+        #                 zip,
+        #                 study=df.study.tolist(),
+        #                 genotype=df.genotype.tolist(),
+        #                 sex=df.sex.tolist(),
+        #                 age=df.age.tolist(),
+        #                 tissue=df.tissue.tolist()),
+        # expand(expand(config['merge']['bw'],
+        #                 zip,
+        #                 study=df.study.tolist(),
+        #                 genotype=df.genotype.tolist(),
+        #                 sex=df.sex.tolist(),
+        #                 age=df.age.tolist(),
+        #                 tissue=df.tissue.tolist(),
+        #                 biorep_num=df.biorep_num.tolist(),
+        #                 allow_missing=True),
+        #                 strand=['fwd', 'rev'])
+
+
         # expand(config['cerberus']['ab'],
         #        zip,
         #        study=df.study.tolist(),
@@ -120,7 +123,7 @@ rule all:
         #                 age=df.age.tolist(),
         #                 tissue=df.tissue.tolist()),
 
-        # rules.all_pseudochrom.input
+
 
 
         # expand(config['talon']['config'],
