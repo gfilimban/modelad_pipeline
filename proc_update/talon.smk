@@ -85,6 +85,7 @@ rule talon_filter:
             --maxFracA {params.max_frac_a}\
             --minCount {params.min_count} \
             --minDatasets {params.min_datasets} \
+            --filter_known \
             --o {output.pass_list}
 		"""
 

@@ -436,7 +436,7 @@ def mk_pseudochrom_mapped_gene_talon_config(wc,
                                  p_df,
                                  cfg_entry,
                                  return_df=True)
-          temp = temp[['sample', 'dataset', 'platform', 'file']]
+          temp = temp[['dataset', 'sample', 'platform', 'file']]
           temp['sample'] = gene
           temp['dataset'] = gene
           temp.to_csv(ofile, index=False, header=None, sep=',')

@@ -146,6 +146,7 @@ talon:
 
   config: data/talon/{study}/{genotype}_{sex}_{age}_{tissue}_config.csv
   db: data/talon/{study}/{genotype}_{sex}_{age}_{tissue}_talon.db
+  temp_dir: data/talon/{study}/{genotype}_{sex}_{age}_{tissue}_temp/
   annot: data/talon/{study}/{genotype}_{sex}_{age}_{tissue}_talon_read_annot.tsv
   pass_list: data/talon/{study}/{genotype}_{sex}_{age}_{tissue}_pass_list.csv
   ab: data/talon/{study}/{genotype}_{sex}_{age}_{tissue}_unfilt_talon_abundance.tsv
@@ -186,6 +187,7 @@ cerberus:
     agg_slack: 20
   ics: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_ic.tsv
   ends: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_{end_mode}.bed
+
   ca: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}.h5
   ca_annot: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_annot.h5
   gtf: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}.gtf
