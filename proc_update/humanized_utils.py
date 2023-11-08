@@ -27,8 +27,9 @@ def merge_sort_human_mouse_pseudochrom_gtfs(wc,
     else:
         h_df = pr.read_gtf(human_gtf).df
 
-
-
+    if mouse_gene == 'dummy' and human_gene == 'dummy':
+        pathlib.Path(ofile).touch()
+        return
 
     # concat and update the ends of the gene entry accordingly
     df = pd.concat([m_df, h_df], ignore_index=True, axis=0)
