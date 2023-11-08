@@ -17,14 +17,16 @@ configfile: 'config.yml'
 # config_tsv = 'test_local_config.tsv'
 # config_tsv = '231102_config_ad003.tsv'
 # config_tsv = '231106_config_ad008.tsv'
+
+# running stuff "from fastqs" loocally for cerberus testing
 # config_tsv = '231102_config_ad003_local.tsv'
 
 # running stuff locaclly for cerberus testing
-config_tsv = '231027_config.tsv'
+# config_tsv = '231027_config.tsv'
 
 
 # trying to run pseudochrom stuff on HPC
-# config_tsv = '231106_config_ad008_ad003.tsv'
+config_tsv = '231106_config_ad008_ad003.tsv'
 
 
 p_meta_tsv = 'pseudochromosome_metadata.tsv'
@@ -69,21 +71,40 @@ ruleorder:
     # cerb_agg_ics_first > cerb_agg_ics_seq > cerb_agg_ends_first > cerb_agg_ends_seq
 
 # max_cerb = df.loc[df.cerberus_run.astype(int)==df.cerberus_run.astype(int).max(axis=0)]
-max_cerb = df.loc[df.cerberus_run.astype(int)==2]
+# max_cerb = df.loc[df.cerberus_run.astype(int)==3]
 
 
 rule all:
     input:
-        expand(expand(config['cerberus']['agg']['ends'],
-               zip,
-               study=max_cerb.study.tolist(),
-               genotype=max_cerb.genotype.tolist(),
-               sex=max_cerb.sex.tolist(),
-               age=max_cerb.age.tolist(),
-               tissue=max_cerb.tissue.tolist(),
-               cerberus_run=max_cerb.cerberus_run.tolist(),
-               allow_missing=True),
-               end_mode='tss')
+        expand(expand(config['merge']['bw'],
+                        zip,
+                        study=df.study.tolist(),
+                        genotype=df.genotype.tolist(),
+                        sex=df.sex.tolist(),
+                        age=df.age.tolist(),
+                        tissue=df.tissue.tolist(),
+                        biorep_num=df.biorep_num.tolist(),
+                        allow_missing=True),
+                        strand=['fwd', 'rev'])
+        # expand(config['cerberus']['ab'],
+        #        zip,
+        #        study=df.study.tolist(),
+        #        genotype=df.genotype.tolist(),
+        #        sex=df.sex.tolist(),
+        #        age=df.age.tolist(),
+        #        tissue=df.tissue.tolist(),
+        #        cerberus_run=df.cerberus_run.tolist())
+
+        # expand(expand(config['cerberus']['agg']['ends'],
+        #        zip,
+        #        study=max_cerb.study.tolist(),
+        #        genotype=max_cerb.genotype.tolist(),
+        #        sex=max_cerb.sex.tolist(),
+        #        age=max_cerb.age.tolist(),
+        #        tissue=max_cerb.tissue.tolist(),
+        #        cerberus_run=max_cerb.cerberus_run.tolist(),
+        #        allow_missing=True),
+        #        end_mode='tss')
         # expand(config['talon']['gtf'],
         #                 zip,
         #                 study=df.study.tolist(),
@@ -91,16 +112,7 @@ rule all:
         #                 sex=df.sex.tolist(),
         #                 age=df.age.tolist(),
         #                 tissue=df.tissue.tolist()),
-        # expand(expand(config['merge']['bw'],
-        #                 zip,
-        #                 study=df.study.tolist(),
-        #                 genotype=df.genotype.tolist(),
-        #                 sex=df.sex.tolist(),
-        #                 age=df.age.tolist(),
-        #                 tissue=df.tissue.tolist(),
-        #                 biorep_num=df.biorep_num.tolist(),
-        #                 allow_missing=True),
-        #                 strand=['fwd', 'rev'])
+
 
             # expand(config['lapa']['filt']['ind_gtf'],
             #                 zip,
@@ -452,7 +464,19 @@ use rule cerb_agg_ends as cerb_agg_ends_lr with:
     output:
         ends = config['cerberus']['agg']['ends']
 
-use rule cerb_write_ref as cerb_write_ref_run with:
+use rule cerberus_agg_ics as cerb_agg_ics_lr with:
+    input:
+        ref_ics = lambda wc: get_prev_cerb_entry(wc, p_df,
+                                                  config['cerberus']['agg']['ics'],
+                                                  config),
+        ics = config['cerberus']['ics']
+    params:
+        ref = False,
+        sources = lambda wc:['cerberus', get_df_col(wc, df, 'source')]
+    output:
+        ics = config['cerberus']['agg']['ics']
+
+use rule cerb_write_ref as cerb_write_ref_lr with:
     input:
         ic = config['cerberus']['agg']['ics'],
         tss = lambda wc:expand(get_cfg_entries(wc,

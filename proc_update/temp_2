@@ -1,7 +1,0 @@
-Building DAG of jobs...
-MissingInputException in rule map_reads in file /Users/fairliereese/Documents/programming/mortazavi_lab/bin/modelad_pipeline/proc_update/Snakefile, line 173:
-Missing input files for rule map_reads:
-    output: data/minimap2/ad002/5xFADHEMI_M_18_months_CTX_1_1.sam, data/minimap2/ad002/5xFADHEMI_M_18_months_CTX_1_1_minimap.log
-    wildcards: study=ad002, genotype=5xFADHEMI, sex=M, age=18_months, tissue=CTX, biorep_num=1, flowcell=1
-    affected files:
-        /share/crsp/lab/seyedam/share/ad_nanopore_tmp/AD002/ad002_trimfastq/ad002_10725_lig-blk_2_t1.fastq.gz

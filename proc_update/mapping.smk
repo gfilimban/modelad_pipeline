@@ -16,6 +16,7 @@ rule map:
      """
 
 # https://github.com/lh3/minimap2/issues/521
+# these settings did not improve anything
 rule map_pseudochrom:
   resources:
     threads = 32,
@@ -26,13 +27,8 @@ rule map_pseudochrom:
     minimap2 --MD \
         -t {resources.threads} \
         -ax splice \
-        -A2 \
-        -B1 \
-        -O4,24 \
-        -E2,1 \
-        -k10 \
-        -w8 \
-    {input.ref_fa} {input.fastq} > {output.sam} 2> {output.log}
+        -k14 \
+        {input.ref_fa} {input.fastq} > {output.sam} 2> {output.log}
     """
 
 rule rev_alignment:
