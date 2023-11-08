@@ -15,8 +15,18 @@ def merge_sort_human_mouse_pseudochrom_gtfs(wc,
     so they come from the same "gene". 
     """
     
-    m_df = pr.read_gtf(mouse_gtf).df
-    h_df = pr.read_gtf(human_gtf).df
+    if wc.mouse_gene == 'dummy':
+        m_df = pd.DataFrame()
+    else:
+        m_df = pr.read_gtf(mouse_gtf).df
+    
+    if wc.human_gene == 'dummy':
+        h_df = pd.DataFrame()
+    else:
+        h_df = pr.read_gtf(human_gtf).df
+        
+
+        
     
     # concat and update the ends of the gene entry accordingly
     df = pd.concat([m_df, h_df], ignore_index=True, axis=0)
