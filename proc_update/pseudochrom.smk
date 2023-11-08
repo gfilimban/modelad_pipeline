@@ -593,15 +593,37 @@ use rule talon_gtf_pseudochrom_refmt as talon_gtf_pseudochrom_refmt_mouse with:
     output:
         gtf = config['ref']['pseudochrom']['gene']['fmt_gtf']
 
+rule mkref_pseudochrom_annot:
+    input:
+        human_gtf = lambda wc: get_cfg_entries(wc,
+                    p_df,
+                    config['ref']['pseudochrom']['human_gene']['fmt_gtf']),
+        mouse_gtf = lambda wc: get_cfg_entries(wc,
+                    p_df,
+                    config['ref']['pseudochrom']['gene']['fmt_gtf'])
+    resources:
+        mem_gb = 16,
+        threads = 1
+    output:
+        gtf = config['ref']['pseudochrom']['gtf']
+    run:
+        merge_sort_human_mouse_pseudochrom_gtfs(wildcards,
+                                            input.mouse_gtf,
+                                            input.human_gtf,
+                                            output.gtf)
+
 use rule mkref_cat as mkref_annot with:
     input:
         ref = config['ref']['gtf'],
         files = lambda wc: get_cfg_entries(wc,
-                    p_df,
-                    config['ref']['pseudochrom']['human_gene']['fmt_gtf'])+\
-                get_cfg_entries(wc,
-                    p_df,
-                    config['ref']['pseudochrom']['gene']['fmt_gtf'])
+                                           p_df,
+                                           rules.mkref_pseudochrom_annot.output.gtf)
+        # files = lambda wc: get_cfg_entries(wc,
+        #             p_df,
+        #             config['ref']['pseudochrom']['human_gene']['fmt_gtf'])+\
+        #         get_cfg_entries(wc,
+        #             p_df,
+        #             config['ref']['pseudochrom']['gene']['fmt_gtf'])
     params:
         p_df = p_df
     output:

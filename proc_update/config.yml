@@ -39,6 +39,7 @@ ref:
 
   pseudochrom:
     fa: ref/pseudochrom/{pseudochrom}/ref.fa
+    gtf: ref/pseudochrom/{pseudochrom}/annot.gtf
 
     gene:
       fq: ref/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_t.fastq
@@ -75,6 +76,7 @@ ref:
       db: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_ref_talon.db
       gtf: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_talon_observedOnly.gtf
       fmt_gtf: human_ref/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_fmt.gtf
+
 
     fa_merge: ref/genome/{genotype}/merged.fa
     gtf_merge: ref/genome/{genotype}/annot.gtf

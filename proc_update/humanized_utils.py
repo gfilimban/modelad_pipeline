@@ -4,8 +4,37 @@ import pyranges as pr
 import pyfaidx
 import re
 import textwrap
+import cerberus
 
+def merge_sort_human_mouse_pseudochrom_gtfs(wc,
+                                            mouse_gtf,
+                                            human_gtf,
+                                            ofile):
+    """
+    Merge and sort GTFs from human and mouse transcripts mapped onto pseudochromosome
+    so they come from the same "gene". 
+    """
+    
+    m_df = pr.read_gtf(mouse_gtf).df
+    h_df = pr.read_gtf(human_gtf).df
+    
+    # concat and update the ends of the gene entry accordingly
+    df = pd.concat([m_df, h_df], ignore_index=True, axis=0)
+    gene_entries = df.loc[df.Feature=='gene'].copy(deep=True)
+    if len(gene_entries.index) == 2:
+        gene_end = gene_entries.End.max(0)
+        gene_start = gene_entries.Start.min(0)
+        df.drop(gene_entries.index.tolist()[0], axis=0, inplace=True)
+        df.loc[df.Feature=='gene', 'Start'] = gene_start
+        df.loc[df.Feature=='gene', 'End'] = gene_end
 
+    # sort gtf with cerberus sort functionality
+    df_sorted = cerberus.sort_gtf(df)
+    
+    # output
+    df_sorted = pr.PyRanges(df_sorted)
+    df_sorted.to_gtf(ofile)
+    
 def get_gene_t_fastq(wc,
                      fa_file,
                      ofile):
