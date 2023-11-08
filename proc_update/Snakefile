@@ -76,23 +76,31 @@ ruleorder:
 
 rule all:
     input:
-        expand(config['lapa']['filt']['ind_gtf'],
-                        zip,
-                        study=df.study.tolist(),
-                        genotype=df.genotype.tolist(),
-                        sex=df.sex.tolist(),
-                        age=df.age.tolist(),
-                        tissue=df.tissue.tolist()),
+        expand(config['cerberus']['ab'],
+               zip,
+               study=df.study.tolist(),
+               genotype=df.genotype.tolist(),
+               sex=df.sex.tolist(),
+               age=df.age.tolist(),
+               tissue=df.tissue.tolist(),
+               cerberus_run=df.cerberus_run.tolist())
         expand(expand(config['merge']['bw'],
-                        zip,
-                        study=df.study.tolist(),
-                        genotype=df.genotype.tolist(),
-                        sex=df.sex.tolist(),
-                        age=df.age.tolist(),
-                        tissue=df.tissue.tolist(),
-                        biorep_num=df.biorep_num.tolist(),
-                        allow_missing=True),
-                        strand=['fwd', 'rev'])
+                zip,
+                study=df.study.tolist(),
+                genotype=df.genotype.tolist(),
+                sex=df.sex.tolist(),
+                age=df.age.tolist(),
+                tissue=df.tissue.tolist(),
+                biorep_num=df.biorep_num.tolist(),
+                allow_missing=True),
+                strand=['fwd', 'rev'])
+                # expand(config['lapa']['filt']['ind_gtf'],
+                #                 zip,
+                #                 study=df.study.tolist(),
+                #                 genotype=df.genotype.tolist(),
+                #                 sex=df.sex.tolist(),
+                #                 age=df.age.tolist(),
+                #                 tissue=df.tissue.tolist()),
         # rules.all_pseudochrom.input
 
 
