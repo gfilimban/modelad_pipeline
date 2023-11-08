@@ -597,10 +597,10 @@ rule mkref_pseudochrom_annot:
     input:
         human_gtf = lambda wc: get_cfg_entries(wc,
                     p_df,
-                    config['ref']['pseudochrom']['human_gene']['fmt_gtf']),
+                    config['ref']['pseudochrom']['human_gene']['fmt_gtf'])[0],
         mouse_gtf = lambda wc: get_cfg_entries(wc,
                     p_df,
-                    config['ref']['pseudochrom']['gene']['fmt_gtf'])
+                    config['ref']['pseudochrom']['gene']['fmt_gtf'])[0]
     resources:
         mem_gb = 16,
         threads = 1
