@@ -613,7 +613,7 @@ rule mkref_pseudochrom_annot:
         threads = 1
     output:
         gtf = config['ref']['pseudochrom']['gtf']
-    run:s
+    run:
         merge_sort_human_mouse_pseudochrom_gtfs(wildcards,
                                             input.mouse_gtf,
                                             params.mouse_gene,
