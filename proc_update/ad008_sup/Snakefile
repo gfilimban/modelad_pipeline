@@ -5,6 +5,9 @@ import swan_vis as swan
 import itertools
 import cerberus
 
+p = os.path.dirname(os.getcwd())
+sys.path.append(p)
+
 from utils import *
 from sm_utils import *
 from humanized_utils import *

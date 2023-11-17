@@ -235,7 +235,7 @@ def refmt_mapped_transcript_gtf(wc,
         df = pr.read_gtf(ifile, rename_attr=True).df
 
         keep_cols = ['Chromosome', 'Source', 'Feature', 'Start', 'End', 'Score', 'Strand',
-           'Frame', 'gene_id', 'gene_name', 'gene_status', 'source_attr',
+           'Frame', 'gene_id', 'gene_name', 'gene_status',
            'transcript_id', 'transcript_status', 'transcript_name', 'exon_number', 'exon_id',
            'exon_status']
         df = df[keep_cols]
