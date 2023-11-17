@@ -1,0 +1,13 @@
+ad008_19995_lig-blk_1_t1.fastq.gz
+ad008_20564_lig-blk_1_t1.fastq.gz
+ad008_19612_lig-blk_1_t1.fastq.gz
+ad008_19575_lig-blk_1_t1.fastq.gz
+ad008_19614_lig-blk_1_t1.fastq.gz
+ad008_19613_lig-blk_1_t1.fastq.gz
+ad008_20362_lig-blk_2_t1.fastq.gz
+ad008_19574_lig-blk_1_t1.fastq.gz
+ad008_19573_lig-blk_1_t1.fastq.gz
+ad008_21021_lig-blk_1_t1.fastq.gz
+ad008_20363_lig-blk_1_t1.fastq.gz
+ad008_20362_lig-blk_1_t1.fastq.gz
+ad008_19994_lig-blk_1_t1.fastq.gz
