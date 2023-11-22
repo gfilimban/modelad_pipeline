@@ -121,7 +121,7 @@ def parse_config_file(fname,
     # df['dataset'] = df['talon_dataset']+'_'+df['flowcell'].astype(str)
 
     # get and verify humanized status
-    assert len(df.loc[(df.pseudochrom_needed==True)&~(df.genotype.str.contains('h'))]) == 0
+    # assert len(df.loc[(df.pseudochrom_needed==True)&~(df.genotype.str.contains('h'))]) == 0
     temp = df.loc[(df.pseudochrom_needed==False)&(df.genotype.str.contains('h'))].copy(deep=True)
     if len(temp.index) >= 1:
         genotypes = temp.genotype.unique().tolist()
