@@ -91,4 +91,4 @@ mouse_id	genotype	sex	age	tissue	pseudochrom_needed	pseudochrom
 14360	TREM2 R47H NSS	M	12 months	half_brain	FALSE	
 14361	TREM2 R47H NSS	M	12 months	half_brain	FALSE	
 14362	TREM2 R47H NSS	M	12 months	half_brain	FALSE	
-777	hAPOE4	M	12 months	half_brain	TRUE	hAPOE4
+777	modelad1	M	12 months	half_brain	TRUE	"hchr17,hAPOE4"
