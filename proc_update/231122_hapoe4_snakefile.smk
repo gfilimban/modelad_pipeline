@@ -26,7 +26,10 @@ configfile: 'config.yml'
 
 
 # trying to run pseudochrom stuff on HPC
-config_tsv = '231106_config_ad008_ad003.tsv'
+# config_tsv = '231106_config_ad008_ad003.tsv'
+
+# making hapoe4 refs
+config_tsv = '231122_hapoe_dummy_config.tsv'
 
 
 p_meta_tsv = 'pseudochromosome_metadata.tsv'
@@ -37,6 +40,7 @@ df, p_df = parse_config_file(config_tsv,
                        meta_tsv,
                        p_meta_tsv,
                        auto_dedupe=auto_dedupe)
+
 end_modes = ['tss', 'tes']
 strands = ['fwd', 'rev']
 
@@ -76,32 +80,27 @@ ruleorder:
 
 rule all:
     input:
-        expand(config['cerberus']['ab'],
-               zip,
-               study=df.study.tolist(),
-               genotype=df.genotype.tolist(),
-               sex=df.sex.tolist(),
-               age=df.age.tolist(),
-               tissue=df.tissue.tolist(),
-               cerberus_run=df.cerberus_run.tolist())
-        expand(expand(config['merge']['bw'],
-                zip,
-                study=df.study.tolist(),
-                genotype=df.genotype.tolist(),
-                sex=df.sex.tolist(),
-                age=df.age.tolist(),
-                tissue=df.tissue.tolist(),
-                biorep_num=df.biorep_num.tolist(),
-                allow_missing=True),
-                strand=['fwd', 'rev'])
-                # expand(config['lapa']['filt']['ind_gtf'],
-                #                 zip,
-                #                 study=df.study.tolist(),
-                #                 genotype=df.genotype.tolist(),
-                #                 sex=df.sex.tolist(),
-                #                 age=df.age.tolist(),
-                #                 tissue=df.tissue.tolist()),
-        # rules.all_pseudochrom.input
+        expand(config['ref']['pseudochrom']['gtf_merge'],
+               genotype='hAPOE4')
+        # expand(config['cerberus']['ab'],
+        #        zip,
+        #        study=df.study.tolist(),
+        #        genotype=df.genotype.tolist(),
+        #        sex=df.sex.tolist(),
+        #        age=df.age.tolist(),
+        #        tissue=df.tissue.tolist(),
+        #        cerberus_run=df.cerberus_run.tolist()),
+        # expand(expand(config['merge']['bw'],
+        #         zip,
+        #         study=df.study.tolist(),
+        #         genotype=df.genotype.tolist(),
+        #         sex=df.sex.tolist(),
+        #         age=df.age.tolist(),
+        #         tissue=df.tissue.tolist(),
+        #         biorep_num=df.biorep_num.tolist(),
+        #         allow_missing=True),
+        #         strand=['fwd', 'rev'])
+
 
 
 
@@ -187,7 +186,7 @@ use rule rev_alignment as map_rev with:
 use rule tc as tc_sam with:
     input:
         sam = config['map']['sam_rev'],
-        fa = rules.map_reads.input.ref_fa
+        fa = config['ref']['pseudochrom']['fa_merge']
     params:
         path = config['tc']['path'],
         min_intron_size = config['tc']['min_intron_size'],
@@ -209,7 +208,8 @@ use rule alignment_stats as tc_stats with:
 ################################################################################
 use rule talon_label as talon_label_reads with:
     input:
-        fa = rules.map_reads.input.ref_fa,
+        # fa = rules.map_reads.input.ref_fa,
+        fa  = config['ref']['pseudochrom']['fa_merge'],
         sam = config['tc']['sam']
     params:
         frac_a_range = config['talon_label']['frac_a_range'],
@@ -368,7 +368,8 @@ rule lapa_config:
 use rule lapa_call_ends as lapa_call_ends_run with:
         input:
             config = config['lapa']['config'],
-            fa = rules.map_reads.input.ref_fa,
+            fa =config['ref']['pseudochrom']['fa_merge'],
+            # fa = rules.map_reads.input.ref_fa,
             gtf = config['ref']['gtf_utr'],
             chrom_sizes = config['ref']['pseudochrom']['chrom_sizes']
         params:

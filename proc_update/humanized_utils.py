@@ -115,7 +115,8 @@ def get_gene_seq(fa_file,
                 whole_chr=False,
                 ofile=None,
                 chr_name=None,
-                slack=0):
+                slack=0,
+                complement_rev=True):
 
     gtf_df = pr.read_gtf(gtf_file, as_df=True)
 
@@ -135,10 +136,11 @@ def get_gene_seq(fa_file,
 
     # just get the sequence of the gene
     if not whole_chr:
-        if strand == '+':
-            gene_seq = fa[ch][start:end]
-        else:
+        if strand == '-' and complement_rev==True:
             gene_seq = fa[ch][start:end].complement
+        else:
+            gene_seq = fa[ch][start:end]
+            
     # get the sequence of the whole chromosome
     else:
         gene_seq = fa[ch][:]
