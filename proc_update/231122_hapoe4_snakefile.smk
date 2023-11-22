@@ -81,7 +81,9 @@ ruleorder:
 rule all:
     input:
         expand(config['ref']['pseudochrom']['gtf_merge'],
-               genotype='modelad1')
+               genotype='modelad1'),
+        expand(config['ref']['pseudochrom']['fa_merge'],
+                genotype='modelad1')
         # expand(config['cerberus']['ab'],
         #        zip,
         #        study=df.study.tolist(),
