@@ -21,12 +21,11 @@ configfile: 'config.yml'
 # running stuff "from fastqs" loocally for cerberus testing
 # config_tsv = '231102_config_ad003_local.tsv'
 
-# running stuff locaclly for cerberus testing
-# config_tsv = '231027_config.tsv'
+config_tsv = '231027_config.tsv'
 
 
 # trying to run pseudochrom stuff on HPC
-config_tsv = '231106_config_ad008_ad003.tsv'
+# config_tsv = '231106_config_ad008_ad003.tsv'
 
 
 p_meta_tsv = 'pseudochromosome_metadata.tsv'
