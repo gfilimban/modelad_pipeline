@@ -82,7 +82,7 @@ rule all:
                sex=df.sex.tolist(),
                age=df.age.tolist(),
                tissue=df.tissue.tolist(),
-               cerberus_run=df.cerberus_run.tolist())
+               cerberus_run=df.cerberus_run.tolist()),
         expand(expand(config['merge']['bw'],
                 zip,
                 study=df.study.tolist(),
