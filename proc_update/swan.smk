@@ -43,5 +43,6 @@ rule make_swan_graph:
         sg.save_graph(params.prefix)
 
 rule all_swan:
-    expand(config['swan']['swan_graph'],
-           analysis=p_df.analysis.unique().tolist())
+    input:
+        expand(config['swan']['swan_graph'],
+               analysis=p_df.analysis.unique().tolist())
