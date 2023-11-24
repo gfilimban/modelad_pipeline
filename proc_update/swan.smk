@@ -9,7 +9,7 @@ rule make_swan_metadata:
     output:
         meta = config['swan']['meta']
     run:
-        temp_meta = get_cfg_entries(wildcards, params.pd_df,
+        temp_meta = get_cfg_entries(wildcards, params.p_df,
                                     config['merge']['sort_bam'],
                                     return_df=True)
         cols = ['dataset', 'mouse_id', 'study', 'genotype',
