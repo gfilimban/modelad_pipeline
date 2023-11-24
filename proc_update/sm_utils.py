@@ -25,6 +25,7 @@ def process_meta(meta_fname):
 def parse_config_file(fname,
                       meta_fname,
                       p_meta_fname,
+                      an_meta_fname, 
                       auto_dedupe=True):
                       # include_pseudochrom=True):
 
@@ -33,6 +34,7 @@ def parse_config_file(fname,
         fname (str): Path to config file fname. One line per input fastq.
         meta_fname (str): Path to file with metadata information.
         p_meta_fname (str): Path to pseudochromosome metadata information
+        an_meta_fname (str): Path to analysis metadata information
         datasets_per_run (int): Number of datasets to process in each TALON run
         auto_dedupe (bool): Automatically deduplicate duplicate fastqs that result from
             successive Porechop rounds
@@ -175,6 +177,11 @@ def parse_config_file(fname,
     p_meta = pd.read_csv(p_meta_fname, sep='\t')
     p_meta.fillna('dummy', inplace=True)
     p_df = temp.merge(p_meta, on='pseudochrom')
+    
+    # add in analysis stuff
+    an_df = pd.read_csv(an_meta_fname, sep='\t')
+    p_df = p_df.merge(an_df, how='left', 
+                  on=['genotype', 'study'])
 
     return df, p_df
 
@@ -252,6 +259,7 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
     # try:
     mouse_gene = temp.mouse_gene.tolist()
     human_gene = temp.human_gene.tolist()
+    analysis = temp.analysis.tolist()
     # except:
     #     import pdb; pdb.set_trace()
 
@@ -288,6 +296,7 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
                    pseudochrom=pseudochrom,
                    human_gene=human_gene,
                    mouse_gene=mouse_gene,
+                   analysis=analysis,
                    allow_missing=True)
     # import pdb; pdb.set_trace()
 

@@ -95,6 +95,7 @@ def write_chr(seq, ofile, chr_name, line_lim=None):
                 ofile.write(seq+'\n')
         else:
             ofile.write(str(seq))
+        ofile.write('\n')
 
 
 def get_gene_gtf_entry(gtf_file, gene):

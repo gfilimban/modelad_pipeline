@@ -202,3 +202,7 @@ cerberus:
       slack: 20
     ics: data/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_ic.tsv
     ends: data/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_{end_mode}.bed
+
+swan:
+  meta: data/cerberus/{analysis}/{analysis}_meta.tsv
+  swan_graph: data/cerberus/{analysis}/swan_graph.p

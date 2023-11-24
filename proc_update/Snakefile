@@ -21,20 +21,22 @@ configfile: 'config.yml'
 # running stuff "from fastqs" loocally for cerberus testing
 # config_tsv = '231102_config_ad003_local.tsv'
 
-config_tsv = '231027_config.tsv'
+# config_tsv = '231027_config.tsv'
 
 
 # trying to run pseudochrom stuff on HPC
-# config_tsv = '231106_config_ad008_ad003.tsv'
+config_tsv = '231106_config_ad008_ad003.tsv'
 
 
 p_meta_tsv = 'pseudochromosome_metadata.tsv'
 meta_tsv = 'mouse_metadata.tsv'
+an_tsv = 'analysis_config.tsv'
 auto_dedupe = True
 
 df, p_df = parse_config_file(config_tsv,
                        meta_tsv,
                        p_meta_tsv,
+                       an_meta_tsv,
                        auto_dedupe=auto_dedupe)
 end_modes = ['tss', 'tes']
 strands = ['fwd', 'rev']
@@ -50,6 +52,7 @@ include: 'cerberus.smk'
 include: 'deeptools.smk'
 include: 'igvtools.smk'
 include: 'pseudochrom.smk'
+include: 'swan.smk'
 
 # TODO - get rid of this at some point
 # temp_study_pass_list = ['ad002', 'ad003', 'ad005', 'ad006', 'ad007']
@@ -75,24 +78,25 @@ ruleorder:
 
 rule all:
     input:
-        expand(config['cerberus']['ab'],
-               zip,
-               study=df.study.tolist(),
-               genotype=df.genotype.tolist(),
-               sex=df.sex.tolist(),
-               age=df.age.tolist(),
-               tissue=df.tissue.tolist(),
-               cerberus_run=df.cerberus_run.tolist()),
-        expand(expand(config['merge']['bw'],
-                zip,
-                study=df.study.tolist(),
-                genotype=df.genotype.tolist(),
-                sex=df.sex.tolist(),
-                age=df.age.tolist(),
-                tissue=df.tissue.tolist(),
-                biorep_num=df.biorep_num.tolist(),
-                allow_missing=True),
-                strand=['fwd', 'rev'])
+        rules.all_swan.input
+        # expand(config['cerberus']['ab'],
+        #        zip,
+        #        study=df.study.tolist(),
+        #        genotype=df.genotype.tolist(),
+        #        sex=df.sex.tolist(),
+        #        age=df.age.tolist(),
+        #        tissue=df.tissue.tolist(),
+        #        cerberus_run=df.cerberus_run.tolist()),
+        # expand(expand(config['merge']['bw'],
+        #         zip,
+        #         study=df.study.tolist(),
+        #         genotype=df.genotype.tolist(),
+        #         sex=df.sex.tolist(),
+        #         age=df.age.tolist(),
+        #         tissue=df.tissue.tolist(),
+        #         biorep_num=df.biorep_num.tolist(),
+        #         allow_missing=True),
+        #         strand=['fwd', 'rev'])
                 # expand(config['lapa']['filt']['ind_gtf'],
                 #                 zip,
                 #                 study=df.study.tolist(),
