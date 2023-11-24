@@ -7,7 +7,7 @@ rule make_swan_metadata:
         mem_gb = 1,
         threads = 1
     output:
-        meta = confqig['swan']['meta']
+        meta = config['swan']['meta']
     run:
         temp_meta = get_cfg_entries(wildcards, params.p_df,
                                     config['merge']['sort_bam'],
