@@ -2,12 +2,12 @@ import swan_vis as swan
 
 rule make_swan_metadata:
     params:
-        p_df
+        p_df = p_df
     resources:
         mem_gb = 1,
         threads = 1
     output:
-        meta = config['swan']['meta']
+        meta = confqig['swan']['meta']
     run:
         temp_meta = get_cfg_entries(wildcards, params.p_df,
                                     config['merge']['sort_bam'],
