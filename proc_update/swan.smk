@@ -45,4 +45,4 @@ rule make_swan_graph:
 rule all_swan:
     input:
         expand(config['swan']['swan_graph'],
-               analysis=p_df.analysis.notnull().unique().tolist())
+               analysis=p_df.analysis.dropna().unique().tolist())
