@@ -54,8 +54,7 @@ def run_deseq2(fname,
                    design_factors=obs_col,
                    refit_cooks=True)
     dds.deseq2()
-    stat_res = DeseqStats(dds,
-                      n_cpus=threads)
+    stat_res = DeseqStats(dds)
     stat_res.summary()
 
     # save output
