@@ -172,6 +172,9 @@ def parse_config_file(fname,
     df['flowcell'] = df.flowcell.astype(str)
     df['biorep_num'] = df.biorep_num.astype(str)
     df['cerberus_run'] = df.cerberus_run.astype(str)
+    
+    # add in columns for comparisons
+    df['genotype_sex'] = df['genotype']+'_'+df['sex']
 
     # get a table that matches genotype + pseudochrom + human gene + mouse gene
     temp = df.explode('pseudochrom')
@@ -183,9 +186,6 @@ def parse_config_file(fname,
     an_df = pd.read_csv(an_meta_fname, sep='\t')
     p_df = p_df.merge(an_df, how='left', 
                   on=['genotype', 'study'])
-    
-    # add in columns for comparisons
-    p_df['genotype_sex'] = p_df['genotype']+'_'+p_df['sex']
 
     return df, p_df
 
