@@ -204,5 +204,11 @@ cerberus:
     ends: data/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_{end_mode}.bed
 
 swan:
-  meta: data/cerberus/{analysis}/{analysis}_meta.tsv
-  swan_graph: data/cerberus/{analysis}/swan_graph.p
+  meta: data/swan/{analysis}/{analysis}_meta.tsv
+  swan_graph: data/swan/{analysis}/swan_graph.p
+  g_adata: data/swan/{analysis}/swan_g_adata.h5ad
+  t_adata: data/swan/{analysis}/swan_t_adata.h5ad
+
+  du: data/swan/{analysis}/{obs_cond1}_vs_{obs_cond2}_{obs_col}_du_{feat}.tsv
+  deg: data/swan/{analysis}/{obs_cond1}_vs_{obs_cond2}_{obs_col}_deg.tsv
+  det: data/swan/{analysis}/{obs_cond1}_vs_{obs_cond2}_{obs_col}_det.tsv

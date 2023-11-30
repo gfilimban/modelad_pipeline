@@ -182,6 +182,9 @@ def parse_config_file(fname,
     an_df = pd.read_csv(an_meta_fname, sep='\t')
     p_df = p_df.merge(an_df, how='left', 
                   on=['genotype', 'study'])
+    
+    # add in columns for comparisons
+    p_df['genotype_sex'] = p_df['genotype']+'_'+p_df['sex']
 
     return df, p_df
 
@@ -408,3 +411,67 @@ def get_prev_cerb_entry(wc, df, cfg_entry, config):
         file = file[0]
 
     return file
+
+def get_de_cfg_entries(p_df, cfg_entry, how):
+    """
+    Get file names needed as output for DE or DU 
+    tests within analysis objects for
+        - all pairwise genotype sets
+        - all pairwise genotype sets by sex 
+    
+    Parameters:
+        how (str): {'du', 'de'}
+    """
+    
+    if how == 'du':
+        feats = ['tss', 'tes', 'iso']
+    else: 
+        feats = []
+        
+    files = []
+
+    for a in p_df.analysis.unique().tolist():
+        # print()
+        # print(a)
+        wc = {'analysis': a}
+        temp = subset_df_on_wcs(wc, p_df)
+        obs_col = 'genotype'
+        conds = temp[obs_col].unique().tolist()
+        # genotypes += ['ghost_cookie']
+
+        combos = [c for c in itertools.combinations(conds, 2)]
+        obs_cond1 = [c[0] for c in combos]
+        obs_cond2 = [c[1] for c in combos]
+        # print(genotype1)
+        # print(genotype2)
+
+        files += expand(expand(cfg_entry, 
+          zip,
+          obs_cond1=obs_cond1,
+          obs_cond2=obs_cond2,
+          allow_missing=True),
+          obs_col=obs_col,
+          feat=feats,
+          analysis=a)
+
+        # now get genotype comparisons for each sex
+        for s in temp.sex.unique():
+            wc['sex'] = s
+            temp2 = subset_df_on_wcs(wc, temp)
+            obs_col = 'genotype_sex'
+            conds = temp2[obs_col].unique().tolist()
+
+            combos = [c for c in itertools.combinations(conds, 2)]
+            obs_cond1 = [c[0] for c in combos]
+            obs_cond2 = [c[1] for c in combos]
+
+            files += expand(expand(cfg_entry, 
+              zip,
+              obs_cond1=obs_cond1,
+              obs_cond2=obs_cond2,
+              allow_missing=True),
+              obs_col=obs_col,
+              feat=feats,
+              analysis=a)
+        
+    return files
