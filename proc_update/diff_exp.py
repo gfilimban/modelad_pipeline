@@ -52,7 +52,6 @@ def run_deseq2(fname,
     # run test
     dds = DeseqDataSet(adata=adata,
                    design_factors=obs_col,
-                   inference=DefaultInference(n_cpus=threads),
                    refit_cooks=True)
     dds.deseq2()
     stat_res = DeseqStats(dds,
