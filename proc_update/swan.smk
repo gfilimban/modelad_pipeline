@@ -39,6 +39,9 @@ rule make_swan_graph:
         for ab in input.ab:
             sg.add_abundance(ab)
 
+        for ab in input.ab:
+            sg.add_abundance(ab, how='gene')
+
         sg.add_metadata(input.meta)
         sg.save_graph(params.prefix)
 
