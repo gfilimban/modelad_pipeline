@@ -37,7 +37,7 @@ def run_deseq2(fname,
         raise ValueError(f'{obs_col} not found in adata')
     # remove novel genes
     if how == 'gene':
-        adata = adata[:, adata.var.loc[adata.var.gid.str.contains('ENSMUS')].index].copy()
+        adata = adata[:, adata.var.loc[adata.var.index.str.contains('ENSMUS')].index].copy()
 
     # remove entries that don't belong to the groups we want to test
     adata = adata[adata.obs.loc[adata.obs[obs_col].isin(obs_conditions)].index,
