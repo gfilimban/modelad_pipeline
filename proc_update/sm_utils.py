@@ -3,6 +3,7 @@ from snakemake.io import expand
 import pandas as pd
 import warnings
 import os
+import itertools
 
 def process_meta(meta_fname):
     """
