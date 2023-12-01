@@ -26,7 +26,7 @@ def process_meta(meta_fname):
 def parse_config_file(fname,
                       meta_fname,
                       p_meta_fname,
-                      an_meta_fname, 
+                      an_meta_fname,
                       auto_dedupe=True):
                       # include_pseudochrom=True):
 
@@ -172,7 +172,7 @@ def parse_config_file(fname,
     df['flowcell'] = df.flowcell.astype(str)
     df['biorep_num'] = df.biorep_num.astype(str)
     df['cerberus_run'] = df.cerberus_run.astype(str)
-    
+
     # add in columns for comparisons
     df['genotype_sex'] = df['genotype']+'_'+df['sex']
 
@@ -181,10 +181,10 @@ def parse_config_file(fname,
     p_meta = pd.read_csv(p_meta_fname, sep='\t')
     p_meta.fillna('dummy', inplace=True)
     p_df = temp.merge(p_meta, on='pseudochrom')
-    
+
     # add in analysis stuff
     an_df = pd.read_csv(an_meta_fname, sep='\t')
-    p_df = p_df.merge(an_df, how='left', 
+    p_df = p_df.merge(an_df, how='left',
                   on=['genotype', 'study'])
 
     return df, p_df
@@ -415,20 +415,20 @@ def get_prev_cerb_entry(wc, df, cfg_entry, config):
 
 def get_de_cfg_entries(p_df, cfg_entry, how):
     """
-    Get file names needed as output for DE or DU 
+    Get file names needed as output for DE or DU
     tests within analysis objects for
         - all pairwise genotype sets
-        - all pairwise genotype sets by sex 
-    
+        - all pairwise genotype sets by sex
+
     Parameters:
         how (str): {'du', 'de'}
     """
-    
+
     if how == 'du':
-        feats = ['tss', 'tes', 'iso']
-    else: 
+        feats = ['tss', 'tes', 'ic', 'iso']
+    else:
         feats = []
-        
+
     files = []
 
     for a in p_df.analysis.unique().tolist():
@@ -446,7 +446,7 @@ def get_de_cfg_entries(p_df, cfg_entry, how):
         # print(genotype1)
         # print(genotype2)
 
-        files += expand(expand(cfg_entry, 
+        files += expand(expand(cfg_entry,
           zip,
           obs_cond1=obs_cond1,
           obs_cond2=obs_cond2,
@@ -466,7 +466,7 @@ def get_de_cfg_entries(p_df, cfg_entry, how):
             obs_cond1 = [c[0] for c in combos]
             obs_cond2 = [c[1] for c in combos]
 
-            files += expand(expand(cfg_entry, 
+            files += expand(expand(cfg_entry,
               zip,
               obs_cond1=obs_cond1,
               obs_cond2=obs_cond2,
@@ -474,5 +474,5 @@ def get_de_cfg_entries(p_df, cfg_entry, how):
               obs_col=obs_col,
               feat=feats,
               analysis=a)
-        
+
     return files
