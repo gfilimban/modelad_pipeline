@@ -368,7 +368,10 @@ rule lapa_config:
         cfg = config['lapa']['config']
     run:
         temp = get_cfg_entries(wildcards, p_df, config['merge']['sort_bam'], return_df=True)
-        temp = temp[['sample', 'dataset', 'file']].copy(deep=True)
+        temp = temp[['dataset', 'sample', 'file']].copy(deep=True)
+
+        # argggggh rename these files in the opposite manner because
+        # hasan and I have opposite definitions of "sample" and "dataset"
         temp.columns = ['sample', 'dataset', 'path']
         temp.to_csv(output.cfg, sep=',', index=False)
 
