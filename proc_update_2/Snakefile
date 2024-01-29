@@ -60,7 +60,7 @@ ruleorder:
 rule all:
     input:
         config['ref']['cerberus']['ics'],
-        expand(['ref']['cerberus']['ends'],
+        expand(config['ref']['cerberus']['ends'],
                end_mode=end_modes),
         expand(expand(config['merge']['bw'],
                 zip,
