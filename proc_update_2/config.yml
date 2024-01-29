@@ -1,0 +1,214 @@
+human_ref:
+  gtf_ver: 'v29'
+  gtf_link: https://www.encodeproject.org/files/gencode.v29.primary_assembly.annotation_UCSC_names/@@download/gencode.v29.primary_assembly.annotation_UCSC_names.gtf.gz
+
+  fa_ver: 'hg38'
+  fa_link: https://www.encodeproject.org/files/GRCh38_no_alt_analysis_set_GCA_000001405.15/@@download/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta.gz
+
+  gtf_gz: human_ref2/annot.gtf.gz
+  gtf: human_ref2/annot.gtf
+
+  t_fa_link: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/gencode.v29.transcripts.fa.gz
+  t_fa_gz: human_ref2/annot.fa.gz
+  t_fa: human_ref2/annot.fa
+
+  all_gtf_link: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/gencode.v29.chr_patch_hapl_scaff.annotation.gtf.gz
+  all_gtf_gz: human_ref2/all_annot.gtf.gz
+  all_gtf: human_ref2/all_annot.gtf
+
+  fa_gz: human_ref2/ref.fa.gz
+  fa: human_ref2/ref.fa
+
+ref:
+  gtf_ver: 'vM21'
+  gtf_link: https://www.encodeproject.org/files/gencode.vM21.primary_assembly.annotation_UCSC_names/@@download/gencode.vM21.primary_assembly.annotation_UCSC_names.gtf.gz
+  fa_ver: 'mm10'
+  fa_link: https://www.encodeproject.org/files/mm10_no_alt_analysis_set_ENCODE/@@download/mm10_no_alt_analysis_set_ENCODE.fasta.gz
+
+  t_fa_link: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M21/gencode.vM21.transcripts.fa.gz
+  t_fa_gz: ref2/annot.fa.gz
+  t_fa: ref2/annot.fa
+
+  gtf_gz: ref2/annot.gtf.gz
+  gtf: ref2/annot.gtf
+  gtf_utr: ref2/annot_utr.gtf
+  sjs: ref2/annot_junc.bed
+
+  fa_gz: ref2/ref.fa.gz
+  fa: ref2/ref.fa
+
+  pseudochrom:
+    fa: ref2/pseudochrom/{pseudochrom}/ref.fa
+    gtf: ref2/pseudochrom/{pseudochrom}/annot.gtf
+
+    gene:
+      fq: ref2/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_t.fastq
+      sam: ref2/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_mapped.sam
+      log: ref2/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_minimap.log
+      tc_sam: ref2/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_clean.sam
+      tc_fa: ref2/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_clean.fa
+      tc_log: ref2/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_clean.log
+      te_log: ref2/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_clean.TE.log
+
+      bam: ref2/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_mapped.bam
+      sort_bam: ref2/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_mapped_sorted.bam
+      ind_bam: ref2/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_mapped_sorted.bam.bai
+
+      config: ref2/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_config.csv
+      db: ref2/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_ref_talon.db
+      gtf: ref2/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_talon_observedOnly.gtf
+      fmt_gtf: ref2/pseudochrom/{pseudochrom}/{mouse_gene}/{mouse_gene}_fmt.gtf
+
+    human_gene:
+      fq: human_ref2/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_t.fastq
+      sam: human_ref2/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_mapped.sam
+      log: human_ref2/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_minimap.log
+      tc_sam: human_ref2/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_clean.sam
+      tc_fa: human_ref2/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_clean.fa
+      tc_log: human_ref2/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_clean.log
+      te_log: human_ref2/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_clean.TE.log
+
+      bam: human_ref2/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_mapped.bam
+      sort_bam: human_ref2/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_mapped_sorted.bam
+      ind_bam: human_ref2/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_mapped_sorted.bam.bai
+
+      config: human_ref2/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_config.csv
+      db: human_ref2/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_ref_talon.db
+      gtf: human_ref2/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_talon_observedOnly.gtf
+      fmt_gtf: human_ref2/pseudochrom/{pseudochrom}/{human_gene}/{human_gene}_fmt.gtf
+
+
+    fa_merge: ref2/genome/{genotype}/merged.fa
+    gtf_merge: ref2/genome/{genotype}/annot.gtf
+    chrom_sizes: ref2/genome/{genotype}/chrom_sizes.txt
+    db: ref2/genome/{genotype}/ref.db
+
+    talon:
+      # reference to use for humanized insertions
+      db: ref2/talon/{genotype}/ref.db
+
+
+  # talon reference -- db from the input gtf
+  talon:
+    db: ref2/talon/ref.db
+
+  # LAPA reference - ENCODE refs + GENCODE UTRs
+  lapa:
+    gtf: ref2/lapa/ref.gtf
+
+  # cerberus references - mouse cerberus annotation from
+  # the long read ENCODE4 RNA project
+  cerberus:
+    link: https://www.encodeproject.org/files/ENCFF999KXH/@@download/ENCFF999KXH.h5
+    ca: ref2/ca.h5
+    ends: ref2/ca_{end_mode}.bed
+    ics: ref2/ca_ic.tsv
+    ca_annot: ref2/ca_annot.h5
+    gtf: ref2/cerberus.gtf
+
+
+map:
+  sam: data2/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}.sam
+  log: data2/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_minimap.log
+  stats: data2/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_minimap_stats.txt
+  sam_rev: data2/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_reverse.sam
+
+tc:
+  path: ~/mortazavi_lab/bin/TranscriptClean/
+  min_intron_size: 21
+
+  sam: data2/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.sam
+  fa: data2/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.fa
+  log: data2/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.log
+  te_log: data2/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.TE.log
+  stats: data2/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_tc_stats.txt
+
+talon_label:
+  frac_a_range: 20
+  sam: data2/talon_label/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled.sam
+  bam: data2/talon_label/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled.bam
+  sort_bam: data2/talon_label/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled_sorted.bam
+  ind_bam: data2/talon_label/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_labeled_sorted.bam.bai
+
+merge:
+  bam: data2/merge/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}.bam
+  sort_bam: data2/merge/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_sorted.bam
+  ind_bam: data2/merge/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_sorted.bam.bai
+  bw: data2/merge/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{strand}.bw
+
+# run talon on bioreplicates so that reproducibility
+# metrics for novel isoforms are biologically meaningful
+talon:
+  min_transcript_len: 0
+  max_5_dist: 500
+  max_3_dist: 300
+  max_frac_a: 0.5
+  min_count: 5
+  min_datasets: 2
+
+  config: data2/talon/{study}/{genotype}_{sex}_{age}_{tissue}_config.csv
+  db: data2/talon/{study}/{genotype}_{sex}_{age}_{tissue}_talon.db
+  temp_dir: data2/talon/{study}/{genotype}_{sex}_{age}_{tissue}_temp/
+  annot: data2/talon/{study}/{genotype}_{sex}_{age}_{tissue}_talon_read_annot.tsv
+  pass_list: data2/talon/{study}/{genotype}_{sex}_{age}_{tissue}_pass_list.csv
+  ab: data2/talon/{study}/{genotype}_{sex}_{age}_{tissue}_unfilt_talon_abundance.tsv
+  filt_ab: data2/talon/{study}/{genotype}_{sex}_{age}_{tissue}_talon_abundance_filtered.tsv
+  gtf: data2/talon/{study}/{genotype}_{sex}_{age}_{tissue}_talon.gtf
+
+# similarly, run lapa on bioreplicates
+lapa:
+  config: data2/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/config.csv
+  ends: data2/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/{end_mode}/clusters.bed
+  links: data2/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/tss_to_tes_links.csv
+
+  corrected:
+    gtf: data2/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/talon_corrected/corrected.gtf
+    filt_ab: data2/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/talon_corrected/filtered_abundance_corrected.tsv
+
+  filt:
+    t_novs: ['Known', 'NIC', 'NNC', 'ISM_rescue']
+    g_novs: ['Known', 'Intergenic', 'Fusion']
+    remove_spikes: True
+
+    pass_list: data2/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/pass_list.tsv
+    filt_ab: data2/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/filtered_abundance.tsv
+    gtf: data2/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/filtered.gtf
+
+    sort_gtf: data2/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/filtered.sorted.gtf
+    ind_gtf: data2/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/filtered.sorted.gtf.idx
+
+# TODO - how to run cerberus?
+cerberus:
+  tss:
+    dist: 50
+    slack: 50
+    agg_slack: 20
+  tes:
+    dist: 50
+    slack: 50
+    agg_slack: 20
+  ics: data2/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_ic.tsv
+  ends: data2/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{end_mode}.bed
+
+  ca: data2/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}.h5
+  ca_annot: data2/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_annot.h5
+  gtf: data2/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}.gtf
+  ab: data2/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_abundance.tsv
+
+  agg:
+    tss:
+      slack: 20
+    tes:
+      slack: 20
+    ics: data2/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_ic.tsv
+    ends: data2/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_{end_mode}.bed
+
+swan:
+  meta: data2/swan/{analysis}/{analysis}_meta.tsv
+  swan_graph: data2/swan/{analysis}/swan_graph.p
+  g_adata: data2/swan/{analysis}/swan_g_adata.h5ad
+  t_adata: data2/swan/{analysis}/swan_t_adata.h5ad
+
+  du: data2/swan/{analysis}/{obs_cond1}_vs_{obs_cond2}_{obs_col}_du_{feat}.tsv
+  deg: data2/swan/{analysis}/{obs_cond1}_vs_{obs_cond2}_{obs_col}_deg.tsv
+  det: data2/swan/{analysis}/{obs_cond1}_vs_{obs_cond2}_{obs_col}_det.tsv
