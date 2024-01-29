@@ -181,7 +181,7 @@ def parse_config_file(fname,
 
     return df, p_df
 
-def parse_analysis_config_file(fname,
+def parse_config_file_analysis(fname,
                       meta_fname,
                       p_meta_fname,
                       an_meta_fname,
@@ -416,35 +416,56 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
     tissue = temp.tissue.tolist()
     biorep_num = temp.biorep_num.tolist()
     flowcell = temp.flowcell.tolist()
+    pseudochrom = temp.pseudochrom.tolist()
+    mouse_gene = temp.mouse_gene.tolist()
+    human_gene = temp.human_gene.tolist()
+    files = expand(cfg_entry,
+                   zip,
+                   study=study,
+                   genotype=genotype,
+                   sex=sex,
+                   age=age,
+                   tissue=tissue,
+                   biorep_num=biorep_num,
+                   flowcell=flowcell,
+                   pseudochrom=pseudochrom,
+                   human_gene=human_gene,
+                   mouse_gene=mouse_gene,
+                   allow_missing=True)
+    temp['file'] = files
+
+    # make sure we only take unique ones
+    temp = temp.drop_duplicates(subset='file', keep='first')
+    files = temp['file'].tolist()
+
+    if return_df:
+        return temp
+    else:
+        return files
+
+def get_cfg_entries_analysis(wc, df, cfg_entry, return_df=False):
+    """
+    Expand a config entry based on the wildcards and the
+    values in df that satisfy these wildcards
+
+    Parameters:
+        return_df (bool): Return DataFrame with 'file' column
+            as opposed to list of files. Default: False
+    """
+    temp = subset_df_on_wcs(wc, df)
+
+    genotype = temp.genotype.tolist()
+    study = temp.study.tolist()
+    sex = temp.sex.tolist()
+    age = temp.age.tolist()
+    tissue = temp.tissue.tolist()
+    biorep_num = temp.biorep_num.tolist()
+    flowcell = temp.flowcell.tolist()
     cerberus_run = temp.cerberus_run.tolist()
     pseudochrom = temp.pseudochrom.tolist()
-    # try:
     mouse_gene = temp.mouse_gene.tolist()
     human_gene = temp.human_gene.tolist()
     analysis = temp.analysis.tolist()
-    # except:
-    #     import pdb; pdb.set_trace()
-
-    # # pseudochrom stuff needs to be treated differently
-    # pseudochrom = temp.pseudochrom.tolist()
-    # todo need to figure out if this is a correct assertion
-    # i'm a lil more confident about it now
-    # assert len(set(pseudochrom)) == 1
-    # pseudochrom = list(pseudochrom[0])
-    #
-    # files = expand(cfg_entry,
-    #                zip,
-    #                study=study,
-    #                genotype=genotype,
-    #                sex=sex,
-    #                age=age,
-    #                tissue=tissue,
-    #                biorep_num=biorep_num,
-    #                flowcell=flowcell,
-    #                cerberus_run=cerberus_run,
-    #                pseudochrom=pseudochrom,
-    #                allow_missing=True)
-
     files = expand(cfg_entry,
                    zip,
                    study=study,
@@ -460,21 +481,7 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
                    mouse_gene=mouse_gene,
                    analysis=analysis,
                    allow_missing=True)
-    # import pdb; pdb.set_trace()
-
-    # # if we're working with multiple files for one
-    # # entry (ie pseudochroms), turn that into a tuple
-    # if len(files) > 1 and len(temp.index) == 1:
-    #     files = [tuple(files)]
-    #     untuple = True
-    # else:
-    #     untuple = False
-
-    # try:
     temp['file'] = files
-    # except:
-    #     import pdb; pdb.set_trace()
-
 
     # make sure we only take unique ones
     temp = temp.drop_duplicates(subset='file', keep='first')
@@ -483,9 +490,6 @@ def get_cfg_entries(wc, df, cfg_entry, return_df=False):
     if return_df:
         return temp
     else:
-    #     if untuple:
-    #         assert len(files) == 1
-    #         files = list(files[0])
         return files
 
 def get_lapa_settings(wc, df, cfg_entry, kind):
