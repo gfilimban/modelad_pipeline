@@ -13,13 +13,11 @@ configfile: 'config.yml'
 config_tsv = 'config.tsv'
 p_meta_tsv = 'pseudochromosome_metadata.tsv'
 meta_tsv = 'mouse_metadata.tsv'
-an_meta_tsv = 'analysis_config.tsv'
 auto_dedupe = True
 
 df, p_df = parse_config_file(config_tsv,
                        meta_tsv,
                        p_meta_tsv,
-                       # an_meta_tsv,
                        auto_dedupe=auto_dedupe)
 end_modes = ['tss', 'tes']
 strands = ['fwd', 'rev']
@@ -35,7 +33,7 @@ include: 'cerberus.smk'
 include: 'deeptools.smk'
 include: 'igvtools.smk'
 include: 'pseudochrom.smk'
-include: 'swan.smk'
+# include: 'swan.smk'
 
 wildcard_constraints:
     genotype='|'.join([re.escape(x) for x in df.genotype.unique().tolist()]),
