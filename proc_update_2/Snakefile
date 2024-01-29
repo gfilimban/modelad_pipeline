@@ -497,23 +497,3 @@ use rule cerb_ab_ids as study_cerb_ab with:
         agg = True
     output:
         ab = config['cerberus']['ab']
-
-
-################################################################################
-################################# Cerberus #####################################
-################################################################################
-
-use rule cerb_gtf_to_bed as cerb_get_gtf_ends with:
-    input:
-        gtf = config['lapa']['filt']['gtf']
-    output:
-        ends = config['cerberus']['ends']
-    params:
-        slack = lambda wc:config['cerberus'][wc.end_mode]['slack'],
-        dist = lambda wc:config['cerberus'][wc.end_mode]['dist']
-
-use rule cerb_gtf_to_ics as cerb_get_gtf_ics with:
-    input:
-        gtf = config['lapa']['filt']['gtf']
-    output:
-        ics = config['cerberus']['ics']
