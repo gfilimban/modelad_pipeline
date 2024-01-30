@@ -85,11 +85,11 @@ use rule cerb_write_ref as cerb_write_ref_lr with:
         ic = config['analysis']['cerberus']['agg']['ics'],
         tss = lambda wc:expand(get_cfg_entries_analysis(wc,
                         p_df,
-                        config['analysis']['cerberus']['agg']['ends']),
+                        config['analysis']['cerberus']['agg']['ends'])[0],
                         end_mode='tss')[0],
         tes = lambda wc:expand(get_cfg_entries_analysis(wc,
                         p_df,
-                        config['analysis']['cerberus']['agg']['ends']),
+                        config['analysis']['cerberus']['agg']['ends'])[0],
                         end_mode='tes')[0]
     output:
         h5 = config['analysis']['cerberus']['ca']
