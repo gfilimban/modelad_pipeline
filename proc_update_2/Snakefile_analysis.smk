@@ -9,6 +9,8 @@ from utils import *
 from sm_utils import *
 from humanized_utils import *
 
+p_dir = '/share/crsp/lab/model-ad/share/freese/modelad_pipeline/'
+
 configfile: 'config.yml'
 config_tsv = 'config.tsv'
 p_meta_tsv = 'pseudochromosome_metadata.tsv'
@@ -25,17 +27,7 @@ df, p_df = parse_config_file_analysis(config_tsv,
 end_modes = ['tss', 'tes']
 strands = ['fwd', 'rev']
 
-include: 'download.smk'
-include: 'samtools.smk'
-include: 'refs.smk'
-include: 'talon.smk'
-include: 'lapa.smk'
-include: 'mapping.smk'
-include: 'tc.smk'
-include: 'cerberus.smk'
-include: 'deeptools.smk'
-include: 'igvtools.smk'
-include: 'pseudochrom.smk'
+include: 'cerberus_agg_annot.smk'
 include: 'swan.smk'
 
 wildcard_constraints:
@@ -50,87 +42,62 @@ wildcard_constraints:
     obs_cond1='|'.join([re.escape(x) for x in df.genotype.unique().tolist()+df.genotype_sex.unique().tolist()]),
     obs_cond2='|'.join([re.escape(x) for x in df.genotype.unique().tolist()+df.genotype_sex.unique().tolist()]),
 
-
-
 ruleorder:
     # cerberus_agg_ics_first > cerberus_agg_ics_seq
     # cerb_agg_ics_first > cerb_agg_ics_seq > cerb_agg_ends_first > cerb_agg_ends_seq
 
-# max_cerb = df.loc[df.cerberus_run.astype(int)==df.cerberus_run.astype(int).max(axis=0)]
-# max_cerb = df.loc[df.cerberus_run.astype(int)==3]
-
-
 rule all:
     input:
-
+        rules.all_swan.input
 
 ################################################################################
-################################# Cerberus agg #####################################
+########################### Cerberus agg + annot ###############################
 ################################################################################
-################################################################################
-################################# Cerberus #####################################
-################################################################################
-
-use rule cerb_gtf_to_bed as cerb_get_gtf_ends with:
-    input:
-        gtf = config['lapa']['filt']['gtf']
-    output:
-        ends = config['cerberus']['ends']
-    params:
-        slack = lambda wc:config['cerberus'][wc.end_mode]['slack'],
-        dist = lambda wc:config['cerberus'][wc.end_mode]['dist']
-
-use rule cerb_gtf_to_ics as cerb_get_gtf_ics with:
-    input:
-        gtf = config['lapa']['filt']['gtf']
-    output:
-        ics = config['cerberus']['ics']
 
 use rule cerb_agg_ends as cerb_agg_ends_lr with:
     input:
         ref_ends = lambda wc: get_prev_cerb_entry(wc, p_df,
-                                                  config['cerberus']['agg']['ends'],
-                                                  config),
-        ends = config['cerberus']['ends']
+                                                  config['analysis']['cerberus']['agg']['ends'],
+                                                  config)
     params:
+        ends = p_dir+config['cerberus']['ends'],
         add_ends = True,
         ref = False,
-        slack = lambda wc:config['cerberus']['agg'][wc.end_mode]['slack'],
+        slack = lambda wc:config['cerberus']['agg'][wc.end_mode]['agg_slack'],
         sources = lambda wc:['cerberus', get_df_col(wc, df, 'source')]
     output:
-        ends = config['cerberus']['agg']['ends']
+        ends = config['analysis']['cerberus']['agg']['ends']
 
 use rule cerberus_agg_ics as cerb_agg_ics_lr with:
     input:
         ref_ics = lambda wc: get_prev_cerb_entry(wc, p_df,
-                                                  config['cerberus']['agg']['ics'],
-                                                  config),
-        ics = config['cerberus']['ics']
+                                                  config['analysis']['cerberus']['agg']['ics'],
+                                                  config)
     params:
+        ics = p_dir+config['cerberus']['ics'],
         ref = False,
         sources = lambda wc:['cerberus', get_df_col(wc, df, 'source')]
     output:
-        ics = config['cerberus']['agg']['ics']
+        ics = config['analysis']['cerberus']['agg']['ics']
 
 use rule cerb_write_ref as cerb_write_ref_lr with:
     input:
-        ic = config['cerberus']['agg']['ics'],
+        ic = config['analysis']['cerberus']['agg']['ics'],
         tss = lambda wc:expand(get_cfg_entries(wc,
                         p_df,
-                        config['cerberus']['agg']['ends']),
+                        config['analysis']['cerberus']['agg']['ends']),
                         end_mode='tss')[0],
         tes = lambda wc:expand(get_cfg_entries(wc,
                         p_df,
-                        config['cerberus']['agg']['ends']),
+                        config['analysis']['cerberus']['agg']['ends']),
                         end_mode='tes')[0]
     output:
-        h5 = config['cerberus']['ca']
+        h5 = config['analysis']['cerberus']['ca']
 
-use rule cerb_annot as cerb_annot_ref with:
-    input:
-        h5 = config['ref']['cerberus']['ca'],
-        gtf = config['ref']['gtf']
+use rule cerb_annot_proc as cerb_annot_ref with:
     params:
+        h5 = p_dir+config['ref']['cerberus']['ca'],
+        gtf = p_dir+config['ref']['gtf'],
         source = config['ref']['gtf_ver'],
         gene_source = None
     output:
@@ -138,20 +105,20 @@ use rule cerb_annot as cerb_annot_ref with:
 
 use rule cerb_annot as cerb_annot_run with:
     input:
-        h5 = config['cerberus']['ca'],
-        gtf = config['lapa']['filt']['gtf']
+        h5 = config['analysis']['cerberus']['ca']
     params:
+        gtf = p_dir+config['lapa']['filt']['gtf'],
         source = lambda wc:get_df_col(wc, df, 'source'),
         gene_source = None
     output:
-        h5 = config['cerberus']['ca_annot']
+        h5 = config['analysis']['cerberus']['ca_annot']
 
 #
 use rule cerb_gtf_ids as cerb_update_ref_gtf with:
     input:
-        h5 = config['analysis']['ref']['cerberus']['ca_annot'],
-        gtf = config['ref']['gtf']
+        h5 = config['analysis']['ref']['cerberus']['ca_annot']
     params:
+        gtf = p_dir+config['ref']['gtf'],
         source = config['ref']['gtf_ver'],
         update_ends = True,
         agg = True
@@ -160,21 +127,21 @@ use rule cerb_gtf_ids as cerb_update_ref_gtf with:
 
 use rule cerb_gtf_ids as cerb_update_gtf with:
     input:
-        h5 = config['cerberus']['ca_annot'],
-        gtf = config['lapa']['filt']['gtf']
+        h5 = config['analysis']['cerberus']['ca_annot']
     params:
+        gtf = p_dir+config['lapa']['filt']['gtf'],
         source = lambda wc:get_df_col(wc, df, 'source'),
         update_ends = True,
         agg = True
     output:
-        gtf = config['cerberus']['gtf']
+        gtf = config['analysis']['cerberus']['gtf']
 
 use rule cerb_ab_ids as study_cerb_ab with:
     input:
-        h5 = config['cerberus']['ca_annot'],
-        ab = config['lapa']['filt']['filt_ab']
+        h5 = config['analysis']['cerberus']['ca_annot']
     params:
+        ab = p_dir+config['lapa']['filt']['filt_ab'],
         source = lambda wc:get_df_col(wc, df, 'source'),
         agg = True
     output:
-        ab = config['cerberus']['ab']
+        ab = config['analysis']['cerberus']['ab']

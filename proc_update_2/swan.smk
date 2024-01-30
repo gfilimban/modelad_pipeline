@@ -7,7 +7,7 @@ rule make_swan_metadata:
         mem_gb = 1,
         threads = 1
     output:
-        meta = config['swan']['meta']
+        meta = config['analysis']['swan']['meta']
     run:
         temp_meta = get_cfg_entries(wildcards, params.p_df,
                                     config['merge']['sort_bam'],
@@ -19,17 +19,17 @@ rule make_swan_metadata:
 
 rule make_swan_graph:
     input:
-        gtf = lambda wc:get_cfg_entries(wc, p_df, config['cerberus']['gtf']),
-        ab = lambda wc:get_cfg_entries(wc, p_df, config['cerberus']['ab']),
-        annot = config['ref']['cerberus']['gtf'],
-        meta = config['swan']['meta']
+        gtf = lambda wc:get_cfg_entries(wc, p_df, config['analysis']['cerberus']['gtf']),
+        ab = lambda wc:get_cfg_entries(wc, p_df, config['analysis']['cerberus']['ab']),
+        annot = config['analysis']['ref']['cerberus']['gtf'],
+        meta = config['analysis']['swan']['meta']
     resources:
         mem_gb = 64,
         threads = 4
     params:
-        prefix = config['swan']['swan_graph'].replace('.p', '')
+        prefix = config['analysis']['swan']['swan_graph'].replace('.p', '')
     output:
-        sg = config['swan']['swan_graph']
+        sg = config['analysis']['swan']['swan_graph']
     run:
         sg = swan.SwanGraph()
         sg.add_annotation(input.annot)
@@ -47,12 +47,12 @@ rule make_swan_graph:
 
 rule swan_die:
     input:
-        sg = config['swan']['swan_graph']
+        sg = config['analysis']['swan']['swan_graph']
     resources:
         mem_gb = 128,
         threads = 8
     output:
-        out = config['swan']['du']
+        out = config['analysis']['swan']['du']
     run:
         sg = swan.read(input.sg)
         die, genes = sg.die_gene_test(obs_col=wildcards.obs_col,
@@ -83,12 +83,12 @@ def save_swan_adata(swan_file,
 
 rule swan_output_g_adata:
     input:
-        sg = config['swan']['swan_graph']
+        sg = config['analysis']['swan']['swan_graph']
     resources:
         mem_gb = 64,
         threads = 1
     output:
-        out = temporary(config['swan']['g_adata'])
+        out = temporary(config['analysis']['swan']['g_adata'])
     run:
         save_swan_adata(input.sg,
                         output.out,
@@ -96,12 +96,12 @@ rule swan_output_g_adata:
 
 rule swan_output_t_adata:
     input:
-        sg = config['swan']['swan_graph']
+        sg = config['analysis']['swan']['swan_graph']
     resources:
         mem_gb = 64,
         threads = 1
     output:
-        out = temporary(config['swan']['t_adata'])
+        out = temporary(config['analysis']['swan']['t_adata'])
     run:
         save_swan_adata(input.sg,
                         output.out,
@@ -112,12 +112,12 @@ rule swan_output_t_adata:
 ################################################################################
 rule deg:
     input:
-        adata = config['swan']['g_adata']
+        adata = config['analysis']['swan']['g_adata']
     resources:
         mem_gb = 128,
         threads = 8
     output:
-        out = config['swan']['deg']
+        out = config['analysis']['swan']['deg']
     conda:
         "pydeseq2"
     shell:
@@ -133,12 +133,12 @@ rule deg:
 
 rule det:
     input:
-        adata = config['swan']['t_adata']
+        adata = config['analysis']['swan']['t_adata']
     resources:
         mem_gb = 128,
         threads = 8
     output:
-        out = config['swan']['det']
+        out = config['analysis']['swan']['det']
     conda:
         "pydeseq2"
     shell:
@@ -154,9 +154,9 @@ rule det:
 
 rule all_swan:
     input:
-        get_de_cfg_entries(p_df, config['swan']['du'], how='du'),
-        get_de_cfg_entries(p_df, config['swan']['deg'], how='de'),
-        get_de_cfg_entries(p_df, config['swan']['det'], how='de')
+        get_de_cfg_entries(p_df, config['analysis']['swan']['du'], how='du'),
+        get_de_cfg_entries(p_df, config['analysis']['swan']['deg'], how='de'),
+        get_de_cfg_entries(p_df, config['analysis']['swan']['det'], how='de')
 
-        # expand(config['swan']['swan_graph'],
+        # expand(config['analysis']['swan']['swan_graph'],
         #        analysis=p_df.analysis.dropna().unique().tolist())

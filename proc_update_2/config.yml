@@ -186,31 +186,37 @@ cerberus:
   ics: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_ic.tsv
   ends: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{end_mode}.bed
 
-  ca: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}.h5
-  ca_annot: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_annot.h5
-  gtf: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}.gtf
-  ab: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_abundance.tsv
-
-  agg:
-    tss:
-      slack: 20
-    tes:
-      slack: 20
-    ics: data/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_ic.tsv
-    ends: data/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_{end_mode}.bed
+  # ca: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}.h5
+  # ca_annot: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_annot.h5
+  # gtf: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}.gtf
+  # ab: data/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_abundance.tsv
+  #
+  # agg:
+  #   ics: data/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_ic.tsv
+  #   ends: data/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_{end_mode}.bed
 
 analysis:
   ref:
     cerberus:
-      ca_annot: {analysis}/ref/ca_annot.h5
-      gtf: {analysis}/ref/cerberus.gtf
+      ca_annot: analysis/{analysis}/ref/ca_annot.h5
+      gtf: analysis/{analysis}/ref/cerberus.gtf
 
-swan:
-  meta: data/swan/{analysis}/{analysis}_meta.tsv
-  swan_graph: data/swan/{analysis}/swan_graph.p
-  g_adata: data/swan/{analysis}/swan_g_adata.h5ad
-  t_adata: data/swan/{analysis}/swan_t_adata.h5ad
+  cerberus:
+    ca: analysis/{analysis}/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}.h5
+    ca_annot: analysis/{analysis}/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_annot.h5
+    gtf: analysis/{analysis}/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}.gtf
+    ab: analysis/{analysis}/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_abundance.tsv
 
-  du: data/swan/{analysis}/{obs_cond1}_vs_{obs_cond2}_{obs_col}_du_{feat}.tsv
-  deg: data/swan/{analysis}/{obs_cond1}_vs_{obs_cond2}_{obs_col}_deg.tsv
-  det: data/swan/{analysis}/{obs_cond1}_vs_{obs_cond2}_{obs_col}_det.tsv
+    agg:
+      ics: analysis/{analysis}/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_ic.tsv
+      ends: analysis/{analysis}/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_{end_mode}.bed
+
+  swan:
+    meta: analysis/{analysis}/swan/analysis/{analysis}_meta.tsv
+    swan_graph: analysis/{analysis}/swan/swan_graph.p
+    g_adata: analysis/{analysis}/swan/swan_g_adata.h5ad
+    t_adata: analysis/{analysis}/swan/swan_t_adata.h5ad
+
+    du: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_du_{feat}.tsv
+    deg: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_deg.tsv
+    det: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_det.tsv

@@ -42,7 +42,6 @@ wildcard_constraints:
     tissue='|'.join([re.escape(x) for x in df.tissue.unique().tolist()]),
     biorep_num='|'.join([re.escape(x) for x in df.biorep_num.unique().tolist()]),
     flowcell='|'.join([re.escape(x) for x in df.flowcell.unique().tolist()]),
-    cerberus_run='|'.join([re.escape(x) for x in df.cerberus_run.unique().tolist()]),
     obs_col='|'.join([re.escape(x) for x in ['genotype', 'genotype_sex']]),
     obs_cond1='|'.join([re.escape(x) for x in df.genotype.unique().tolist()+df.genotype_sex.unique().tolist()]),
     obs_cond2='|'.join([re.escape(x) for x in df.genotype.unique().tolist()+df.genotype_sex.unique().tolist()]),
@@ -385,3 +384,22 @@ use rule igv_index_gtf as igv_index_gtf_lr with:
         gtf = rules.igv_sort_gtf_lr.output.gtf
     output:
         ind = config['lapa']['filt']['ind_gtf']
+
+
+################################################################################
+################################ Cerberus ######################################
+################################################################################
+use rule cerb_gtf_to_bed as cerb_get_gtf_ends with:
+    input:
+        gtf = config['lapa']['filt']['gtf']
+    output:
+        ends = config['cerberus']['ends']
+    params:
+        slack = lambda wc:config['cerberus'][wc.end_mode]['slack'],
+        dist = lambda wc:config['cerberus'][wc.end_mode]['dist']
+
+use rule cerb_gtf_to_ics as cerb_get_gtf_ics with:
+    input:
+        gtf = config['lapa']['filt']['gtf']
+    output:
+        ics = config['cerberus']['ics']
