@@ -463,7 +463,7 @@ def get_prev_cerb_entry(wc, df, cfg_entry, config):
             file = config['ref']['cerberus']['ics']
     else:
         prev_wc = {'cerberus_run': prev_run}
-        file = get_cfg_entries(prev_wc, df, cfg_entry)
+        file = get_cfg_entries_analysis(prev_wc, df, cfg_entry)
         assert len(file) == 1
         file = file[0]
 
