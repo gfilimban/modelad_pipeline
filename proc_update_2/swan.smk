@@ -9,7 +9,7 @@ rule make_swan_metadata:
     output:
         meta = config['analysis']['swan']['meta']
     run:
-        temp_meta = get_cfg_entries(wildcards, params.p_df,
+        temp_meta = get_cfg_entries_analysis(wildcards, params.p_df,
                                     config['merge']['sort_bam'],
                                     return_df=True)
         cols = ['dataset', 'mouse_id', 'study', 'genotype',
@@ -19,8 +19,8 @@ rule make_swan_metadata:
 
 rule make_swan_graph:
     input:
-        gtf = lambda wc:get_cfg_entries(wc, p_df, config['analysis']['cerberus']['gtf']),
-        ab = lambda wc:get_cfg_entries(wc, p_df, config['analysis']['cerberus']['ab']),
+        gtf = lambda wc:get_cfg_entries_analysis(wc, p_df, config['analysis']['cerberus']['gtf']),
+        ab = lambda wc:get_cfg_entries_analysis(wc, p_df, config['analysis']['cerberus']['ab']),
         annot = config['analysis']['ref']['cerberus']['gtf'],
         meta = config['analysis']['swan']['meta']
     resources:

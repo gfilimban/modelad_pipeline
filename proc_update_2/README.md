@@ -87,5 +87,6 @@ Wait for this command to run and make sure the steps that it plans to run are re
 
 ## Analysis hints
 
-* Visualize your reads from the `data/merge/*.bam` files. BAMs and their indices are stored there.
-* Visualize your coverage tracks (very helpful for interpreting TSSs and TESs) from the `data/merge/*.bw` files
+* Visualize your reads from the `data/merge/*.bam` files. BAMs and their indices are stored there. This is very helpful for *verifying incorporation of SNPs from the genotypes*.
+* Visualize your coverage tracks (very helpful for interpreting TSSs and TESs) from the `data/merge/*.bw` files.
+* TODO find examples on using Swan to visualize transcriptomes in `TODO.ipynb`

@@ -248,7 +248,6 @@ def parse_config_file_analysis(fname,
     return df, p_df
 
 
-
 def subset_df_on_wcs(wc, df):
     """
     Return a copy of the input metadata df limited to the wildcards
