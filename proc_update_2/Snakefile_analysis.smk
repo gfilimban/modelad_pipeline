@@ -16,11 +16,12 @@ meta_tsv = 'mouse_metadata.tsv'
 an_meta_tsv = 'analysis_config.tsv'
 auto_dedupe = True
 
-df, p_df = parse_config_file(config_tsv,
+df, p_df = parse_config_file_analysis(config_tsv,
                        meta_tsv,
                        p_meta_tsv,
                        an_meta_tsv,
                        auto_dedupe=auto_dedupe)
+
 end_modes = ['tss', 'tes']
 strands = ['fwd', 'rev']
 
@@ -66,21 +67,24 @@ rule all:
 ################################################################################
 ################################# Cerberus agg #####################################
 ################################################################################
+################################################################################
+################################# Cerberus #####################################
+################################################################################
 
-# use rule cerb_gtf_to_bed as cerb_get_gtf_ends with:
-#     input:
-#         gtf = config['lapa']['filt']['gtf']
-#     output:
-#         ends = config['cerberus']['ends']
-#     params:
-#         slack = lambda wc:config['cerberus'][wc.end_mode]['slack'],
-#         dist = lambda wc:config['cerberus'][wc.end_mode]['dist']
-#
-# use rule cerb_gtf_to_ics as cerb_get_gtf_ics with:
-#     input:
-#         gtf = config['lapa']['filt']['gtf']
-#     output:
-#         ics = config['cerberus']['ics']
+use rule cerb_gtf_to_bed as cerb_get_gtf_ends with:
+    input:
+        gtf = config['lapa']['filt']['gtf']
+    output:
+        ends = config['cerberus']['ends']
+    params:
+        slack = lambda wc:config['cerberus'][wc.end_mode]['slack'],
+        dist = lambda wc:config['cerberus'][wc.end_mode]['dist']
+
+use rule cerb_gtf_to_ics as cerb_get_gtf_ics with:
+    input:
+        gtf = config['lapa']['filt']['gtf']
+    output:
+        ics = config['cerberus']['ics']
 
 use rule cerb_agg_ends as cerb_agg_ends_lr with:
     input:
@@ -130,7 +134,7 @@ use rule cerb_annot as cerb_annot_ref with:
         source = config['ref']['gtf_ver'],
         gene_source = None
     output:
-        h5 = config['ref']['cerberus']['ca_annot']
+        h5 = config['analysis']['ref']['cerberus']['ca_annot']
 
 use rule cerb_annot as cerb_annot_run with:
     input:
@@ -145,14 +149,14 @@ use rule cerb_annot as cerb_annot_run with:
 #
 use rule cerb_gtf_ids as cerb_update_ref_gtf with:
     input:
-        h5 = config['ref']['cerberus']['ca_annot'],
+        h5 = config['analysis']['ref']['cerberus']['ca_annot'],
         gtf = config['ref']['gtf']
     params:
         source = config['ref']['gtf_ver'],
         update_ends = True,
         agg = True
     output:
-        gtf = config['ref']['cerberus']['gtf']
+        gtf = config['analysis']['ref']['cerberus']['gtf']
 
 use rule cerb_gtf_ids as cerb_update_gtf with:
     input:

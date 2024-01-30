@@ -103,9 +103,6 @@ ref:
     ca: ref/ca.h5
     ends: ref/ca_{end_mode}.bed
     ics: ref/ca_ic.tsv
-    ca_annot: ref/ca_annot.h5
-    gtf: ref/cerberus.gtf
-
 
 map:
   sam: data/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}.sam
@@ -177,7 +174,6 @@ lapa:
     sort_gtf: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/filtered.sorted.gtf
     ind_gtf: data/lapa/{study}/{genotype}_{sex}_{age}_{tissue}/filtered.sorted.gtf.idx
 
-# TODO - how to run cerberus?
 cerberus:
   tss:
     dist: 50
@@ -202,6 +198,12 @@ cerberus:
       slack: 20
     ics: data/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_ic.tsv
     ends: data/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_{end_mode}.bed
+
+analysis:
+  ref:
+    cerberus:
+      ca_annot: {analysis}/ref/ca_annot.h5
+      gtf: {analysis}/ref/cerberus.gtf
 
 swan:
   meta: data/swan/{analysis}/{analysis}_meta.tsv
