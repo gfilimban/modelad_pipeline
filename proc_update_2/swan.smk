@@ -19,8 +19,10 @@ rule make_swan_metadata:
 
 rule make_swan_graph:
     input:
-        gtf = lambda wc:get_cfg_entries(wc, p_df, config['analysis']['cerberus']['gtf']),
-        ab = lambda wc:get_cfg_entries(wc, p_df, config['analysis']['cerberus']['ab']),
+        # gtf = lambda wc:get_cfg_entries(wc, p_df, config['analysis']['cerberus']['gtf']),
+        # ab = lambda wc:get_cfg_entries(wc, p_df, config['analysis']['cerberus']['ab']),
+        gtf = lambda wc:get_cfg_entries(wc, df, config['analysis']['cerberus']['gtf']),
+        ab = lambda wc:get_cfg_entries(wc, df, config['analysis']['cerberus']['ab']),
         annot = config['analysis']['ref']['cerberus']['gtf'],
         meta = config['analysis']['swan']['meta']
     resources:
