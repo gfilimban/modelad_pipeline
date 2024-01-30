@@ -15,12 +15,14 @@ configfile: 'config.yml'
 config_tsv = 'config.tsv'
 p_meta_tsv = 'pseudochromosome_metadata.tsv'
 meta_tsv = 'mouse_metadata.tsv'
+geno_tsv = 'genotype_metadata.tsv'
 an_meta_tsv = 'analysis_config.tsv'
 auto_dedupe = True
 
 df, p_df = parse_config_file_analysis(config_tsv,
                        meta_tsv,
                        p_meta_tsv,
+                       geno_tsv,
                        an_meta_tsv,
                        auto_dedupe=auto_dedupe)
 

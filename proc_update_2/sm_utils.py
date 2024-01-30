@@ -26,6 +26,7 @@ def process_meta(meta_fname):
 def parse_config_file(fname,
                       meta_fname,
                       p_meta_fname,
+                      geno_fname,
                       auto_dedupe=True):
 
     """
@@ -33,6 +34,7 @@ def parse_config_file(fname,
         fname (str): Path to config file fname. One line per input fastq.
         meta_fname (str): Path to file with metadata information.
         p_meta_fname (str): Path to pseudochromosome metadata information
+        geno_fname (str): Path to genotype metadata information
         datasets_per_run (int): Number of datasets to process in each TALON run
         auto_dedupe (bool): Automatically deduplicate duplicate fastqs that result from
             successive Porechop rounds
@@ -45,7 +47,7 @@ def parse_config_file(fname,
     df, p_df = parse_config_common(fname,
                           meta_fname,
                           p_meta_fname,
-                          an_meta_fname,
+                          geno_fname,
                           auto_dedupe=True)
 
     return df, p_df
@@ -53,7 +55,7 @@ def parse_config_file(fname,
 def parse_config_common(fname,
                       meta_fname,
                       p_meta_fname,
-                      an_meta_fname,
+                      geno_fname,
                       auto_dedupe=True):
 
     df = pd.read_csv(fname, sep='\t')
@@ -98,6 +100,12 @@ def parse_config_common(fname,
     meta = process_meta(meta_fname)
     df['mouse_id'] = df['mouse_id'].astype('int')
     df = df.merge(meta, how='left', on='mouse_id')
+
+    # merge in genotype metadata
+    g_meta = pd.read_csv(geno_fname, sep='\t')
+    df = df.merge(g_meta,
+                  how='left',
+                  on='genotype')
 
     # get tech rep numbers -- each mouse has multiple reps
     # and are therefore technical reps
@@ -181,6 +189,7 @@ def parse_config_common(fname,
 def parse_config_file_analysis(fname,
                       meta_fname,
                       p_meta_fname,
+                      geno_fname,
                       an_meta_fname,
                       auto_dedupe=True):
 
@@ -189,6 +198,7 @@ def parse_config_file_analysis(fname,
         fname (str): Path to config file fname. One line per input fastq.
         meta_fname (str): Path to file with metadata information.
         p_meta_fname (str): Path to pseudochromosome metadata information
+        geno_fname (str): Path to genotype metadata information
         an_meta_fname (str): Path to analysis metadata information
         datasets_per_run (int): Number of datasets to process in each TALON run
         auto_dedupe (bool): Automatically deduplicate duplicate fastqs that result from
@@ -204,7 +214,7 @@ def parse_config_file_analysis(fname,
     df, p_df = parse_config_common(fname,
                           meta_fname,
                           p_meta_fname,
-                          an_meta_fname,
+                          geno_fname,
                           auto_dedupe=True)
 
     # limit to just the studies and genotypes requested
@@ -218,6 +228,7 @@ def parse_config_file_analysis(fname,
     df = df.loc[(df.genotype.isin(genotypes))&\
                 (df.study.isin(studies))]
     i3 = len(p_df[['genotype', 'study']].drop_duplicates().index)
+    import pdb; pdb.set_trace()
     if not (i==i2==i3):
         genotypes = list(set(genotypes)-\
                          set(df.genotype.unique().tolist()))

@@ -1,0 +1,3 @@
+analysis	genotype	study	genotype_alias
+hABKI_Swe_IB_HET_WT	hABKI_Swe_IB_HET	ad008	hABKI_Swe_IB_HET
+hABKI_Swe_IB_HET_WT	hABKI_Swe_IB_WT	ad008	B6J

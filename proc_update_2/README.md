@@ -67,6 +67,13 @@ snakemake \
 -j 200 \
 --latency-wait 120 \
 --use-conda \
+  -n
+
+snakemake \
+-s Snakefile_analysis.smk \
+-j 200 \
+--latency-wait 120 \
+--use-conda \
 --cluster "sbatch -A \
   model-ad_lab \
   --partition=highmem \
