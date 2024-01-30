@@ -241,6 +241,10 @@ def parse_config_file_analysis(fname,
     p_df = p_df.merge(an_df, how='left',
                   on=['genotype', 'study'])
 
+    # add cerberus run info
+    p_df = p_df.merge(df[gb_cols+['cerberus_run']].drop_duplicates(), how='left',
+                 on=gb_cols)
+
     return df, p_df
 
 
