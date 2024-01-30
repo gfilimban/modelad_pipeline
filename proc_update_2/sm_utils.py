@@ -36,8 +36,6 @@ def parse_config_file(fname,
         datasets_per_run (int): Number of datasets to process in each TALON run
         auto_dedupe (bool): Automatically deduplicate duplicate fastqs that result from
             successive Porechop rounds
-        include_pseudochrom (bool): Include models with pseudochrom loci, which need
-            some preprocessing / different treatment
 
     Returns:
         df (pandas DataFrame): DF w/ pipeline information; one line per fastq
