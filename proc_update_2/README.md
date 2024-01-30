@@ -3,12 +3,14 @@
 
 ## Preprocessing
 Preparing your processing environment:
-* TranscriptClean
-* gencode_utr_fix
-* igvtools
-* deeptools
+* [TranscriptClean](https://github.com/mortazavilab/TranscriptClean)
+* [TALON](https://github.com/mortazavilab/TALON)
+* [GENCODE UTR Fix](https://github.com/MuhammedHasan/gencode_utr_fix)
+* [igvtools](https://anaconda.org/bioconda/igvtools)
+* [deeptools](https://deeptools.readthedocs.io/en/develop/content/installation.html)
 * TODO add yaml config files for enviroemnt
-* TODO mention qi and tmux
+* Get familiar with using `tmux` to stash your sessions while performing preprocessing
+* Always use `srun` on HPC3 before running Snakemake or you'll get yelled at
 
 
 * When you get new reads, add the paths to FASTQ files to `config.tsv`.
@@ -32,6 +34,30 @@ snakemake \
   --time=72:00:00" \
   -n
 ```
+
+<!-- ```bash
+snakemake \
+-s Snakefile \
+-j 200 \
+--latency-wait 120 \
+--use-conda \
+  -n
+
+snakemake \
+-s Snakefile \
+-j 200 \
+--latency-wait 120 \
+--use-conda \
+--cluster "sbatch -A \
+  model-ad_lab \
+  --partition=highmem \
+  --mem={resources.mem_gb}GB \
+  -c {resources.threads} \
+  --mail-user=freese@uci.edu \
+  --mail-type=START,END,FAIL \
+  --time=72:00:00" \
+  -n
+``` -->
 
 Wait for this command to run and make sure the steps that it plans to run are reasonable. After it finishes, run the same command without the `-n` option.
 
