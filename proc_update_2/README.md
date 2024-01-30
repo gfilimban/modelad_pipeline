@@ -36,4 +36,4 @@ Wait for this command to run and make sure the steps that it plans to run are re
 
 ## Downstream analysis
 
-For the majority of you, you will only be running this part of the pipeline. This part of the pipeline will run some basic analyses on the long-read data for you
+For the majority of you, you will only be running this part of the pipeline. This part of the pipeline will run some basic analyses on the long-read data for you including differential gene and transcript expression tests and differential isoform usage tests.
