@@ -352,9 +352,9 @@ def get_cfg_entries_analysis(wc, df, cfg_entry, return_df=False):
             as opposed to list of files. Default: False
     """
     temp = subset_df_on_wcs(wc, df)
-
-    if 'agg' in cfg_entry and '.bed' in cfg_entry:
-        import pdb; pdb.set_trace()
+    #
+    # if 'agg' in cfg_entry and '.bed' in cfg_entry:
+    #     import pdb; pdb.set_trace()
 
     genotype = temp.genotype.tolist()
     study = temp.study.tolist()
