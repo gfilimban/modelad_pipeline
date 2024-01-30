@@ -191,20 +191,20 @@ use rule sort_bam as bam_sort_merge with:
     input:
         bam = config['merge']['bam']
     output:
-        bam = config['merge']['sort_bam']
+        bam = protected(config['merge']['sort_bam'])
 
 use rule index_bam as bam_ind_merge with:
     input:
         bam = config['merge']['sort_bam']
     output:
-        ind = config['merge']['ind_bam']
+        ind = protected(config['merge']['ind_bam'])
 
 use rule bam_to_bw as bw with:
     input:
         bam = config['merge']['sort_bam'],
         bai = config['merge']['ind_bam']
     output:
-        bw = config['merge']['bw']
+        bw = protected(config['merge']['bw'])
 
 ################################################################################
 ################################## TALON #######################################
@@ -244,8 +244,8 @@ use rule talon as talon_run with:
         genome_ver = config['ref']['fa_ver'],
         opref = config['talon']['db'].rsplit('_talon.db', maxsplit=1)[0]
     output:
-        db = config['talon']['db'],
-        read_annot = config['talon']['annot']
+        db = protected(config['talon']['db']),
+        read_annot = protected(config['talon']['annot'])
 
 use rule talon_abundance as talon_abundance_run with:
     input:
@@ -255,7 +255,7 @@ use rule talon_abundance as talon_abundance_run with:
         annot_ver = config['ref']['gtf_ver'],
         opref = config['talon']['ab'].rsplit('_talon', maxsplit=1)[0]
     output:
-        ab = config['talon']['ab']
+        ab = protected(config['talon']['ab'])
 
 use rule talon_filter as talon_filt_run with:
     input:
@@ -266,7 +266,7 @@ use rule talon_filter as talon_filt_run with:
         min_count = config['talon']['min_count'],
         min_datasets = config['talon']['min_datasets']
     output:
-        pass_list = config['talon']['pass_list']
+        pass_list = protected(config['talon']['pass_list'])
 
 use rule talon_filtered_abundance as talon_filt_ab_run with:
     input:
@@ -277,7 +277,7 @@ use rule talon_filtered_abundance as talon_filt_ab_run with:
         genome_ver = config['ref']['fa_ver'],
         annot_ver = config['ref']['gtf_ver']
     output:
-        ab = config['talon']['filt_ab']
+        ab = protected(config['talon']['filt_ab'])
 
 use rule talon_gtf as talon_gtf_run with:
     input:
@@ -288,7 +288,7 @@ use rule talon_gtf as talon_gtf_run with:
         genome_ver = config['ref']['fa_ver'],
         annot_ver = config['ref']['gtf_ver']
     output:
-        gtf = config['talon']['gtf']
+        gtf = protected(config['talon']['gtf'])
 
 ################################################################################
 ################################### LAPA #######################################
@@ -300,7 +300,7 @@ rule lapa_config:
         threads = 1,
         mem_gb = 2
     output:
-        cfg = config['lapa']['config']
+        cfg = protected(config['lapa']['config'])
     run:
         temp = get_cfg_entries(wildcards, p_df, config['merge']['sort_bam'], return_df=True)
         temp = temp[['dataset', 'sample', 'file']].copy(deep=True)
@@ -327,7 +327,7 @@ use rule lapa_call_ends as lapa_call_ends_run with:
                                 config['lapa']['ends'],
                                 'temp_file')
         output:
-            ends = config['lapa']['ends']
+            ends = protected(config['lapa']['ends'])
 
 use rule lapa_link as lapa_link_run with:
     input:
@@ -338,7 +338,7 @@ use rule lapa_link as lapa_link_run with:
         tss_dir = expand(config['lapa']['ends'], end_mode='tss', allow_missing=True)[0].rsplit('/', maxsplit=1)[0]+'/',
         tes_dir = expand(config['lapa']['ends'], end_mode='tes', allow_missing=True)[0].rsplit('/', maxsplit=1)[0]+'/'
     output:
-        links = config['lapa']['links']
+        links = protected(config['lapa']['links'])
 
 use rule lapa_correct_talon as lapa_correct_talon_run with:
     input:
@@ -347,8 +347,8 @@ use rule lapa_correct_talon as lapa_correct_talon_run with:
         annot = config['talon']['annot'],
         links = config['lapa']['links']
     output:
-        gtf = config['lapa']['corrected']['gtf'],
-        filt_ab = config['lapa']['corrected']['filt_ab']
+        gtf = protected(config['lapa']['corrected']['gtf']),
+        filt_ab = protected(config['lapa']['corrected']['filt_ab'])
 
 use rule lapa_filt as lapa_filt_run with:
     input:
@@ -359,14 +359,14 @@ use rule lapa_filt as lapa_filt_run with:
         g_novs = config['lapa']['filt']['g_novs'],
         filt_spikes = config['lapa']['filt']['remove_spikes']
     output:
-        filt_list = config['lapa']['filt']['pass_list']
+        filt_list = protected(config['lapa']['filt']['pass_list'])
 
 use rule lapa_filt_ab as lapa_filt_ab_run with:
     input:
         ab = config['lapa']['corrected']['filt_ab'],
         filt_list = config['lapa']['filt']['pass_list']
     output:
-        ab = config['lapa']['filt']['filt_ab']
+        ab = protected(config['lapa']['filt']['filt_ab'])
 
 use rule lapa_filt_gtf as lapa_filt_gtf_run with:
     input:
@@ -379,13 +379,13 @@ use rule igv_sort_gtf as igv_sort_gtf_lr with:
     input:
         gtf = rules.lapa_filt_gtf_run.output.gtf
     output:
-        gtf = config['lapa']['filt']['sort_gtf']
+        gtf = protected(config['lapa']['filt']['sort_gtf'])
 
 use rule igv_index_gtf as igv_index_gtf_lr with:
     input:
         gtf = rules.igv_sort_gtf_lr.output.gtf
     output:
-        ind = config['lapa']['filt']['ind_gtf']
+        ind = protected(config['lapa']['filt']['ind_gtf'])
 
 
 ################################################################################
@@ -395,7 +395,7 @@ use rule cerb_gtf_to_bed as cerb_get_gtf_ends with:
     input:
         gtf = config['lapa']['filt']['gtf']
     output:
-        ends = config['cerberus']['ends']
+        ends = protected(config['cerberus']['ends'])
     params:
         slack = lambda wc:config['cerberus'][wc.end_mode]['slack'],
         dist = lambda wc:config['cerberus'][wc.end_mode]['dist']
@@ -404,4 +404,4 @@ use rule cerb_gtf_to_ics as cerb_get_gtf_ics with:
     input:
         gtf = config['lapa']['filt']['gtf']
     output:
-        ics = config['cerberus']['ics']
+        ics = protected(config['cerberus']['ics'])
