@@ -1,5 +1,6 @@
 # MODEL-AD Long-read RNA-seq pipeline
 
+If you're running the pipeline for the first time, please make sure you build up your compute environments first. [Link](https://github.com/fairliereese/modelad_pipeline/blob/main/proc_update_2/environment.md).
 
 ## Preprocessing
 
@@ -55,7 +56,7 @@ Wait for this command to run and make sure the steps that it plans to run are re
 
 For the majority of you, you will only be running this part of the pipeline. This part of the pipeline will run some basic analyses on the long-read data for you including differential gene and transcript expression tests and differential isoform usage tests.
 
-* First, make sure you *clone (`git clone`) and / or update (`git pull`) this repo* so that you have access to all the relevant metadata.
+* First, make sure you _clone (`git clone`) and / or update (`git pull`) this repo_ so that you have access to all the relevant metadata.
 * When you want to run a new analysis, edit or create a new `analysis_config.tsv`. Check the `mouse_metadata.tsv` file for the relevant genotypes and studies to include in your table.
 * `Snakefile_analysis.smk` will run the preprocessing pipeline through LAPA.
 
@@ -110,6 +111,6 @@ Wait for this command to run and make sure the steps that it plans to run are re
 
 ## Analysis hints
 
-* Visualize your reads from the `data/merge/*.bam` files. BAMs and their indices are stored there. This is very helpful for *verifying incorporation of SNPs from the genotypes*.
+* Visualize your reads from the `data/merge/*.bam` files. BAMs and their indices are stored there. This is very helpful for _verifying incorporation of SNPs from the genotypes_.
 * Visualize your coverage tracks (very helpful for interpreting TSSs and TESs) from the `data/merge/*.bw` files.
 * TODO find examples on using Swan to visualize transcriptomes in `TODO.ipynb`
