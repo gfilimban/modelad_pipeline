@@ -83,11 +83,11 @@ use rule cerberus_agg_ics as cerb_agg_ics_lr with:
 use rule cerb_write_ref as cerb_write_ref_lr with:
     input:
         ic = config['analysis']['cerberus']['agg']['ics'],
-        tss = lambda wc:expand(get_cfg_entries(wc,
+        tss = lambda wc:expand(get_cfg_entries_analysis(wc,
                         p_df,
                         config['analysis']['cerberus']['agg']['ends']),
                         end_mode='tss')[0],
-        tes = lambda wc:expand(get_cfg_entries(wc,
+        tes = lambda wc:expand(get_cfg_entries_analysis(wc,
                         p_df,
                         config['analysis']['cerberus']['agg']['ends']),
                         end_mode='tes')[0]
