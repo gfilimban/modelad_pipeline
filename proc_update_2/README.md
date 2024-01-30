@@ -2,16 +2,6 @@
 
 
 ## Preprocessing
-Preparing your processing environment:
-* [TranscriptClean](https://github.com/mortazavilab/TranscriptClean)
-* [TALON](https://github.com/mortazavilab/TALON)
-* [GENCODE UTR Fix](https://github.com/MuhammedHasan/gencode_utr_fix)
-* [igvtools](https://anaconda.org/bioconda/igvtools)
-* [deeptools](https://deeptools.readthedocs.io/en/develop/content/installation.html)
-* TODO add yaml config files for enviroemnt
-* Get familiar with using `tmux` to stash your sessions while performing preprocessing
-* Always use `srun` on HPC3 before running Snakemake or you'll get yelled at
-
 
 * When you get new reads, add the paths to FASTQ files to `config.tsv`.
 * When you get new mice, add the relevant data

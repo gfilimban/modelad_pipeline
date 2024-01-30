@@ -20,6 +20,11 @@ conda env export > snakemake.yml
 conda activate igvtools
 conda env export > igvtools.yml
 
+conda activate deeptools
+conda env export > deeptools.yml
+
+conda activate pydeseq2
+conda env export > pydeseq2.yml
 ``` -->
 * TODO "igvtools"
 * TODO "deeptools"
