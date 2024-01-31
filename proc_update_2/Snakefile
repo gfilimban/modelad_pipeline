@@ -84,6 +84,13 @@ rule all:
             tissue=df.tissue.tolist(),
             allow_missing=True),
             end_mode=end_modes),
+        expand(config['talon']['ab'],
+              zip,
+              study=df.study.tolist(),
+              genotype=df.genotype.tolist(),
+              sex=df.sex.tolist(),
+              age=df.age.tolist(),
+              tissue=df.tissue.tolist())
         expand(config['lapa']['filt']['filt_ab'],
               zip,
               study=df.study.tolist(),
@@ -211,7 +218,7 @@ rule talon_config:
         threads = 1,
         mem_gb = 4
     output:
-        cfg = config['talon']['config']
+        cfg = protected(config['talon']['config'])
     run:
         temp = get_cfg_entries(wildcards, p_df, config['merge']['sort_bam'], return_df=True)
         temp = temp[['dataset', 'sample', 'platform', 'file']]
