@@ -6,6 +6,7 @@ conda env create -f snakemake.yml
 conda env create -f igvtools.yml
 conda env create -f deeptools.yml
 conda env create -f pydeseq2.yml
+conda env create -f snakemake_vis.yml
 ```
 
 <!-- ```bash
@@ -20,6 +21,9 @@ conda env export > deeptools.yml
 
 conda activate pydeseq2
 conda env export > pydeseq2.yml
+
+conda activate snakemake_vis
+conda env export > snakemake_vis.yml
 ``` -->
 
 Additionally, you'll need to install the following, in your "snakemake" environment.
