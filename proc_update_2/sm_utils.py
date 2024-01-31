@@ -175,9 +175,6 @@ def parse_config_common(fname,
     df['flowcell'] = df.flowcell.astype(str)
     df['biorep_num'] = df.biorep_num.astype(str)
 
-    # add in columns for comparisons
-    df['genotype_sex'] = df['genotype']+'_'+df['sex']
-
     # get a table that matches genotype + pseudochrom + human gene + mouse gene
     temp = df.explode('pseudochrom')
     p_meta = pd.read_csv(p_meta_fname, sep='\t')
@@ -257,7 +254,15 @@ def parse_config_file_analysis(fname,
 
     # sanitize genotype alias internally (int) w/ characters better for file names
     exp = '[^0-9a-zA-Z-_]+'
+    p_df.loc[p_df.genotype_alias.isnull(), 'genotype_alias'] = p_df.loc[p_df.genotype_alias.isnull(), 'genotype']
     p_df['genotype_alias_int'] = p_df.genotype_alias.str.replace(exp, '_', regex=True)
+
+    # add in columns for comparisons
+    p_df['genotype_sex'] = p_df['genotype_alias_int']+'_'+p_df['sex']
+
+    # sanitize analysis
+    exp = '[^0-9a-zA-Z-_]+'
+    p_df['analysis'] = p_df.analysis.str.replace(exp, '_', regex=True)
 
     return df, p_df
 
@@ -510,19 +515,14 @@ def get_de_cfg_entries(p_df, cfg_entry, how):
     files = []
 
     for a in p_df.analysis.unique().tolist():
-        # print()
-        # print(a)
         wc = {'analysis': a}
         temp = subset_df_on_wcs(wc, p_df)
-        obs_col = 'genotype'
+        obs_col = 'genotype_alias_int'
         conds = temp[obs_col].unique().tolist()
-        # genotypes += ['ghost_cookie']
 
         combos = [c for c in itertools.combinations(conds, 2)]
         obs_cond1 = [c[0] for c in combos]
         obs_cond2 = [c[1] for c in combos]
-        # print(genotype1)
-        # print(genotype2)
 
         files += expand(expand(cfg_entry,
           zip,

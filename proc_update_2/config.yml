@@ -111,7 +111,6 @@ map:
   sam_rev: data/minimap2/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_reverse.sam
 
 tc:
-  path: ~/mortazavi_lab/bin/TranscriptClean/
   min_intron_size: 21
 
   sam: data/tc/{study}/{genotype}_{sex}_{age}_{tissue}_{biorep_num}_{flowcell}_clean.sam

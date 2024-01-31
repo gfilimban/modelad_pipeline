@@ -13,7 +13,7 @@ rule make_swan_metadata:
                                     config['merge']['sort_bam'],
                                     return_df=True)
         cols = ['dataset', 'mouse_id', 'study', 'genotype',
-                'sex', 'genotype_sex', 'age', 'tissue', 'biorep_num']
+                'sex', 'genotype_sex', 'genotype_alias', 'age', 'tissue', 'biorep_num']
         temp_meta = temp_meta[cols]
         temp_meta.to_csv(output.meta, sep='\t', index=False)
 

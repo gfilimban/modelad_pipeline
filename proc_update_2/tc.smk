@@ -25,7 +25,7 @@ rule tc:
         threads = 16
     shell:
         """
-        python {params.path}TranscriptClean.py \
+        transcriptclean \
             -t {resources.threads} \
             --sam {input.sam} \
             --genome {input.fa} \

@@ -131,7 +131,6 @@ use rule tc as tc_sam with:
         sam = config['map']['sam_rev'],
         fa = rules.map_reads.input.ref_fa
     params:
-        path = config['tc']['path'],
         min_intron_size = config['tc']['min_intron_size'],
         opref = config['tc']['sam'].rsplit('_clean.sam', maxsplit=1)[0]
     output:
