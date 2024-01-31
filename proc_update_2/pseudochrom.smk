@@ -43,7 +43,7 @@ rule tc_human:
            touch {output.sam_clean_log}
            touch {output.sam_clean_te_log}
         else
-            python {params.path}TranscriptClean.py \
+            transcriptclean \
                 -t {resources.threads} \
                 --sam {input.sam} \
                 --genome {input.fa} \
@@ -76,7 +76,7 @@ rule tc_mouse:
             touch {output.sam_clean_log}
             touch {output.sam_clean_te_log}
         else
-            python {params.path}TranscriptClean.py \
+            transcriptclean \
                 -t {resources.threads} \
                 --sam {input.sam} \
                 --genome {input.fa} \
@@ -248,7 +248,6 @@ use rule tc_human as tc_sam_hgene with:
         sam = rules.map_reads_hgene.output.sam,
         fa = config['ref']['pseudochrom']['fa']
     params:
-        path = config['tc']['path'],
         min_intron_size = config['tc']['min_intron_size'],
         locus_type = lambda wc: get_df_col(wc, p_df, 'locus_type'),
         opref = config['ref']['pseudochrom']['human_gene']['tc_sam'].rsplit('_clean.sam', maxsplit=1)[0]
@@ -318,7 +317,6 @@ use rule tc_mouse as tc_sam_mgene with:
       fa = config['ref']['pseudochrom']['fa']
   params:
       locus_type = lambda wc: get_df_col(wc, p_df, 'locus_type'),
-      path = config['tc']['path'],
       min_intron_size = config['tc']['min_intron_size'],
       opref = config['ref']['pseudochrom']['gene']['tc_sam'].rsplit('_clean.sam', maxsplit=1)[0]
   output:
