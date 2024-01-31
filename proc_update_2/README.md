@@ -6,7 +6,10 @@ If you're running the pipeline for the first time, please make sure you build up
 
 * When you get new reads, add the paths to FASTQ files to `config.tsv`.
 * When you get new mice, add the relevant data
-* `Snakefile` will run the preprocessing pipeline through LAPA.
+* `Snakefile` will run the preprocessing pipeline through LAPA (mapping->TranscriptClean->TALON->LAPA)
+* Get familiar with using `tmux` to stash your sessions while performing preprocessing
+* Always use `srun` on HPC3 before running Snakemake or you'll get yelled at
+* Make sure to run `conda activate snakemake` before running any Snakemake commands
 
 Run the preprocessing pipeline with the following command (replace `{your_email}` with your email you want updates at!):
 ```bash

@@ -1,11 +1,11 @@
-analysis	genotype	study							
-hABKI_Swe_IB_HET_WT	hMAPT-HO_hABKI-SweIb-HET	ad008							
-hABKI_Swe_IB_HET_WT	hMAPT-HO_hABKI-SweIb-WT	ad008							
-hABKI_Swe_IB_HET_WT	hABKI-Swe-WT	ad006							
-hClu	5xFAD-HEMI_Clu-h2kbKI-HO	ad003							
-hClu	5xFAD-WT	ad003							
-hClu	5xFAD-HEMI	ad003							
-hClu	5xFAD-WT_Clu-h2kbKI-HO	ad003							
-hTREM2	hTREM2KI-HET	ad004							
-hTREM2	hTREM2-R47HKI-HET	ad004							
-hTREM2	hTREM2KI-WT	ad004
+analysis	genotype	study	genotype_alias
+hABKI_Swe_IB_HET_WT	hMAPT-HO_hABKI-SweIb-HET	ad008	hMAPT-HO;hABKI-SweIb-HET
+hABKI_Swe_IB_HET_WT	hMAPT-HO_hABKI-SweIb-HET	ad008	hMAPT-HO
+hABKI_Swe_IB_HET_WT	hABKI-Swe-WT	ad006	B6J
+hClu	5xFAD-HEMI_Clu-h2kbKI-HO	ad003	5xFAD-HEMI;Clu-h2kbKI-HO
+hClu	5xFAD-WT	ad003	B6J
+hClu	5xFAD-HEMI	ad003	5xFAD-HEMI
+hClu	5xFAD-WT_Clu-h2kbKI-HO	ad003	Clu-h2kbKI-HO
+hTREM2	hTREM2KI-HET	ad004	hTREM2KI-HET
+hTREM2	hTREM2-R47HKI-HET	ad004	hTREM2-R47HKI-HET
+hTREM2	hTREM2KI-WT	ad004	B6J
