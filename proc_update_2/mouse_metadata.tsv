@@ -90,4 +90,4 @@ mouse_id	genotype_old	sex	age	tissue	genotype
 14361	TREM2 R47H NSS	M	12 months	half_brain	Trem2-R47H-NSS	
 14362	TREM2 R47H NSS	M	12 months	half_brain	Trem2-R47H-NSS	
 777	modelad1	M	12 months	half_brain	hABKI-HO_hMAPT-H2-HO_hAPOE4-HO	
-18634	hTREM2_KI_HET	M	8 months	hippocampus	hTREM2KI-WT	
+18634	hTREM2_KI_HET	M	8 months	HC	hTREM2KI-WT	
