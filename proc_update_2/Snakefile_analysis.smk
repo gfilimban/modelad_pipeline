@@ -9,7 +9,7 @@ from utils import *
 from sm_utils import *
 from humanized_utils import *
 
-p_dir = '/share/crsp/lab/model-ad/share/freese/modelad_pipeline/'
+p_dir = '/share/crsp/lab/model-ad/share/freese/modelad_pipeline/proc_update_2/'
 
 configfile: 'config.yml'
 config_tsv = 'config.tsv'
@@ -40,9 +40,9 @@ wildcard_constraints:
     biorep_num='|'.join([re.escape(x) for x in df.biorep_num.unique().tolist()]),
     flowcell='|'.join([re.escape(x) for x in df.flowcell.unique().tolist()]),
     cerberus_run='|'.join([re.escape(x) for x in df.cerberus_run.unique().tolist()]),
-    obs_col='|'.join([re.escape(x) for x in ['genotype', 'genotype_sex']]),
-    obs_cond1='|'.join([re.escape(x) for x in df.genotype.unique().tolist()+df.genotype_sex.unique().tolist()]),
-    obs_cond2='|'.join([re.escape(x) for x in df.genotype.unique().tolist()+df.genotype_sex.unique().tolist()]),
+    obs_col='|'.join([re.escape(x) for x in ['genotype_alias_int', 'genotype_sex']]),
+    obs_cond1='|'.join([re.escape(x) for x in p_df.genotype.unique().tolist()+p_df.genotype_sex.unique().tolist()]),
+    obs_cond2='|'.join([re.escape(x) for x in p_df.genotype.unique().tolist()+p_df.genotype_sex.unique().tolist()]),
 
 ruleorder:
     # cerberus_agg_ics_first > cerberus_agg_ics_seq
@@ -109,7 +109,7 @@ use rule cerb_annot as cerb_annot_ref with:
 use rule cerb_annot as cerb_annot_run with:
     input:
         h5 = config['analysis']['cerberus']['ca'],
-        gtf = p_dir+config['lapa']['filt']['gtf']
+        gtf = p_dir+config['lapa']['filt']['sort_gtf']
     params:
         source = lambda wc:get_df_col(wc, df, 'source'),
         gene_source = None
@@ -131,7 +131,7 @@ use rule cerb_gtf_ids as cerb_update_ref_gtf with:
 use rule cerb_gtf_ids as cerb_update_gtf with:
     input:
         h5 = config['analysis']['cerberus']['ca_annot'],
-        gtf = p_dir+config['lapa']['filt']['gtf']
+        gtf = p_dir+config['lapa']['filt']['sort_gtf']
     params:
         source = lambda wc:get_df_col(wc, df, 'source'),
         update_ends = True,
