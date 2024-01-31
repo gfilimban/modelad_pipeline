@@ -394,7 +394,7 @@ use rule igv_index_gtf as igv_index_gtf_lr with:
 ################################################################################
 use rule cerb_gtf_to_bed as cerb_get_gtf_ends with:
     input:
-        gtf = config['lapa']['filt']['sort_gtf']
+        gtf = config['lapa']['filt']['gtf']
     output:
         ends = protected(config['cerberus']['ends'])
     params:
@@ -403,6 +403,6 @@ use rule cerb_gtf_to_bed as cerb_get_gtf_ends with:
 
 use rule cerb_gtf_to_ics as cerb_get_gtf_ics with:
     input:
-        gtf = config['lapa']['filt']['sort_gtf']
+        gtf = config['lapa']['filt']['gtf']
     output:
         ics = protected(config['cerberus']['ics'])
