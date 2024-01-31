@@ -91,13 +91,13 @@ rule all:
               sex=df.sex.tolist(),
               age=df.age.tolist(),
               tissue=df.tissue.tolist()),
-        # expand(config['talon']['ab'],
-        #     zip,
-        #     study=df.study.tolist(),
-        #     genotype=df.genotype.tolist(),
-        #     sex=df.sex.tolist(),
-        #     age=df.age.tolist(),
-        #     tissue=df.tissue.tolist()),
+        expand(config['talon']['ab'],
+            zip,
+            study=df.study.tolist(),
+            genotype=df.genotype.tolist(),
+            sex=df.sex.tolist(),
+            age=df.age.tolist(),
+            tissue=df.tissue.tolist())
 
 ################################################################################
 #################################### Mapping ###################################
@@ -415,7 +415,7 @@ use rule igv_index_gtf as igv_index_gtf_lr with:
 ################################################################################
 use rule cerb_gtf_to_bed as cerb_get_gtf_ends with:
     input:
-        gtf = config['lapa']['filt']['gtf']
+        gtf = config['lapa']['filt']['sort_gtf']
     output:
         ends = config['cerberus']['ends']
         # ends = protected(config['cerberus']['ends'])
@@ -425,7 +425,7 @@ use rule cerb_gtf_to_bed as cerb_get_gtf_ends with:
 
 use rule cerb_gtf_to_ics as cerb_get_gtf_ics with:
     input:
-        gtf = config['lapa']['filt']['gtf']
+        gtf = config['lapa']['filt']['sort_gtf']
     output:
         ics = config['cerberus']['ics']
         # ics = protected(config['cerberus']['ics'])
