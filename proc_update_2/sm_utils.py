@@ -228,7 +228,6 @@ def parse_config_file_analysis(fname,
     df = df.loc[(df.genotype.isin(genotypes))&\
                 (df.study.isin(studies))]
     i3 = len(p_df[['genotype', 'study']].drop_duplicates().index)
-    import pdb; pdb.set_trace()
     if not (i==i2==i3):
         genotypes = list(set(genotypes)-\
                          set(df.genotype.unique().tolist()))
@@ -255,6 +254,10 @@ def parse_config_file_analysis(fname,
     # add cerberus run info
     p_df = p_df.merge(df[gb_cols+['cerberus_run']].drop_duplicates(), how='left',
                  on=gb_cols)
+
+    # sanitize genotype alias internally (int) w/ characters better for file names
+    exp = '[^0-9a-zA-Z-_]+'
+    p_df['genotype_alias_int'] = p_df.genotype_alias.str.replace(exp, '_', regex=True)
 
     return df, p_df
 
