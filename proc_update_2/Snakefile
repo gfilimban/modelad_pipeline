@@ -90,7 +90,7 @@ rule all:
               genotype=df.genotype.tolist(),
               sex=df.sex.tolist(),
               age=df.age.tolist(),
-              tissue=df.tissue.tolist())
+              tissue=df.tissue.tolist()),
         expand(config['lapa']['filt']['filt_ab'],
               zip,
               study=df.study.tolist(),
