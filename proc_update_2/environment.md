@@ -23,6 +23,14 @@ conda env export > pydeseq2.yml
 ``` -->
 
 Additionally, you'll need to install the following, in your "snakemake" environment.
+* [samtools](https://anaconda.org/bioconda/samtools)
+  ```bash
+  conda install bioconda::samtools
+  ```
+* [bedtools](https://anaconda.org/bioconda/bedtools)
+  ```bash
+  conda install bioconda::bedtools
+  ```
 * [TranscriptClean](https://github.com/mortazavilab/TranscriptClean)
     * run the following code
     ```bash
