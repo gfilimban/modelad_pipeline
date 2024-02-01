@@ -1,6 +1,12 @@
 # MODEL-AD Long-read RNA-seq pipeline
 
-If you're running the pipeline for the first time, please make sure you build up your compute environments first. [Link](https://github.com/fairliereese/modelad_pipeline/blob/main/proc_update_2/environment.md).
+## Getting started
+
+* First, download this repository
+```bash
+git clone git@github.com:fairliereese/modelad_pipeline.git
+```
+* Build your necessary environments / download necessary software: [Link](https://github.com/fairliereese/modelad_pipeline/blob/main/proc_update_2/environment.md).
 
 ## Preprocessing
 
@@ -18,6 +24,7 @@ snakemake \
 -j 200 \
 --latency-wait 120 \
 --use-conda \
+--rerun-triggers mtime \
 --cluster "sbatch -A \
   model-ad_lab \
   --partition=highmem \
@@ -55,12 +62,15 @@ snakemake \
 
 Wait for this command to run and make sure the steps that it plans to run are reasonable. After it finishes, run the same command without the `-n` option.
 
-## Analyzing preprocessing output files
+#### Analyzing preprocessing output files
 
 The analysis goal of the preprocessing output is to confirm that:
 * *Splicing of mutated / altered genes has not been changed*
 * *SNPs of altered genes have been incorporated*.
-* Visualize your reads from the `share/crsp/lab/model-ad/share/freese/modelad_pipeline/proc_update_2/data/merge/*.bam` files. BAMs and their indices are stored there.
+* Visualize your reads from the `/share/crsp/lab/model-ad/share/freese/modelad_pipeline/proc_update_2/data/merge/*.bam` files. BAMs and their indices are stored there.
+* For genotypes with pseudochromosomes, also download the genome reference (`*.fa` and `*.fai`) and transcriptome reference (`*.gtf`) for your target genotype (in this folder: `/share/crsp/lab/model-ad/share/freese/modelad_pipeline/proc_update_2/ref/genome/<your genotype>/`)
+* I recommend using [IGV](https://www.igv.org/) to visualize your reads.
+
 * Visualize your coverage tracks (very helpful for interpreting TSSs and TESs) from the `data/merge/*.bw` files.
 
 ## Downstream analysis
