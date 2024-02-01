@@ -10,15 +10,23 @@ git clone git@github.com:fairliereese/modelad_pipeline.git
 
 ## Preprocessing
 
-* When you get new reads, add the paths to FASTQ files to [`config.tsv`](https://github.com/fairliereese/modelad_pipeline/blob/main/proc_update_2/config.tsv).
-* When you get new mice, add the relevant data
-* `Snakefile` will run the preprocessing pipeline through LAPA (mapping->TranscriptClean->TALON->LAPA)
+Best practices:
 * Get familiar with using `tmux` to stash your sessions while performing preprocessing
 * Always use `srun` on HPC3 before running Snakemake or you'll get yelled at
 * Make sure to run `conda activate snakemake` before running any Snakemake commands
 
-Run the preprocessing pipeline with the following command (replace `{your_email}` with your email you want updates at!):
+Checklist before running:
+* When you get new reads, add the paths to FASTQ files to [`config.tsv`](https://github.com/fairliereese/modelad_pipeline/blob/main/proc_update_2/config.tsv).
+* Add new mice / tissues to [`mouse_metadata.tsv`](https://github.com/fairliereese/modelad_pipeline/blob/main/proc_update_2/mouse_metadata.tsv)
+* Add new genotypes to [`genotype_metadata.tsv`](https://github.com/fairliereese/modelad_pipeline/blob/main/proc_update_2/genotype_metadata.tsv)
+* Add new pseudochromosomes (if needed) to [`pseudochromosome_metadata.tsv`](https://github.com/fairliereese/modelad_pipeline/blob/main/proc_update_2/pseudochromosome_metadata.tsv)
+* Make sure to save, commit, and push all your changes to metadata files back to this repo.
+* Navigate to the public pipeline directory on MODEL-AD CRSP (`/share/crsp/lab/model-ad/share/freese/modelad_pipeline/proc_update_2/`) and run `git pull` to add metadata file updates.
+
+
+Run the preprocessing pipeline with the following command (replace `{your_email}` with your email you want updates at!). `Snakefile` will run the preprocessing pipeline through LAPA (mapping->TranscriptClean->TALON->LAPA):
 ```bash
+conda activate snakemake
 snakemake \
 -s Snakefile \
 -j 200 \
