@@ -85,8 +85,8 @@ The analysis goal of the preprocessing output is to confirm that:
 
 For the majority of you, you will only be running this part of the pipeline. This part of the pipeline will run some basic analyses on the long-read data for you including differential gene and transcript expression tests and differential isoform usage tests.
 
-* First, make sure you _clone (`git clone`) and / or update (`git pull`) this repo_ so that you have access to all the relevant metadata.
-* When you want to run a new analysis, edit or create a new [`analysis_config.tsv`](https://github.com/fairliereese/modelad_pipeline/blob/main/proc_update_2/analysis_config.tsvv). Check the [`mouse_metadata.tsv`](https://github.com/fairliereese/modelad_pipeline/blob/main/proc_update_2/mouse_metadata.tsv) file for the relevant genotypes and studies to include in your table.
+* First, make sure you _fork_ and _clone (`git clone`) this repo_ so that you have access to all the relevant metadata and you can edit the `analysis_config.tsv`.
+* When you want to run a new analysis, edit or create a new [`analysis_config.tsv`](https://github.com/fairliereese/modelad_pipeline/blob/main/proc_update_2/analysis_config.tsv). Check the [`mouse_metadata.tsv`](https://github.com/fairliereese/modelad_pipeline/blob/main/proc_update_2/mouse_metadata.tsv) file for the relevant genotypes and studies to include in your table.
 * `Snakefile_analysis.smk` will run the preprocessing pipeline through LAPA.
 
 Run the preprocessing pipeline with the following command (replace `{your_email}` with your email you want updates at!):
