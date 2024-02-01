@@ -28,30 +28,33 @@ conda env export > snakemake_vis.yml
 
 Additionally, you'll need to install the following, in your "snakemake" environment.
 * [samtools](https://anaconda.org/bioconda/samtools)
-  ```bash
-  conda install bioconda::samtools
-  ```
+```bash
+conda install bioconda::samtools
+```
 * [bedtools](https://anaconda.org/bioconda/bedtools)
-  ```bash
-  conda install bioconda::bedtools
-  ```
+```bash
+conda install bioconda::bedtools
+```
 * [TranscriptClean](https://github.com/mortazavilab/TranscriptClean)
-    * run the following code
-    ```bash
-    git clone git@github.com:mortazavilab/TranscriptClean.git
-    cd TranscriptClean
-    pip install -e .
-    ```
+```bash
+git clone git@github.com:mortazavilab/TranscriptClean.git
+cd TranscriptClean
+pip install -e .
+```
 * [TALON](https://github.com/mortazavilab/TALON)
-    * run the following code
-      ```bash
-      git clone git@github.com:mortazavilab/TALON.git
-      cd TALON
-      pip install -e .
-      ```
+```bash
+git clone git@github.com:mortazavilab/TALON.git
+cd TALON
+pip install -e .
+```
 * [GENCODE UTR Fix](https://github.com/MuhammedHasan/gencode_utr_fix)
-    * run the following code
-      ```bash
-      pip install cython
-      pip install -e git+https://github.com/MuhammedHasan/gencode_utr_fix.git#egg=gencode_utr_fix
-      ```
+```bash
+pip install cython
+pip install -e git+https://github.com/MuhammedHasan/gencode_utr_fix.git#egg=gencode_utr_fix
+```
+* [Fairlie's version of PyRanges](git@github.com:fairliereese/pyranges.git)
+```bash
+git clone git@github.com:fairliereese/pyranges.git
+cd pyranges
+pip install -e .
+```

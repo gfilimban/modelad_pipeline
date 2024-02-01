@@ -46,6 +46,8 @@ rule talon:
             --create_novel_spliced_genes \
             --o {params.opref} \
             -v 1
+        tmp_dir={params.opref}_temp/
+        rm -r ${tmp_dir}
         """
 
 rule talon_annot:

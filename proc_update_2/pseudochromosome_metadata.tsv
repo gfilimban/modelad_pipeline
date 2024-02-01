@@ -2,7 +2,5 @@ pseudochrom	human_gene	mouse_gene	locus_type	notes
 hCLU	CLU	Clu	chimeric	Some full exons are human; some are mouse
 hchr17	MAPT		human	
 hTREM2	TREM2		chimeric	
-hgenotype1				dummy
-hgenotype2				dummy
 dummy				
 hAPOE4	APOE	Apoe	chimeric	
