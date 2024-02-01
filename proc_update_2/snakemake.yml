@@ -1,4 +1,4 @@
-name: snakemake
+name: modelad_snakemake
 channels:
   - plotly
   - conda-forge
