@@ -55,6 +55,14 @@ snakemake \
 
 Wait for this command to run and make sure the steps that it plans to run are reasonable. After it finishes, run the same command without the `-n` option.
 
+## Analyzing preprocessing output files
+
+The analysis goal of the preprocessing output is to confirm that:
+* *Splicing of mutated / altered genes has not been changed*
+* *SNPs of altered genes have been incorporated*.
+* Visualize your reads from the `share/crsp/lab/model-ad/share/freese/modelad_pipeline/proc_update_2/data/merge/*.bam` files. BAMs and their indices are stored there.
+* Visualize your coverage tracks (very helpful for interpreting TSSs and TESs) from the `data/merge/*.bw` files.
+
 ## Downstream analysis
 
 For the majority of you, you will only be running this part of the pipeline. This part of the pipeline will run some basic analyses on the long-read data for you including differential gene and transcript expression tests and differential isoform usage tests.
@@ -107,6 +115,20 @@ snakemake \
 
 Wait for this command to run and make sure the steps that it plans to run are reasonable. After it finishes, run the same command without the `-n` option.
 
+## Visualize the pipelines execution
+
+```bash
+conda activate snakemake_vis
+
+# preprocessing
+snakemake -s Snakefile --forceall --dag | dot -Tpdf > pipeline_dag.pdf # entire DAG
+snakemake -s Snakefile --forceall --rulegraph | dot -Tpdf > pipeline_rulegraph.pdf # abbreviated DAG (only 1 box / rule)
+
+# preprocessing
+snakemake -s Snakefile --forceall --dag | dot -Tpdf > analysis_pipeline_dag.pdf # entire DAG
+snakemake -s Snakefile --forceall --rulegraph | dot -Tpdf > analysis_pipeline_rulegraph.pdf # abbreviated DAG (only 1 box / rule)
+```
+
 ## Pseudochromosome construction
 
 * When you get a new genotype that requires a pseudochromosome (ie has a large humanized insertion), add the relevant metadata to the `pseudochromosome_metadata.tsv` spreadsheet.
@@ -114,6 +136,4 @@ Wait for this command to run and make sure the steps that it plans to run are re
 
 ## Analysis hints
 
-* Visualize your reads from the `data/merge/*.bam` files. BAMs and their indices are stored there. This is very helpful for _verifying incorporation of SNPs from the genotypes_.
-* Visualize your coverage tracks (very helpful for interpreting TSSs and TESs) from the `data/merge/*.bw` files.
 * TODO find examples on using Swan to visualize transcriptomes in `TODO.ipynb`
