@@ -79,4 +79,4 @@ dependencies:
   - xz=5.2.10=h5eee18b_1
   - zlib=1.2.13=h5eee18b_0
   - zstd=1.5.5=hc292b87_0
-prefix: /data/homezvol1/freese/miniconda3/envs/deeptools
+prefix: ~/miniconda3/envs/deeptools

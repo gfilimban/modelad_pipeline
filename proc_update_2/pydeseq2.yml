@@ -188,4 +188,4 @@ dependencies:
     - wrapt==1.15.0
     - yte==1.5.1
     - zipp==3.15.0
-prefix: /data/homezvol1/freese/miniconda3/envs/pydeseq2
+prefix: ~/miniconda3/envs/pydeseq2
