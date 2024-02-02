@@ -471,6 +471,7 @@ def get_prev_cerb_entry(wc, df, cfg_entry, config):
     Get the previous config entry run for Cerberus. Ensure that
     only one file meets these criteria.
     """
+    import pdb; pdb.set_trace()
     prev_run = str(int(wc['cerberus_run'])-1)
 
     # for first entry, we should be using the reference
