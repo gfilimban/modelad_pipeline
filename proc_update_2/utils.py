@@ -1,4 +1,3 @@
-import pysam
 import pandas as pd
 import re
 import math
@@ -12,6 +11,7 @@ def reverse_alignment(infile, outfile, threads=1):
     (ie are oriented 3'->5'), such that they are in the
     forward orientation (5'->3')
     """
+    import pysam
 
     reverse_strand = {0: 16, 16: 0}
 
