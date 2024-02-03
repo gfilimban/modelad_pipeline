@@ -1,8 +1,8 @@
 import pandas as pd
 import os
 import sys
-import swan_vis as swan
 import itertools
+import swan_vis as swan
 import cerberus
 
 from utils import *
