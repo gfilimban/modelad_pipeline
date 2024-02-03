@@ -2,7 +2,7 @@
 
 # 240202
 # conda create -n modelad_snakemake python==3.7.5 snakemake
-mamba create -c conda-forge -c bioconda -n modelad_snakemake snakemake
+mamba create -c conda-forge -c bioconda -n modelad_snakemake snakemake==7.32
 
 git clone git@github.com:fairliereese/pyranges.git
 cd pyranges
@@ -15,6 +15,15 @@ git clone git@github.com:mortazavilab/cerberus.git
 cd cerberus
 pip install -e .
 cd ../
+
+pip install swan-vis
+
+conda install pyfaidx
+
+conda install pandarallel
+
+conda install pysam==0.16.0
+
 
 
 
