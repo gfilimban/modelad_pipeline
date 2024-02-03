@@ -5,8 +5,6 @@ import math
 import gzip
 import pyranges as pr
 import numpy as np
-import scanpy as sc
-import swan_vis as swan
 
 def reverse_alignment(infile, outfile, threads=1):
     """
