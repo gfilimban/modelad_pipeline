@@ -466,6 +466,26 @@ def get_first_cerb_entry(wc, df, cfg_entry):
 
     return file
 
+def get_final_cerb_entry(wc, df, cfg_entry):
+    """
+    Get the final config entry run for Cerberus.
+    """
+    first_cerb_run = df.cerberus_run.max(axis=0)
+    temp_wc = {'cerberus_run': str(first_cerb_run)}
+    file = get_cfg_entries(temp_wc, df, cfg_entry)
+    assert len(file) == 1
+    file = file[0]
+
+    # add in the end mode if we have it
+    if 'end_mode' in wc.keys():
+        file = expand(file,
+                      zip,
+                      end_mode=wc['end_mode'])
+        assert len(file) == 1
+        file = file[0]
+
+    return file
+
 def get_prev_cerb_entry(wc, df, cfg_entry, config):
     """
     Get the previous config entry run for Cerberus. Ensure that

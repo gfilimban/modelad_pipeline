@@ -65,7 +65,7 @@ use rule cerb_agg_ends as cerb_agg_ends_lr with:
     params:
         add_ends = True,
         ref = False,
-        slack = lambda wc:config['cerberus'][wc.end_mode]['agg_slack'],
+        slack = lambda wc:config['cerberus']['agg'][wc.end_mode]['agg_slack'],
         sources = lambda wc:['cerberus', get_df_col(wc, df, 'source')]
     output:
         ends = config['analysis']['cerberus']['agg']['ends']
@@ -96,9 +96,12 @@ use rule cerb_write_ref as cerb_write_ref_lr with:
     output:
         h5 = config['analysis']['cerberus']['ca']
 
+
 use rule cerb_annot as cerb_annot_ref with:
     input:
-        h5 = p_dir+config['ref']['cerberus']['ca'],
+        h5 = p_dir+lambda wc:get_final_cerb_entry(wc,
+                     p_df,
+                     config['analysis']['cerberus']['ca'])
         gtf = p_dir+config['ref']['gtf']
     params:
         source = config['ref']['gtf_ver'],
@@ -108,7 +111,9 @@ use rule cerb_annot as cerb_annot_ref with:
 
 use rule cerb_annot as cerb_annot_run with:
     input:
-        h5 = config['analysis']['cerberus']['ca'],
+        h5 = p_dir+lambda wc:get_final_cerb_entry(wc,
+                     p_df,
+                     config['analysis']['cerberus']['ca']),
         gtf = p_dir+config['lapa']['filt']['sort_gtf']
     params:
         source = lambda wc:get_df_col(wc, df, 'source'),
