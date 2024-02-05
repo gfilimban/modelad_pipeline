@@ -50,7 +50,7 @@ ruleorder:
 
 rule all:
     input:
-        expand(config['analysis']['cerberus']['ca'],
+        expand(config['analysis']['cerberus']['agg']['ics'],
                 zip,
                 analysis=p_df.analysis.tolist(),
                 study=p_df.study.tolist(),
