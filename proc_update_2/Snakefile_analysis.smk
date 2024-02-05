@@ -50,18 +50,18 @@ ruleorder:
 
 rule all:
     input:
-        expand(expand(config['analysis']['cerberus']['ca'],
-                zip,
-                analysis=p_df.analysis.tolist(),
-                study=p_df.study.tolist(),
-                genotype=p_df.genotype.tolist(),
-                sex=p_df.sex.tolist(),
-                age=p_df.age.tolist(),
-                tissue=p_df.tissue.tolist(),
-                cerberus_run=p_df.cerberus_run.tolist(),
-                allow_missing=True),
-                end_mode=['tss', 'tes'])
-        # rules.all_swan.input
+        rules.all_swan.input
+        # expand(expand(config['analysis']['cerberus']['ca'],
+        #         zip,
+        #         analysis=p_df.analysis.tolist(),
+        #         study=p_df.study.tolist(),
+        #         genotype=p_df.genotype.tolist(),
+        #         sex=p_df.sex.tolist(),
+        #         age=p_df.age.tolist(),
+        #         tissue=p_df.tissue.tolist(),
+        #         cerberus_run=p_df.cerberus_run.tolist(),
+        #         allow_missing=True),
+        #         end_mode=['tss', 'tes'])
 
 ################################################################################
 ########################### Cerberus agg + annot ###############################
