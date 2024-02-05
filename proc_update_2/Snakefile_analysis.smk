@@ -50,7 +50,7 @@ ruleorder:
 
 rule all:
     input:
-        expand(config['analysis']['cerberus']['agg']['ics'],
+        expand(expand(config['analysis']['cerberus']['agg']['ends'],
                 zip,
                 analysis=p_df.analysis.tolist(),
                 study=p_df.study.tolist(),
@@ -58,7 +58,8 @@ rule all:
                 sex=p_df.sex.tolist(),
                 age=p_df.age.tolist(),
                 tissue=p_df.tissue.tolist(),
-                cerberus_run=p_df.cerberus_run.tolist())
+                cerberus_run=p_df.cerberus_run.tolist()),
+                end_mode=['tss', 'tes'])
         # rules.all_swan.input
 
 ################################################################################
