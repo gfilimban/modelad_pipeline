@@ -50,7 +50,7 @@ ruleorder:
 
 rule all:
     input:
-        expand(expand(config['analysis']['cerberus']['agg']['ends'],
+        expand(expand(config['analysis']['cerberus']['ca'],
                 zip,
                 analysis=p_df.analysis.tolist(),
                 study=p_df.study.tolist(),
@@ -76,7 +76,7 @@ use rule cerb_agg_ends as cerb_agg_ends_lr with:
     params:
         add_ends = True,
         ref = False,
-        slack = lambda wc:config['cerberus']['agg'][wc.end_mode]['agg_slack'],
+        slack = lambda wc:config['cerberus'][wc.end_mode]['agg_slack'],
         sources = lambda wc:['cerberus', get_df_col(wc, df, 'source')]
     output:
         ends = config['analysis']['cerberus']['agg']['ends']
