@@ -58,7 +58,8 @@ rule all:
                 sex=p_df.sex.tolist(),
                 age=p_df.age.tolist(),
                 tissue=p_df.tissue.tolist(),
-                cerberus_run=p_df.cerberus_run.tolist()),
+                cerberus_run=p_df.cerberus_run.tolist(),
+                allow_missing=True),
                 end_mode=['tss', 'tes'])
         # rules.all_swan.input
 
