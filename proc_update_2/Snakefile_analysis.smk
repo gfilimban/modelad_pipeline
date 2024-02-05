@@ -99,8 +99,8 @@ use rule cerb_write_ref as cerb_write_ref_lr with:
 
 use rule cerb_annot as cerb_annot_ref with:
     input:
-        h5 = p_dir+lambda wc:get_final_cerb_entry(wc,\
-                     p_df,\
+        h5 = lambda wc:get_final_cerb_entry(p_dir+wc,
+                     p_df,
                      config['analysis']['cerberus']['ca']),
         gtf = p_dir+config['ref']['gtf']
     params:
@@ -111,8 +111,8 @@ use rule cerb_annot as cerb_annot_ref with:
 
 use rule cerb_annot as cerb_annot_run with:
     input:
-        h5 = p_dir+lambda wc:get_final_cerb_entry(wc,\
-                     p_df,\
+        h5 = p_dir+lambda wc:get_final_cerb_entry(wc,
+                     p_df,
                      config['analysis']['cerberus']['ca']),
         gtf = p_dir+config['lapa']['filt']['sort_gtf']
     params:
