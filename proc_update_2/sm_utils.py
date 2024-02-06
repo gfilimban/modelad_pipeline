@@ -4,6 +4,7 @@ import pandas as pd
 import warnings
 import os
 import itertools
+import copy
 
 def process_meta(meta_fname):
     """
@@ -371,6 +372,7 @@ def get_cfg_entries_analysis(wc, df, cfg_entry, return_df=False):
             as opposed to list of files. Default: False
     """
     temp = subset_df_on_wcs(wc, df)
+    import pdb; pdb.set_trace()
     #
     # if 'agg' in cfg_entry and '.bed' in cfg_entry:
     #     import pdb; pdb.set_trace()
@@ -470,9 +472,13 @@ def get_final_cerb_entry(wc, df, cfg_entry):
     """
     Get the final config entry run for Cerberus.
     """
-    first_cerb_run = df.cerberus_run.max(axis=0)
-    temp_wc = {'cerberus_run': str(first_cerb_run)}
-    file = get_cfg_entries(temp_wc, df, cfg_entry)
+    temp = df.copy(deep=True)
+    temp = subset_df_on_wcs(wc, temp)
+    analysis = wc['analysis']
+    final_cerb_run = temp.cerberus_run.max(axis=0)
+    temp_wc = {'cerberus_run': str(final_cerb_run),
+               'analysis': analysis}
+    file = get_cfg_entries_analysis(temp_wc, df, cfg_entry)
     assert len(file) == 1
     file = file[0]
 
