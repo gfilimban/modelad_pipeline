@@ -114,6 +114,7 @@ snakemake \
 -j 200 \
 --latency-wait 120 \
 --use-conda \
+--ignore-incomplete \
   -n
 
 snakemake \

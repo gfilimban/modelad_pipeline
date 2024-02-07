@@ -23,7 +23,10 @@ cd cerberus
 pip install -e .
 cd ../
 
-pip install swan-vis
+git clone git@github.com:mortazavilab/swan_vis.git
+cd swan_vis
+pip install -e .
+cd ../
 
 conda install pyfaidx
 
