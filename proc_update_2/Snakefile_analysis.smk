@@ -136,9 +136,7 @@ use rule cerb_annot as cerb_annot_run with:
 #
 use rule cerb_gtf_ids as cerb_update_ref_gtf with:
     input:
-        h5 = lambda wc:get_final_cerb_entry(wc,
-                     p_df,
-                     config['analysis']['cerberus']['ca_annot']),
+        h5 = config['analysis']['ref']['cerberus']['ca_annot'],
         gtf = p_dir+config['ref']['gtf']
     params:
         source = config['ref']['gtf_ver'],
@@ -149,9 +147,7 @@ use rule cerb_gtf_ids as cerb_update_ref_gtf with:
 
 use rule cerb_gtf_ids as cerb_update_gtf with:
     input:
-        h5 = lambda wc:get_final_cerb_entry(wc,
-                     p_df,
-                     config['analysis']['cerberus']['ca_annot']),
+        h5 = config['analysis']['cerberus']['ca_annot'],
         gtf = p_dir+config['lapa']['filt']['sort_gtf']
     params:
         source = lambda wc:get_df_col(wc, df, 'source'),
@@ -162,9 +158,7 @@ use rule cerb_gtf_ids as cerb_update_gtf with:
 
 use rule cerb_ab_ids as study_cerb_ab with:
     input:
-        h5 = lambda wc:get_final_cerb_entry(wc,
-                     p_df,
-                     config['analysis']['cerberus']['ca_annot']),
+        h5 = config['analysis']['cerberus']['ca_annot'],
         ab = p_dir+config['lapa']['filt']['filt_ab']
     params:
         source = lambda wc:get_df_col(wc, df, 'source'),
