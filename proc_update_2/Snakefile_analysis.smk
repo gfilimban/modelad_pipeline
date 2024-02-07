@@ -41,7 +41,7 @@ wildcard_constraints:
     flowcell='|'.join([re.escape(x) for x in df.flowcell.unique().tolist()]),
     cerberus_run='|'.join([re.escape(x) for x in df.cerberus_run.unique().tolist()]),
     analysis='|'.join([re.escape(x) for x in p_df.analysis.unique().tolist()]),
-    feat='|'.join([re.escape(x) for x in ['tss', 'tes', 'ic', 'iso']])
+    feat='|'.join([re.escape(x) for x in ['tss', 'tes', 'ic', 'iso']]),
     obs_col='|'.join([re.escape(x) for x in ['genotype_alias_int', 'genotype_sex']]),
     obs_cond1='|'.join([re.escape(x) for x in p_df.genotype.unique().tolist()+p_df.genotype_sex.unique().tolist()]),
     obs_cond2='|'.join([re.escape(x) for x in p_df.genotype.unique().tolist()+p_df.genotype_sex.unique().tolist()]),
