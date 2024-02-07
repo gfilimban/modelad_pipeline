@@ -211,7 +211,7 @@ analysis:
       ends: analysis/{analysis}/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_{end_mode}.bed
 
   swan:
-    meta: analysis/{analysis}/swan/analysis/{analysis}_meta.tsv
+    meta: analysis/{analysis}/swan/meta.tsv
     swan_graph: analysis/{analysis}/swan/swan_graph.p
     g_adata: analysis/{analysis}/swan/swan_g_adata.h5ad
     t_adata: analysis/{analysis}/swan/swan_t_adata.h5ad
