@@ -155,8 +155,7 @@ rule det:
 rule all_swan:
     input:
         expand(config['analysis']['swan']['swan_graph'],
-               analysis=p_df.analysis.dropna().unique().tolist())
-
-        # get_de_cfg_entries(p_df, config['analysis']['swan']['du'], how='du'),
-        # get_de_cfg_entries(p_df, config['analysis']['swan']['deg'], how='de'),
-        # get_de_cfg_entries(p_df, config['analysis']['swan']['det'], how='de')
+               analysis=p_df.analysis.dropna().unique().tolist()),
+        get_de_cfg_entries(p_df, config['analysis']['swan']['du'], how='du'),
+        get_de_cfg_entries(p_df, config['analysis']['swan']['deg'], how='de'),
+        get_de_cfg_entries(p_df, config['analysis']['swan']['det'], how='de')
