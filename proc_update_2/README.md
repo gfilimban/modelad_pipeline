@@ -57,6 +57,7 @@ snakemake \
 -j 200 \
 --latency-wait 120 \
 --use-conda \
+--rerun-triggers mtime \
 --cluster "sbatch -A \
   model-ad_lab \
   --partition=highmem \
@@ -128,7 +129,7 @@ snakemake \
   --mail-user=freese@uci.edu \
   --mail-type=START,END,FAIL \
   --time=72:00:00" \
-  -n
+  -n --ignore-incomplete
 ``` -->
 
 Wait for this command to run and make sure the steps that it plans to run are reasonable. After it finishes, run the same command without the `-n` option.

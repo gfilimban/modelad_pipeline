@@ -120,7 +120,7 @@ rule deg:
     output:
         out = config['analysis']['swan']['deg']
     conda:
-        "pydeseq2"
+        "modelad_snakemake_pydeseq2"
     shell:
         """
             python diff_exp.py \
@@ -141,7 +141,7 @@ rule det:
     output:
         out = config['analysis']['swan']['det']
     conda:
-        "pydeseq2"
+        "modelad_snakemake_pydeseq2"
     shell:
         """
             python diff_exp.py \
