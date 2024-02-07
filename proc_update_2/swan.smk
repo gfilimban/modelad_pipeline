@@ -80,7 +80,6 @@ def save_swan_adata(swan_file,
         adata = sg.adata
     else:
         raise ValueError("You haven't implemented this yet.")
-    import pdb; pdb.set_trace()
     adata.write(ofile)
 
 rule swan_output_g_adata:
@@ -158,8 +157,6 @@ rule all_swan:
     input:
         expand(config['analysis']['swan']['swan_graph'],
                analysis=p_df.analysis.dropna().unique().tolist()),
-        expand(config['analysis']['swan']['g_adata'],
-               analysis=p_df.analysis.dropna().unique().tolist())
-        # get_de_cfg_entries(p_df, config['analysis']['swan']['du'], how='du'),
-        # get_de_cfg_entries(p_df, config['analysis']['swan']['deg'], how='de'),
-        # get_de_cfg_entries(p_df, config['analysis']['swan']['det'], how='de')
+        get_de_cfg_entries(p_df, config['analysis']['swan']['du'], how='du'),
+        get_de_cfg_entries(p_df, config['analysis']['swan']['deg'], how='de'),
+        get_de_cfg_entries(p_df, config['analysis']['swan']['det'], how='de')
