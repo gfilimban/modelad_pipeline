@@ -42,7 +42,10 @@ To make the `modelad_snakemake_pydeseq2` environment, run the following commands
 ```bash
 mamba create -c conda-forge -c bioconda -n modelad_snakemake_pydeseq2  python==3.9
 conda activate modelad_snakemake_pydeseq2
-pip install pydeseq2
+conda install scanpy==1.9.3
+pip install pydeseq2==0.4.3
+pip install numpy==1.23.5
+pip install numba==0.59.0
 ```
 
 
