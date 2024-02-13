@@ -141,7 +141,6 @@ def plot_v_plot(df, wc, ofile, kind='gene'):
 
     # plotting
     plt.scatter(x=df['log2FoldChange'], y=df['padj'].apply(lambda x: -np.log10(x)), s=1, label=f"Not significant (n={num_not_significant})")
-    2:56
 
     if kind == 'gene':
         df['label'] = df.gname
