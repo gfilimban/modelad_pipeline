@@ -121,10 +121,12 @@ def filt_de(sg, de, params, ofile, kind='gene'):
     sg.t_df.reset_index(drop=True)
     if kind == 'transcript':
         g_df = sg.t_df[['tid', 'tname']].drop_duplicates().reset_index()
+        merge_thing = 'tid'
     elif kind == 'gene':
         g_df = sg.t_df[['gid', 'gname']].drop_duplicates().reset_index()
+        merge_thing = 'gid'
     df = pd.read_csv(de, sep='\t')
-    df = df.merge(g_df, how='left', on='gid')
+    df = df.merge(g_df, how='left', on=merge_thing)
 
     # call things as upregulated or downregulated
     df['DE'] = 'No'
