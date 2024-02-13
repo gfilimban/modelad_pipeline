@@ -36,6 +36,9 @@ conda install pysam==0.22.0
 
 conda install pandas
 pip install numpy==1.23.5
+
+conda install -c conda-forge adjusttext
+
 ```
 
 To make the `modelad_snakemake_pydeseq2` environment, run the following commands. *It is important that you use the same name here or the pipeline will not work!*
