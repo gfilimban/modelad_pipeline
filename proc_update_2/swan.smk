@@ -124,6 +124,9 @@ def filt_de(sg, de, params, ofile, kind='gene'):
         merge_thing = 'tid'
     elif kind == 'gene':
         g_df = sg.t_df[['gid', 'gname']].drop_duplicates().reset_index()
+        g_df['gid_stable'] = cerberus.get_stable_gid(g_df, 'gid')
+        g_df.drop('gid', axis=1, inplace=True)
+        g_df.rename({'gid_stable':'gid'}, axis=1, inplace=True)
         merge_thing = 'gid'
     df = pd.read_csv(de, sep='\t')
     df = df.merge(g_df, how='left', on=merge_thing)
