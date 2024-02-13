@@ -111,6 +111,67 @@ rule swan_output_t_adata:
 ################################################################################
 ##################################### DEG / DET ################################
 ################################################################################
+def filt_de(sg, de, params, ofile):
+    """
+    Format DE table and filter based on thresholds. Add gene names.
+    """
+
+    # add gene names
+    sg = swan.read(sg)
+    g_df = sg.t_df[['gid', 'gname']].drop_duplicates().reset_index()
+    df = pd.read_csv(de, sep='\t')
+    df = df.merge(g_df, how='left', on='gid')
+
+    # call things as upregulated or downregulated
+    df['DE'] = 'No'
+    df.loc[(df.log2FoldChange >= params.l2fc_thresh)&\
+           (df.padj <= params.adj_p_thresh), 'DE'] = 'Up'
+    df.loc[(df.log2FoldChange <= -1*params.l2fc_thresh)&\
+           (df.padj <= params.adj_p_thresh), 'DE'] = 'Down'
+
+    df.to_csv(ofile, sep='\t', index=False)
+
+def plot_v_plot(df, wc, ofile):
+    from adjustText import adjust_text
+    import matplotlib.pylab as plt
+    import numpy as np
+
+    # plotting
+    plt.scatter(x=df['log2FoldChange'], y=df['padj'].apply(lambda x: -np.log10(x)), s=1, label=f"Not significant (n={num_not_significant})")
+    2:56
+
+    df['label'] = df.gname
+    df.label[df.DE == "No"] = ""
+    # Calculate counts
+    num_up = df[df.DE == "Up"].shape[0]
+    num_down = df[df.DE == "Down"].shape[0]
+    num_not_significant = df[df.DE == "No"].shape[0]
+    # Plotting
+    plt.scatter(x=df['log2FoldChange'], y=df['padj'].apply(lambda x: -np.log10(x)), s=1,
+                label=f"Not significant (n={num_not_significant})")
+    down = df[df.DE == "Down"]
+    down.sort_values(["padj"], inplace=True)
+    plt.scatter(x=down['log2FoldChange'], y=down['padj'].apply(lambda x: -np.log10(x)), s=3,
+                label=f"Down-regulated in {wc.obs_cond1} (n={num_down})", color="blue")
+    up = df[df.DE == "Up"]
+    up.sort_values(["padj"], inplace=True)
+    plt.scatter(x=up['log2FoldChange'], y=up['padj'].apply(lambda x: -np.log10(x)), s=3,
+                label=f"Up-regulated in {wc.obs_cond2} (n={num_up})", color="red")
+    texts = []
+    for i in range(min(10, up.shape[0])):
+        texts.append(plt.text(x=up.iloc[i, 1], y=-np.log10(up.iloc[i, 5]), s=up.iloc[i, 6]))
+    for i in range(min(10, down.shape[0])):
+        texts.append(plt.text(x=down.iloc[i, 1], y=-np.log10(down.iloc[i, 5]), s=down.iloc[i, 6]))
+    adjust_text(texts, arrowprops=dict(arrowstyle="-", color='black', lw=0.5))
+    plt.xlabel("logFC")
+    plt.ylabel("-log10(adj p-value)")
+    plt.axvline(0, color="grey", linestyle="--")
+    plt.axhline(-np.log10(0.05), color="grey", linestyle="--")
+    # Adjust the legend with a numerical font size
+    plt.legend(loc='upper right', fontsize=7)  # Change the font size here
+
+    plt.savefig(ofile, dpi=500)
+
 rule deg:
     input:
         adata = config['analysis']['swan']['g_adata']
@@ -118,7 +179,7 @@ rule deg:
         mem_gb = 128,
         threads = 8
     output:
-        out = config['analysis']['swan']['deg']
+        out = temporary(config['analysis']['swan']['deg'])
     conda:
         "modelad_snakemake_pydeseq2"
     shell:
@@ -132,6 +193,32 @@ rule deg:
                    {resources.threads}
         """
 
+rule deg_fmt:
+    input:
+        de = config['analysis']['swan']['deg']['deg'],
+        sg = config['analysis']['swan']['swan_graph']
+    params:
+        l2fc_thresh = config['analysis']['swan']['deg']['l2fc_thresh'],
+        adj_p_threh = config['analysis']['swan']['deg']['adj_p_thresh']
+    resources:
+        mem_gb = 64,
+        threads = 1
+    output:
+        fname = config['analysis']['swan']['deg']['deg_fmt']
+    run:
+        filt_de(input.sg, input.de, params, ofile)
+
+rule deg_plot:
+    input:
+        degs = config['analysis']['swan']['deg']['deg_fmt'],
+    resources:
+        mem_gb = 64,
+        threads = 1
+    output:
+        fname = config['analysis']['swan']['deg']['deg_plot']
+    run:
+        plot_v_plot(input.degs, input.wc, output.fname)
+
 rule det:
     input:
         adata = config['analysis']['swan']['t_adata']
@@ -139,7 +226,7 @@ rule det:
         mem_gb = 128,
         threads = 8
     output:
-        out = config['analysis']['swan']['det']
+        out = temporary(config['analysis']['swan']['det']['det'])
     conda:
         "modelad_snakemake_pydeseq2"
     shell:
@@ -153,10 +240,36 @@ rule det:
                    {resources.threads}
         """
 
+rule det_fmt:
+    input:
+        de = config['analysis']['swan']['det']['det'],
+        sg = config['analysis']['swan']['swan_graph']
+    params:
+        l2fc_thresh = config['analysis']['swan']['det']['l2fc_thresh'],
+        adj_p_threh = config['analysis']['swan']['det']['adj_p_thresh']
+    resources:
+        mem_gb = 64,
+        threads = 1
+    output:
+        fname = config['analysis']['swan']['det']['det_fmt']
+    run:
+        filt_de(input.sg, input.de, params, ofile)
+
+rule det_plot:
+    input:
+        dets = config['analysis']['swan']['det']['det_fmt'],
+    resources:
+        mem_gb = 64,
+        threads = 1
+    output:
+        fname = config['analysis']['swan']['det']['det_plot']
+    run:
+        plot_v_plot(input.dets, input.wc, output.fname)
+
 rule all_swan:
     input:
         expand(config['analysis']['swan']['swan_graph'],
                analysis=p_df.analysis.dropna().unique().tolist()),
-        get_de_cfg_entries(p_df, config['analysis']['swan']['du'], how='du'),
-        get_de_cfg_entries(p_df, config['analysis']['swan']['deg'], how='de'),
-        get_de_cfg_entries(p_df, config['analysis']['swan']['det'], how='de')
+        get_de_cfg_entries(p_df, config['analysis']['swan']['deg']['deg_plot'], how='de'),
+        get_de_cfg_entries(p_df, config['analysis']['swan']['det']['det_plot'], how='de'),
+        # get_de_cfg_entries(p_df, config['analysis']['swan']['du']['du_plot'], how='du'),

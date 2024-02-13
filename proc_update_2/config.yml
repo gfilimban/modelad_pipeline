@@ -216,6 +216,19 @@ analysis:
     g_adata: analysis/{analysis}/swan/swan_g_adata.h5ad
     t_adata: analysis/{analysis}/swan/swan_t_adata.h5ad
 
+    deg:
+      l2fc_thresh: 0
+      adj_p_thresh: 0.05
+      deg: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_deg.tsv
+      deg_fmt: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_deg_fmt.tsv
+      deg_plot: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_deg_volcano.pdf
+
+    det:
+      l2fc_thresh: 0
+      adj_p_thresh: 0.05
+      det: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_det.tsv
+      det_fmt: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_det_fmt.tsv
+      det_plot: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_det_volcano.tsv
+
     du: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_du_{feat}.tsv
-    deg: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_deg.tsv
-    det: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_det.tsv
+    du_plot: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_du_{feat}_volcano.pdf
