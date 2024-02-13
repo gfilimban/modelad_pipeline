@@ -205,7 +205,7 @@ rule deg_fmt:
         sg = config['analysis']['swan']['swan_graph']
     params:
         l2fc_thresh = config['analysis']['swan']['deg']['l2fc_thresh'],
-        adj_p_threh = config['analysis']['swan']['deg']['adj_p_thresh']
+        adj_p_thresh = config['analysis']['swan']['deg']['adj_p_thresh']
     resources:
         mem_gb = 64,
         threads = 1
@@ -252,7 +252,7 @@ rule det_fmt:
         sg = config['analysis']['swan']['swan_graph']
     params:
         l2fc_thresh = config['analysis']['swan']['det']['l2fc_thresh'],
-        adj_p_threh = config['analysis']['swan']['det']['adj_p_thresh']
+        adj_p_thresh = config['analysis']['swan']['det']['adj_p_thresh']
     resources:
         mem_gb = 64,
         threads = 1
