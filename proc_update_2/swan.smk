@@ -62,6 +62,57 @@ rule swan_die:
                                       kind=wildcards.feat)
         die.to_csv(output.out, sep='\t')
 
+def plot_du_plot(df, wc, ofile):
+    from adjustText import adjust_text
+    import matplotlib.pylab as plt
+    import numpy as np
+
+    df = pd.read_csv(df, sep='\t')
+
+    df['DU'] = False
+    df.loc[(df.adj_p_val<=wc.adj_p_thresh)&\
+           (df.dpi.abs()>=wc.dpi_thresh), 'DU'] = True
+
+    # counts of each
+    num_du = len(df.loc[df.DU].index)
+    num_not_du = len(df.loc[~df.DU].index)
+
+
+    plt.scatter(x=df['dpi'], y=df['adj_p_val'].apply(lambda x: -np.log10(x)), s=1,
+                label=f'Not significant (n={num_not_du})')
+    du = df.loc[df.DU]
+    du.sort_values(['adj_p_val'], inplace=True)
+    plt.scatter(x=du['dpi'], y=df['adj_p_val'].apply(lambda x: -np.log10(x)), s=3,
+                label=f"DU b/w {wc['obs_cond1']} and {wc['obs_cond2']} (n={num_du})", color='b')
+    texts = []
+    for i in range(min(10, du.shape[0])):
+        texts.append(plt.text(x=du.iloc[i]['log2FoldChange'],
+                              y=-np.log10(du.iloc[i]['padj']),
+                              s=du.iloc[i]['gname']))
+    adjust_text(texts, arrowprops=dict(arrowstyle="-", color='black', lw=0.5))
+    plt.xlabel("logFC")
+    plt.ylabel("-log10(adj p-value)")
+    plt.axvline(0, color="grey", linestyle="--")
+    plt.axhline(-np.log10(0.05), color="grey", linestyle="--")
+    # Adjust the legend with a numerical font size
+    plt.legend(loc='upper right', fontsize=7)  # Change the font size here
+
+    plt.savefig(ofile, dpi=500)
+
+rule du_plot:
+    input:
+        du = config['analysis']['swan']['du']['du']
+    params:
+        adj_p_thresh = config['analysis']['swan']['du']['adj_p_thresh'],
+        dpi_thresh = config['analysis']['swan']['du']['dpi_thresh']
+    resources:
+        mem_gb = 8,
+        threads = 1
+    output:
+        fname = config['analysis']['swan']['du']['du_plot']
+    run:
+        plot_du_plot(input.du, wildcards, output.fname)
+
 def save_swan_adata(swan_file,
                     ofile,
                     how='iso'):
@@ -293,4 +344,4 @@ rule all_swan:
                analysis=p_df.analysis.dropna().unique().tolist()),
         get_de_cfg_entries(p_df, config['analysis']['swan']['deg']['deg_plot'], how='de'),
         get_de_cfg_entries(p_df, config['analysis']['swan']['det']['det_plot'], how='de'),
-        # get_de_cfg_entries(p_df, config['analysis']['swan']['du']['du_plot'], how='du'),
+        get_de_cfg_entries(p_df, config['analysis']['swan']['du']['du_plot'], how='du'),
