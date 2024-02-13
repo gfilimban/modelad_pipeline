@@ -142,6 +142,8 @@ def plot_v_plot(df, wc, ofile, kind='gene'):
     import matplotlib.pylab as plt
     import numpy as np
 
+    df = pd.read_csv(df, sep='\t')
+
     if kind == 'gene':
         df['label'] = df.gname
     elif kind == 'transcript':
