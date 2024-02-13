@@ -111,14 +111,17 @@ rule swan_output_t_adata:
 ################################################################################
 ##################################### DEG / DET ################################
 ################################################################################
-def filt_de(sg, de, params, ofile):
+def filt_de(sg, de, params, ofile, kind='gene'):
     """
     Format DE table and filter based on thresholds. Add gene names.
     """
 
     # add gene names
     sg = swan.read(sg)
-    g_df = sg.t_df[['gid', 'gname']].drop_duplicates().reset_index()
+    if kind == 'transcript':
+        g_df = sg.t_df[['tid', 'tname']].drop_duplicates().reset_index()
+    elif kind == 'gene':
+        g_df = sg.t_df[['gid', 'gname']].drop_duplicates().reset_index()
     df = pd.read_csv(de, sep='\t')
     df = df.merge(g_df, how='left', on='gid')
 
@@ -131,7 +134,7 @@ def filt_de(sg, de, params, ofile):
 
     df.to_csv(ofile, sep='\t', index=False)
 
-def plot_v_plot(df, wc, ofile):
+def plot_v_plot(df, wc, ofile, kind='gene'):
     from adjustText import adjust_text
     import matplotlib.pylab as plt
     import numpy as np
@@ -140,7 +143,11 @@ def plot_v_plot(df, wc, ofile):
     plt.scatter(x=df['log2FoldChange'], y=df['padj'].apply(lambda x: -np.log10(x)), s=1, label=f"Not significant (n={num_not_significant})")
     2:56
 
-    df['label'] = df.gname
+    if kind == 'gene':
+        df['label'] = df.gname
+    elif kind == 'transcript':
+        df['label'] = 'tname'
+
     df.label[df.DE == "No"] = ""
     # Calculate counts
     num_up = df[df.DE == "Up"].shape[0]
@@ -156,7 +163,7 @@ def plot_v_plot(df, wc, ofile):
     up = df[df.DE == "Up"]
     up.sort_values(["padj"], inplace=True)
     plt.scatter(x=up['log2FoldChange'], y=up['padj'].apply(lambda x: -np.log10(x)), s=3,
-                label=f"Up-regulated in {wc.obs_cond2} (n={num_up})", color="red")
+                label=f"Up-regulated in {wc.obs_cond1} (n={num_up})", color="red")
     texts = []
     for i in range(min(10, up.shape[0])):
         texts.append(plt.text(x=up.iloc[i, 1], y=-np.log10(up.iloc[i, 5]), s=up.iloc[i, 6]))
@@ -217,7 +224,7 @@ rule deg_plot:
     output:
         fname = config['analysis']['swan']['deg']['deg_plot']
     run:
-        plot_v_plot(input.degs, input.wc, output.fname)
+        plot_v_plot(input.degs, input.wc, output.fname, wildcards)
 
 rule det:
     input:
@@ -253,7 +260,7 @@ rule det_fmt:
     output:
         fname = config['analysis']['swan']['det']['det_fmt']
     run:
-        filt_de(input.sg, input.de, params, ofile)
+        filt_de(input.sg, input.de, params, ofile, kind='transcript')
 
 rule det_plot:
     input:
@@ -264,7 +271,7 @@ rule det_plot:
     output:
         fname = config['analysis']['swan']['det']['det_plot']
     run:
-        plot_v_plot(input.dets, input.wc, output.fname)
+        plot_v_plot(input.dets, input.wc, output.fname, wildcards, kind='transcript')
 
 rule all_swan:
     input:
