@@ -118,7 +118,7 @@ def filt_de(sg, de, params, ofile, kind='gene'):
 
     # add gene names
     sg = swan.read(sg)
-    sg.t_df.reset_index(drop=True)
+    sg.t_df = sg.t_df.reset_index(drop=True)
     if kind == 'transcript':
         g_df = sg.t_df[['tid', 'tname']].drop_duplicates().reset_index()
         merge_thing = 'tid'
