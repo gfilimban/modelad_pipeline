@@ -153,6 +153,11 @@ def plot_v_plot(df, wc, ofile, kind='gene'):
     elif kind == 'transcript':
         df['label'] = df.tname
 
+    if kind == 'gene':
+        label = 'gname'
+    elif kind == 'transcript':
+        label = 'tname'
+
     df.loc[df.DE == "No", 'label'] = ""
     # Calculate counts
     num_up = df[df.DE == "Up"].shape[0]
@@ -164,16 +169,20 @@ def plot_v_plot(df, wc, ofile, kind='gene'):
     down = df[df.DE == "Down"]
     down.sort_values(["padj"], inplace=True)
     plt.scatter(x=down['log2FoldChange'], y=down['padj'].apply(lambda x: -np.log10(x)), s=3,
-                label=f"Down-regulated in {wc.obs_cond1} (n={num_down})", color="blue")
+                label=f"Down-regulated in {wc['obs_cond1']} (n={num_down})", color="blue")
     up = df[df.DE == "Up"]
     up.sort_values(["padj"], inplace=True)
     plt.scatter(x=up['log2FoldChange'], y=up['padj'].apply(lambda x: -np.log10(x)), s=3,
-                label=f"Up-regulated in {wc.obs_cond1} (n={num_up})", color="red")
+                label=f"Up-regulated in {wc['obs_cond1']} (n={num_up})", color="red")
     texts = []
     for i in range(min(10, up.shape[0])):
-        texts.append(plt.text(x=up.iloc[i, 1], y=-np.log10(up.iloc[i, 5]), s=up.iloc[i, 6]))
+        texts.append(plt.text(x=up.iloc[i]['log2FoldChange'],
+                              y=-np.log10(up.iloc[i]['padj']),
+                              s=up.iloc[i][label]))
     for i in range(min(10, down.shape[0])):
-        texts.append(plt.text(x=down.iloc[i, 1], y=-np.log10(down.iloc[i, 5]), s=down.iloc[i, 6]))
+            texts.append(plt.text(x=down.iloc[i]['log2FoldChange'],
+                              y=-np.log10(up.iloc[i]['padj']),
+                              s=down.iloc[i][label]))
     adjust_text(texts, arrowprops=dict(arrowstyle="-", color='black', lw=0.5))
     plt.xlabel("logFC")
     plt.ylabel("-log10(adj p-value)")
