@@ -228,7 +228,7 @@ rule deg_plot:
     output:
         fname = config['analysis']['swan']['deg']['deg_plot']
     run:
-        plot_v_plot(input.degs, wildcards, output.fname, wildcards)
+        plot_v_plot(input.degs, wildcards, output.fname)
 
 rule det:
     input:
@@ -275,7 +275,7 @@ rule det_plot:
     output:
         fname = config['analysis']['swan']['det']['det_plot']
     run:
-        plot_v_plot(input.dets, wildcards, output.fname, wildcards, kind='transcript')
+        plot_v_plot(input.dets, wildcards, output.fname, kind='transcript')
 
 rule all_swan:
     input:
