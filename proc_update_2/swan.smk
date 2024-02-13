@@ -62,7 +62,7 @@ rule swan_die:
                                       kind=wildcards.feat)
         die.to_csv(output.out, sep='\t')
 
-def plot_du_plot(df, wc, ofile):
+def plot_du_plot(df, wc, params, ofile):
     from adjustText import adjust_text
     import matplotlib.pylab as plt
     import numpy as np
@@ -70,8 +70,8 @@ def plot_du_plot(df, wc, ofile):
     df = pd.read_csv(df, sep='\t')
 
     df['DU'] = False
-    df.loc[(df.adj_p_val<=wc.adj_p_thresh)&\
-           (df.dpi.abs()>=wc.dpi_thresh), 'DU'] = True
+    df.loc[(df.adj_p_val<=params.adj_p_thresh)&\
+           (df.dpi.abs()>=params.dpi_thresh), 'DU'] = True
 
     # counts of each
     num_du = len(df.loc[df.DU].index)
@@ -111,7 +111,7 @@ rule du_plot:
     output:
         fname = config['analysis']['swan']['du']['du_plot']
     run:
-        plot_du_plot(input.du, wildcards, output.fname)
+        plot_du_plot(input.du, wildcards, params, output.fname)
 
 def save_swan_adata(swan_file,
                     ofile,
