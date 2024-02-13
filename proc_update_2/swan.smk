@@ -147,9 +147,9 @@ def plot_v_plot(df, wc, ofile, kind='gene'):
     if kind == 'gene':
         df['label'] = df.gname
     elif kind == 'transcript':
-        df['label'] = 'tname'
+        df['label'] = df.tname
 
-    df.label[df.DE == "No"] = ""
+    df.loc[df.DE == "No", 'label'] = ""
     # Calculate counts
     num_up = df[df.DE == "Up"].shape[0]
     num_down = df[df.DE == "Down"].shape[0]
