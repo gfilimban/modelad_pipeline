@@ -212,7 +212,7 @@ rule deg_fmt:
     output:
         fname = config['analysis']['swan']['deg']['deg_fmt']
     run:
-        filt_de(input.sg, input.de, params, ofile)
+        filt_de(input.sg, input.de, params, output.fname)
 
 rule deg_plot:
     input:
@@ -259,7 +259,7 @@ rule det_fmt:
     output:
         fname = config['analysis']['swan']['det']['det_fmt']
     run:
-        filt_de(input.sg, input.de, params, ofile, kind='transcript')
+        filt_de(input.sg, input.de, params, output.fname, kind='transcript')
 
 rule det_plot:
     input:
