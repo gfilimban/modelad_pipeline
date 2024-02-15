@@ -1,5 +1,4 @@
 analysis	genotype	study	genotype_alias
 240214_ghassan	5xFAD-WT	ad003	B6J
 240214_ghassan	5xFAD-HEMI	ad003	5xFAD
-240214_ghassan	5xCLU-h2kbKI	ad003	5xFADHEMI_CLU-h2kbKI_HO
-240214_ghassan	CLU-h2kbKI_HO	ad003	CLU-h2kbKI_HO
+240214_ghassan	5xFAD-HEMI_Clu-h2kbKI-HO	ad003	5xFADHEMI_CLU-h2kbKI_HO
