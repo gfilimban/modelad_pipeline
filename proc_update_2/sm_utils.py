@@ -504,7 +504,7 @@ def get_final_cerb_entry(wc, df, cfg_entry):
 
     return file
 
-def get_prev_cerb_entry(wc, df, cfg_entry, config):
+def get_prev_cerb_entry(wc, df, cfg_entry, config, p_dir):
     """
     Get the previous config entry run for Cerberus. Ensure that
     only one file meets these criteria.
@@ -515,9 +515,9 @@ def get_prev_cerb_entry(wc, df, cfg_entry, config):
     # set of ends / ics
     if prev_run == '0':
         if 'end_mode' in wc.keys():
-            file = config['ref']['cerberus']['ends']
+            file = p_dir+config['ref']['cerberus']['ends']
         else:
-            file = config['ref']['cerberus']['ics']
+            file = p_dir+config['ref']['cerberus']['ics']
     else:
         prev_wc = {'cerberus_run': prev_run}
         file = get_cfg_entries_analysis(prev_wc, df, cfg_entry)
