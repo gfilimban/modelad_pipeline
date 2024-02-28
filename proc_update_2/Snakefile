@@ -59,7 +59,7 @@ tissue_temp = 'HC'
 df = df.loc[(df.genotype==g_temp)&\
             (df.sex==s_temp)&\
             (df.age==a_temp)&\
-            (df.tissue_temp==tissue_temp)]
+            (df.tissue==tissue_temp)]
 
 rule all:
     input:
