@@ -80,7 +80,7 @@ def plot_du_plot(df, wc, params, ofile):
     # add pseudocount to significance and -log10
     df['sig'] = -np.log10(df.adj_p_val+0.01)
 
-    plt.scatter(x=df['dpi'], y=df['sig']., s=1,
+    plt.scatter(x=df['dpi'], y=df['sig'], s=1,
                 label=f'Not significant (n={num_not_du})')
     du = df.loc[df.DU]
     du.sort_values(['sig'], inplace=True)
