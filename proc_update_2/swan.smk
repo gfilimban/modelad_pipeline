@@ -287,7 +287,7 @@ rule deg_plot:
     resources:
         mem_gb = 64,
         threads = 1
-    params
+    params:
         l2fc_thresh = config['analysis']['swan']['deg']['l2fc_thresh'],
         adj_p_thresh = config['analysis']['swan']['deg']['adj_p_thresh']
     output:
