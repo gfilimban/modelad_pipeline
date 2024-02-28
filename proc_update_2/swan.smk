@@ -337,7 +337,7 @@ rule det_plot:
     resources:
         mem_gb = 64,
         threads = 1
-    params
+    params:
         l2fc_thresh = config['analysis']['swan']['det']['l2fc_thresh'],
         adj_p_thresh = config['analysis']['swan']['det']['adj_p_thresh']
     output:
