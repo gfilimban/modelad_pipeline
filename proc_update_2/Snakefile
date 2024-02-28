@@ -51,6 +51,15 @@ ruleorder:
 # max_cerb = df.loc[df.cerberus_run.astype(int)==df.cerberus_run.astype(int).max(axis=0)]
 # max_cerb = df.loc[df.cerberus_run.astype(int)==3]
 
+# temp
+g_temp = 'hTREM2KI-WT'
+s_temp='M'
+a_temp='8_months'
+tissue_temp = 'HC'
+df = df.loc[(df.genotype==g_temp)&\
+            (df.sex==s_temp)&\
+            (df.age==a_temp)&\
+            (df.tissue_temp==tissue_temp)]
 
 rule all:
     input:
