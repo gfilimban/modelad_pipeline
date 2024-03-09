@@ -215,17 +215,30 @@ def parse_config_file_analysis(fname,
                           geno_fname,
                           auto_dedupe=True)
 
+
     # limit to just the studies and genotypes requested
     an_df = pd.read_csv(an_meta_fname, sep='\t')
     i = len(an_df[['genotype', 'study']].drop_duplicates().index)
+    an_df['genotype_study'] = an_df['genotype']+' '+an_df['study']
+    df['genotype_study'] = df['genotype']+' '+df['study']
+    p_df['genotype_study'] = p_df['genotype']+' '+p_df['study']
+    # import pdb; pdb.set_trace()
+    # p_df = p_df.loc[(p_df.genotype.isin(genotypes))&\
+    #                 (p_df.study.isin(studies))]
+    p_df = p_df.loc[p_df.genotype_study.isin(an_df.genotype_study.tolist())]
+    p_df.drop('genotype_study', axis=1, inplace=True)
+    i2 = len(p_df[['genotype', 'study']].drop_duplicates().index)
+    df = df.loc[df.genotype_study.isin(an_df.genotype_study.tolist())]
+    df.drop('genotype_study', axis=1, inplace=True)
+
+
+    # df = df.loc[(df.genotype.isin(genotypes))&\
+    #             (df.study.isin(studies))]
+    i3 = len(p_df[['genotype', 'study']].drop_duplicates().index)
+
     genotypes = an_df.genotype.unique().tolist()
     studies = an_df.study.unique().tolist()
-    p_df = p_df.loc[(p_df.genotype.isin(genotypes))&\
-                    (p_df.study.isin(studies))]
-    i2 = len(p_df[['genotype', 'study']].drop_duplicates().index)
-    df = df.loc[(df.genotype.isin(genotypes))&\
-                (df.study.isin(studies))]
-    i3 = len(p_df[['genotype', 'study']].drop_duplicates().index)
+
     if not (i==i2==i3):
         genotypes = list(set(genotypes)-\
                          set(df.genotype.unique().tolist()))
@@ -491,7 +504,7 @@ def get_final_cerb_entry(wc, df, cfg_entry):
 
     return file
 
-def get_prev_cerb_entry(wc, df, cfg_entry, config):
+def get_prev_cerb_entry(wc, df, cfg_entry, config, p_dir):
     """
     Get the previous config entry run for Cerberus. Ensure that
     only one file meets these criteria.
@@ -502,9 +515,9 @@ def get_prev_cerb_entry(wc, df, cfg_entry, config):
     # set of ends / ics
     if prev_run == '0':
         if 'end_mode' in wc.keys():
-            file = config['ref']['cerberus']['ends']
+            file = p_dir+config['ref']['cerberus']['ends']
         else:
-            file = config['ref']['cerberus']['ics']
+            file = p_dir+config['ref']['cerberus']['ics']
     else:
         prev_wc = {'cerberus_run': prev_run}
         file = get_cfg_entries_analysis(prev_wc, df, cfg_entry)

@@ -230,5 +230,8 @@ analysis:
       det_fmt: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_det_fmt.tsv
       det_plot: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_det_volcano.pdf
 
-    du: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_du_{feat}.tsv
-    du_plot: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_du_{feat}_volcano.pdf
+    du:
+      dpi_thresh: 10
+      adj_p_thresh: 0.05
+      du: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_du_{feat}.tsv
+      du_plot: analysis/{analysis}/swan/{obs_cond1}_vs_{obs_cond2}_{obs_col}_du_{feat}_volcano.pdf

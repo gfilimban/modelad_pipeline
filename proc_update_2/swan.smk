@@ -53,7 +53,7 @@ rule swan_die:
         mem_gb = 128,
         threads = 8
     output:
-        out = config['analysis']['swan']['du']
+        out = config['analysis']['swan']['du']['du']
     run:
         sg = swan.read(input.sg)
         die, genes = sg.die_gene_test(obs_col=wildcards.obs_col,
@@ -61,6 +61,58 @@ rule swan_die:
                                                       wildcards.obs_cond2],
                                       kind=wildcards.feat)
         die.to_csv(output.out, sep='\t')
+
+def plot_du_plot(df, wc, params, ofile):
+    from adjustText import adjust_text
+    import matplotlib.pylab as plt
+    import numpy as np
+
+    df = pd.read_csv(df, sep='\t')
+
+    df['DU'] = False
+    df.loc[(df.adj_p_val<=params.adj_p_thresh)&\
+           (df.dpi.abs()>=params.dpi_thresh), 'DU'] = True
+
+    # counts of each
+    num_du = len(df.loc[df.DU].index)
+    num_not_du = len(df.loc[~df.DU].index)
+
+    # add pseudocount to significance and -log10
+    df['sig'] = -np.log10(df.adj_p_val+0.01)
+
+    plt.scatter(x=df['dpi'], y=df['sig'], s=1,
+                label=f'Not significant (n={num_not_du})')
+    du = df.loc[df.DU]
+    du.sort_values(['sig'], inplace=True)
+    plt.scatter(x=du['dpi'], y=df['sig'], s=3,
+                label=f"DU b/w {wc['obs_cond1']} and {wc['obs_cond2']} (n={num_du})", color='b')
+    texts = []
+    for i in range(min(10, du.shape[0])):
+        texts.append(plt.text(x=du.iloc[i]['dpi'],
+                              y=du.iloc[i]['sig'],
+                              s=du.iloc[i]['gname']))
+    adjust_text(texts, arrowprops=dict(arrowstyle="-", color='black', lw=0.5))
+    plt.xlabel("logFC")
+    plt.ylabel("-log10(adj p-value+0.01)")
+    plt.axvline(0, color="grey", linestyle="--")
+    plt.axhline(-np.log10(0.05), color="grey", linestyle="--")
+    plt.legend(loc='upper right', fontsize=7)
+
+    plt.savefig(ofile, dpi=500)
+
+rule du_plot:
+    input:
+        du = config['analysis']['swan']['du']['du']
+    params:
+        adj_p_thresh = config['analysis']['swan']['du']['adj_p_thresh'],
+        dpi_thresh = config['analysis']['swan']['du']['dpi_thresh']
+    resources:
+        mem_gb = 8,
+        threads = 1
+    output:
+        fname = config['analysis']['swan']['du']['du_plot']
+    run:
+        plot_du_plot(input.du, wildcards, params, output.fname)
 
 def save_swan_adata(swan_file,
                     ofile,
@@ -116,6 +168,8 @@ def filt_de(sg, de, params, ofile, kind='gene'):
     Format DE table and filter based on thresholds. Add gene names.
     """
 
+    df = pd.read_csv(de, sep='\t')
+
     # add gene names
     sg = swan.read(sg)
     sg.t_df = sg.t_df.reset_index(drop=True)
@@ -124,11 +178,10 @@ def filt_de(sg, de, params, ofile, kind='gene'):
         merge_thing = 'tid'
     elif kind == 'gene':
         g_df = sg.t_df[['gid', 'gname']].drop_duplicates().reset_index()
-        g_df['gid_stable'] = cerberus.get_stable_gid(g_df, 'gid')
-        g_df.drop('gid', axis=1, inplace=True)
-        g_df.rename({'gid_stable':'gid'}, axis=1, inplace=True)
+        df['gid_stable'] = cerberus.get_stable_gid(df, 'gid')
+        df.drop('gid', axis=1, inplace=True)
+        df.rename({'gid_stable':'gid'}, axis=1, inplace=True)
         merge_thing = 'gid'
-    df = pd.read_csv(de, sep='\t')
     df = df.merge(g_df, how='left', on=merge_thing)
 
     # call things as upregulated or downregulated
@@ -140,7 +193,7 @@ def filt_de(sg, de, params, ofile, kind='gene'):
 
     df.to_csv(ofile, sep='\t', index=False)
 
-def plot_v_plot(df, wc, ofile, kind='gene'):
+def plot_v_plot(df, wc, params, ofile, kind='gene'):
     from adjustText import adjust_text
     import matplotlib.pylab as plt
     import numpy as np
@@ -151,6 +204,11 @@ def plot_v_plot(df, wc, ofile, kind='gene'):
         df['label'] = df.gname
     elif kind == 'transcript':
         df['label'] = df.tname
+
+    if kind == 'gene':
+        label = 'gname'
+    elif kind == 'transcript':
+        label = 'tname'
 
     df.loc[df.DE == "No", 'label'] = ""
     # Calculate counts
@@ -163,21 +221,25 @@ def plot_v_plot(df, wc, ofile, kind='gene'):
     down = df[df.DE == "Down"]
     down.sort_values(["padj"], inplace=True)
     plt.scatter(x=down['log2FoldChange'], y=down['padj'].apply(lambda x: -np.log10(x)), s=3,
-                label=f"Down-regulated in {wc.obs_cond1} (n={num_down})", color="blue")
+                label=f"Down-regulated in {wc['obs_cond1']} (n={num_down})", color="blue")
     up = df[df.DE == "Up"]
     up.sort_values(["padj"], inplace=True)
     plt.scatter(x=up['log2FoldChange'], y=up['padj'].apply(lambda x: -np.log10(x)), s=3,
-                label=f"Up-regulated in {wc.obs_cond1} (n={num_up})", color="red")
+                label=f"Up-regulated in {wc['obs_cond1']} (n={num_up})", color="red")
     texts = []
     for i in range(min(10, up.shape[0])):
-        texts.append(plt.text(x=up.iloc[i, 1], y=-np.log10(up.iloc[i, 5]), s=up.iloc[i, 6]))
+        texts.append(plt.text(x=up.iloc[i]['log2FoldChange'],
+                              y=-np.log10(up.iloc[i]['padj']),
+                              s=up.iloc[i][label]))
     for i in range(min(10, down.shape[0])):
-        texts.append(plt.text(x=down.iloc[i, 1], y=-np.log10(down.iloc[i, 5]), s=down.iloc[i, 6]))
+            texts.append(plt.text(x=down.iloc[i]['log2FoldChange'],
+                              y=-np.log10(up.iloc[i]['padj']),
+                              s=down.iloc[i][label]))
     adjust_text(texts, arrowprops=dict(arrowstyle="-", color='black', lw=0.5))
     plt.xlabel("logFC")
     plt.ylabel("-log10(adj p-value)")
-    plt.axvline(0, color="grey", linestyle="--")
-    plt.axhline(-np.log10(0.05), color="grey", linestyle="--")
+    plt.axvline(params.l2fc_thresh, color="grey", linestyle="--")
+    plt.axhline(-np.log10(params.adj_p_thresh), color="grey", linestyle="--")
     # Adjust the legend with a numerical font size
     plt.legend(loc='upper right', fontsize=7)  # Change the font size here
 
@@ -190,7 +252,7 @@ rule deg:
         mem_gb = 128,
         threads = 8
     output:
-        out = temporary(config['analysis']['swan']['deg'])
+        out = temporary(config['analysis']['swan']['deg']['deg'])
     conda:
         "modelad_snakemake_pydeseq2"
     shell:
@@ -225,10 +287,13 @@ rule deg_plot:
     resources:
         mem_gb = 64,
         threads = 1
+    params:
+        l2fc_thresh = config['analysis']['swan']['deg']['l2fc_thresh'],
+        adj_p_thresh = config['analysis']['swan']['deg']['adj_p_thresh']
     output:
         fname = config['analysis']['swan']['deg']['deg_plot']
     run:
-        plot_v_plot(input.degs, wildcards, output.fname)
+        plot_v_plot(input.degs, wildcards, params, output.fname)
 
 rule det:
     input:
@@ -272,10 +337,13 @@ rule det_plot:
     resources:
         mem_gb = 64,
         threads = 1
+    params:
+        l2fc_thresh = config['analysis']['swan']['det']['l2fc_thresh'],
+        adj_p_thresh = config['analysis']['swan']['det']['adj_p_thresh']
     output:
         fname = config['analysis']['swan']['det']['det_plot']
     run:
-        plot_v_plot(input.dets, wildcards, output.fname, kind='transcript')
+        plot_v_plot(input.dets, wildcards, params, output.fname, kind='transcript')
 
 rule all_swan:
     input:
@@ -283,4 +351,4 @@ rule all_swan:
                analysis=p_df.analysis.dropna().unique().tolist()),
         get_de_cfg_entries(p_df, config['analysis']['swan']['deg']['deg_plot'], how='de'),
         get_de_cfg_entries(p_df, config['analysis']['swan']['det']['det_plot'], how='de'),
-        # get_de_cfg_entries(p_df, config['analysis']['swan']['du']['du_plot'], how='du'),
+        get_de_cfg_entries(p_df, config['analysis']['swan']['du']['du_plot'], how='du'),

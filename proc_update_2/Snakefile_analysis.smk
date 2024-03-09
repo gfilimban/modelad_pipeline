@@ -74,7 +74,8 @@ use rule cerb_agg_ends as cerb_agg_ends_lr with:
     input:
         ref_ends = lambda wc: get_prev_cerb_entry(wc, p_df,
                                                   config['analysis']['cerberus']['agg']['ends'],
-                                                  config),
+                                                  config,
+                                                  p_dir),
         ends = p_dir+config['cerberus']['ends']
     params:
         add_ends = True,
@@ -88,7 +89,8 @@ use rule cerberus_agg_ics as cerb_agg_ics_lr with:
     input:
         ref_ics = lambda wc: get_prev_cerb_entry(wc, p_df,
                                                   config['analysis']['cerberus']['agg']['ics'],
-                                                  config),
+                                                  config,
+                                                  p_dir),
         ics = p_dir+config['cerberus']['ics']
     params:
         ref = False,
