@@ -96,7 +96,7 @@ use rule cerberus_agg_ics_cfg as cerb_agg_ics_cfg_lr with:
         ref = False,
         sources = lambda wc:['cerberus', get_df_col(wc, df, 'source')]
     output:
-        ics = config['analysis']['cerberus']['agg']['ics_cfg']
+        cfg = config['analysis']['cerberus']['agg']['ics_cfg']
 
 use rule cerberus_agg_ics_cli as cerb_agg_ics_cfg_cli_lr with:
     input:
