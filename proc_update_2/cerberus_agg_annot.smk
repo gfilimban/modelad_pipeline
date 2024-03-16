@@ -32,7 +32,7 @@ rule cerberus_agg_ics_cfg:
         df['fname'] = [input.ref_ics, input.ics]
         df['ref'] = refs
         df['sources'] = params.sources
-        df.to_csv(output.cfg, sep='\t', header=None, index=False)
+        df.to_csv(output.cfg, sep=',', header=None, index=False)
 
 rule cerberus_agg_ics_cli:
     resources:
