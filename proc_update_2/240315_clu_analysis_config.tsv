@@ -1,0 +1,5 @@
+analysis	genotype	study	genotype_alias
+240315_clu	5xFAD-WT	ad003	B6J
+240315_clu	5xFAD-HEMI	ad003	5xFAD
+240315_clu	5xFAD-HEMI_Clu-h2kbKI-HO	ad003	5xhCLU
+240315_clu	5xFAD-WT_Clu-h2kbKI-HO	ad003	hCLU
