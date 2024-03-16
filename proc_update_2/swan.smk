@@ -84,7 +84,7 @@ def plot_du_plot(df, wc, params, ofile):
                 label=f'Not significant (n={num_not_du})')
     du = df.loc[df.DU]
     du.sort_values(['sig'], inplace=True)
-    plt.scatter(x=du['dpi'], y=df['sig'], s=3,
+    plt.scatter(x=du['dpi'], y=du['sig'], s=3,
                 label=f"DU b/w {wc['obs_cond1']} and {wc['obs_cond2']} (n={num_du})", color='b')
     texts = []
     for i in range(min(10, du.shape[0])):
