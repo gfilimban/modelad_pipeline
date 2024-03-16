@@ -85,7 +85,7 @@ use rule cerb_agg_ends as cerb_agg_ends_lr with:
     output:
         ends = config['analysis']['cerberus']['agg']['ends']
 
-use rule cerberus_agg_ics as cerb_agg_ics_lr with:
+use rule cerberus_agg_ics_cfg as cerb_agg_ics_cfg_lr with:
     input:
         ref_ics = lambda wc: get_prev_cerb_entry(wc, p_df,
                                                   config['analysis']['cerberus']['agg']['ics'],
@@ -96,7 +96,31 @@ use rule cerberus_agg_ics as cerb_agg_ics_lr with:
         ref = False,
         sources = lambda wc:['cerberus', get_df_col(wc, df, 'source')]
     output:
+        ics = config['analysis']['cerberus']['agg']['ics_cfg']
+
+use rule cerberus_agg_ics_cli as cerb_agg_ics_cfg_cli_lr with:
+    input:
+        ref_ics = lambda wc: get_prev_cerb_entry(wc, p_df,
+                                                  config['analysis']['cerberus']['agg']['ics'],
+                                                  config,
+                                                  p_dir),
+        ics = p_dir+config['cerberus']['ics'],
+        cfg = config['analysis']['cerberus']['agg']['ics_cfg']
+    output:
         ics = config['analysis']['cerberus']['agg']['ics']
+
+# use rule cerberus_agg_ics as cerb_agg_ics_lr with:
+#     input:
+#         ref_ics = lambda wc: get_prev_cerb_entry(wc, p_df,
+#                                                   config['analysis']['cerberus']['agg']['ics'],
+#                                                   config,
+#                                                   p_dir),
+#         ics = p_dir+config['cerberus']['ics']
+#     params:
+#         ref = False,
+#         sources = lambda wc:['cerberus', get_df_col(wc, df, 'source')]
+#     output:
+#         ics = config['analysis']['cerberus']['agg']['ics']
 
 use rule cerb_write_ref as cerb_write_ref_lr with:
     input:

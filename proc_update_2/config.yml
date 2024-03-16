@@ -207,6 +207,7 @@ analysis:
     ab: analysis/{analysis}/cerberus/{study}/{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_abundance.tsv
 
     agg:
+      ics_cfg: analysis/{analysis}/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_ic_cfg.tsv
       ics: analysis/{analysis}/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_ic.tsv
       ends: analysis/{analysis}/cerberus/agg/{study}_{genotype}_{sex}_{age}_{tissue}_{cerberus_run}_{end_mode}.bed
 
