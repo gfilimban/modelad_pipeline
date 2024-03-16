@@ -117,6 +117,7 @@ snakemake \
 --ignore-incomplete \
   -n
 
+conda activate modelad_snakemake_2
 snakemake \
 -s Snakefile_analysis.smk \
 -j 200 \
@@ -130,7 +131,7 @@ snakemake \
   --mail-user=freese@uci.edu \
   --mail-type=START,END,FAIL \
   --time=72:00:00" \
-  -n --ignore-incomplete
+   --ignore-incomplete -n
 ``` -->
 
 Wait for this command to run and make sure the steps that it plans to run are reasonable. After it finishes, run the same command without the `-n` option.
