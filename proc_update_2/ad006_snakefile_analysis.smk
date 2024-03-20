@@ -100,7 +100,7 @@ use rule cerberus_agg_ics_cfg as cerb_agg_ics_cfg_lr with:
 
 use rule cerberus_agg_ics_cli as cerb_agg_ics_cfg_cli_lr with:
     input:
-        ref_ics = lambda wc: get_prev_cerb_enstry(wc, p_df,
+        ref_ics = lambda wc: get_prev_cerb_entry(wc, p_df,
                                                   config['analysis']['cerberus']['agg']['ics'],
                                                   config,
                                                   p_dir),
