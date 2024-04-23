@@ -132,6 +132,22 @@ snakemake \
   --mail-type=START,END,FAIL \
   --time=72:00:00" \
    --ignore-incomplete -n
+
+   conda activate modelad_snakemake_2
+   snakemake \
+   -s 240211_nm_snakefile_analysis.smk \
+   -j 200 \
+   --latency-wait 120 \
+   --use-conda \
+   --cluster "sbatch -A \
+     model-ad_lab \
+     --partition=highmem \
+     --mem={resources.mem_gb}GB \
+     -c {resources.threads} \
+     --mail-user=freese@uci.edu \
+     --mail-type=START,END,FAIL \
+     --time=72:00:00" \
+      -n
 ``` -->
 
 Wait for this command to run and make sure the steps that it plans to run are reasonable. After it finishes, run the same command without the `-n` option.

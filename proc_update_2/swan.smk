@@ -1,5 +1,7 @@
 import swan_vis as swan
 
+# Use metadata specified in input files to generate a metadata file to use
+# to make the obs table for Swan
 rule make_swan_metadata:
     params:
         p_df = p_df
@@ -18,6 +20,9 @@ rule make_swan_metadata:
         temp_meta = temp_meta[cols]
         temp_meta.to_csv(output.meta, sep='\t', index=False)
 
+# Make a Swan graph out of 1) the Cerberus-transformed reference (ie GENCODE) GTF
+# 2) the Cerberus-transformed sample GTFs, 3) the Cerberus-transformed sample
+# transcript abundance files, 4) the metadata file
 rule make_swan_graph:
     input:
         gtf = lambda wc:get_cfg_entries_analysis(wc, p_df, config['analysis']['cerberus']['gtf']),
@@ -46,6 +51,9 @@ rule make_swan_graph:
         sg.add_metadata(input.meta)
         sg.save_graph(params.prefix)
 
+# Run differential isoform / triplet feature usage tests. Will run to compare
+# all pairwise groups of genotypes in the analysis and between sexes in each
+# genotype automatically.
 rule swan_die:
     input:
         sg = config['analysis']['swan']['swan_graph']
@@ -100,6 +108,7 @@ def plot_du_plot(df, wc, params, ofile):
 
     plt.savefig(ofile, dpi=500)
 
+# Plot the results of the DU analyses
 rule du_plot:
     input:
         du = config['analysis']['swan']['du']['du']
@@ -134,6 +143,7 @@ def save_swan_adata(swan_file,
         raise ValueError("You haven't implemented this yet.")
     adata.write(ofile)
 
+# Make a gene-level anndata file for use with PyDESeq2 to do DEGs
 rule swan_output_g_adata:
     input:
         sg = config['analysis']['swan']['swan_graph']
@@ -147,6 +157,7 @@ rule swan_output_g_adata:
                         output.out,
                         how='gene')
 
+# Make a transcript-level anndata file for use with PyDESeq2 to do DETs
 rule swan_output_t_adata:
     input:
         sg = config['analysis']['swan']['swan_graph']
@@ -245,6 +256,7 @@ def plot_v_plot(df, wc, params, ofile, kind='gene'):
 
     plt.savefig(ofile, dpi=500)
 
+# Run DEG test for each pair of genotypes and sexes w/i each genotype
 rule deg:
     input:
         adata = config['analysis']['swan']['g_adata']
@@ -266,6 +278,7 @@ rule deg:
                    {resources.threads}
         """
 
+# Format and filter DEG results
 rule deg_fmt:
     input:
         de = config['analysis']['swan']['deg']['deg'],
@@ -281,6 +294,7 @@ rule deg_fmt:
     run:
         filt_de(input.sg, input.de, params, output.fname)
 
+# Plot volcano plot of DEG results
 rule deg_plot:
     input:
         degs = config['analysis']['swan']['deg']['deg_fmt'],
@@ -295,6 +309,7 @@ rule deg_plot:
     run:
         plot_v_plot(input.degs, wildcards, params, output.fname)
 
+# Run DET test for each pair of genotypes and sexes w/i each genotype
 rule det:
     input:
         adata = config['analysis']['swan']['t_adata']
@@ -316,6 +331,7 @@ rule det:
                    {resources.threads}
         """
 
+# Format and filter DET results
 rule det_fmt:
     input:
         de = config['analysis']['swan']['det']['det'],
@@ -331,6 +347,7 @@ rule det_fmt:
     run:
         filt_de(input.sg, input.de, params, output.fname, kind='transcript')
 
+# Plot volcano plot of DET results
 rule det_plot:
     input:
         dets = config['analysis']['swan']['det']['det_fmt'],

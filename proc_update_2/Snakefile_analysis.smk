@@ -70,6 +70,9 @@ rule all:
 ########################### Cerberus agg + annot ###############################
 ################################################################################
 
+# Aggregate the ends used to create a unified Cerberus reference object across
+# the different samples used. This rule will run once for each unique sample
+# used in the analysis, sequentially (one after the other).
 use rule cerb_agg_ends as cerb_agg_ends_lr with:
     input:
         ref_ends = lambda wc: get_prev_cerb_entry(wc, p_df,
@@ -85,6 +88,7 @@ use rule cerb_agg_ends as cerb_agg_ends_lr with:
     output:
         ends = config['analysis']['cerberus']['agg']['ends']
 
+# Create a configuration file for Cerberus IC aggregation
 use rule cerberus_agg_ics_cfg as cerb_agg_ics_cfg_lr with:
     input:
         ref_ics = lambda wc: get_prev_cerb_entry(wc, p_df,
@@ -98,6 +102,9 @@ use rule cerberus_agg_ics_cfg as cerb_agg_ics_cfg_lr with:
     output:
         cfg = config['analysis']['cerberus']['agg']['ics_cfg']
 
+# Aggregate the ICs used to create a unified Cerberus reference object across
+# the different samples used. This rule will run once for each unique sample
+# used in the analysis, sequentially (one after the other).
 use rule cerberus_agg_ics_cli as cerb_agg_ics_cfg_cli_lr with:
     input:
         ref_ics = lambda wc: get_prev_cerb_entry(wc, p_df,
@@ -109,19 +116,8 @@ use rule cerberus_agg_ics_cli as cerb_agg_ics_cfg_cli_lr with:
     output:
         ics = config['analysis']['cerberus']['agg']['ics']
 
-# use rule cerberus_agg_ics as cerb_agg_ics_lr with:
-#     input:
-#         ref_ics = lambda wc: get_prev_cerb_entry(wc, p_df,
-#                                                   config['analysis']['cerberus']['agg']['ics'],
-#                                                   config,
-#                                                   p_dir),
-#         ics = p_dir+config['cerberus']['ics']
-#     params:
-#         ref = False,
-#         sources = lambda wc:['cerberus', get_df_col(wc, df, 'source')]
-#     output:
-#         ics = config['analysis']['cerberus']['agg']['ics']
-
+# Write the Cerberus reference object by turning the separate IC, TSS, and TES
+# tab-separated files from the aggregation stage into one h5ad file.
 use rule cerb_write_ref as cerb_write_ref_lr with:
     input:
         ic = config['analysis']['cerberus']['agg']['ics'],
@@ -137,6 +133,8 @@ use rule cerb_write_ref as cerb_write_ref_lr with:
         h5 = config['analysis']['cerberus']['ca']
 
 
+# Use the Cerberus reference from above to call the TSS, IC, and TES used by each
+# transcript in the reference (ie GENCODE) GTF
 use rule cerb_annot as cerb_annot_ref with:
     input:
         h5 = lambda wc:get_final_cerb_entry(wc,
@@ -149,6 +147,8 @@ use rule cerb_annot as cerb_annot_ref with:
     output:
         h5 = config['analysis']['ref']['cerberus']['ca_annot']
 
+# Use the Cerberus reference from above to call the TSS, IC, and TES used by each
+# transcript in each sample GTF. Run sequentially for each sample (one after the other).
 use rule cerb_annot as cerb_annot_run with:
     input:
         h5 = lambda wc:get_final_cerb_entry(wc,
@@ -161,7 +161,9 @@ use rule cerb_annot as cerb_annot_run with:
     output:
         h5 = config['analysis']['cerberus']['ca_annot']
 
-#
+# Update the transcript IDs and transcript names, as well as aggregate transcripts
+# that are collapsed because they now have similar / overlapping TSSs / TESs and
+# identical ICs, in the reference (ie GENCODE) GTF.
 use rule cerb_gtf_ids as cerb_update_ref_gtf with:
     input:
         h5 = config['analysis']['ref']['cerberus']['ca_annot'],
@@ -173,6 +175,9 @@ use rule cerb_gtf_ids as cerb_update_ref_gtf with:
     output:
         gtf = config['analysis']['ref']['cerberus']['gtf']
 
+# Update the transcript IDs and transcript names, as well as aggregate transcripts
+# that are collapsed because they now have similar / overlapping TSSs / TESs and
+# identical ICs, in each sample's GTF.
 use rule cerb_gtf_ids as cerb_update_gtf with:
     input:
         h5 = config['analysis']['cerberus']['ca_annot'],
@@ -184,6 +189,9 @@ use rule cerb_gtf_ids as cerb_update_gtf with:
     output:
         gtf = config['analysis']['cerberus']['gtf']
 
+# Update the transcript IDs and transcript names, as well as aggregate transcripts
+# that are collapsed because they now have similar / overlapping TSSs / TESs and
+# identical ICs, in each sample's abundance file. Collapsed transcripts sum across counts.
 use rule cerb_ab_ids as study_cerb_ab with:
     input:
         h5 = config['analysis']['cerberus']['ca_annot'],
@@ -193,3 +201,6 @@ use rule cerb_ab_ids as study_cerb_ab with:
         agg = True
     output:
         ab = config['analysis']['cerberus']['ab']
+
+
+# For the rest of the commentary on what's running, please look at swan.smk
