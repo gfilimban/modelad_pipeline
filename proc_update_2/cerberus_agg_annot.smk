@@ -22,6 +22,29 @@ rule cerb_agg_ends:
 ######################### Cerberus annotation ##################################
 ################################################################################
 
+rule cerberus_agg_ics_cfg:
+    resources:
+        threads = 1,
+        mem_gb = 1
+    run:
+        refs = [params.ref for i in range(2)]
+        df = pd.DataFrame()
+        df['fname'] = [input.ref_ics, input.ics]
+        df['ref'] = refs
+        df['sources'] = params.sources
+        df.to_csv(output.cfg, sep=',', header=None, index=False)
+
+rule cerberus_agg_ics_cli:
+    resources:
+        threads = 2,
+        mem_gb = 32
+    shell:
+        """
+        cerberus agg_ics \
+            --input {input.cfg} \
+            -o {output.ics}
+        """
+
 rule cerberus_agg_ics:
     resources:
         mem_gb = 32,
